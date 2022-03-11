@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fio-exporter
+  labels:
+    app: fio-exporter
+spec:
+  selector:
+    matchLabels:
+      app: fio-exporter
+  template:
+    metadata:
+      labels:
+        app: fio-exporter
+      {{- if .Values.prometheusScrape.enabled }}
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '1334'
+        prometheus.io/path: '/metrics'
+      {{- else }}
+      annotations: {}
+      {{- end }}
+    spec:
+      {{- if .Values.installOnControllPlane }}
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      {{- end }}
+      containers:
+      - name: fio-exporter
+        image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with .Values.image.pullSecret }}
+        imagePullSecrets:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 1334
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+          - containerPort: 1334
+            protocol: TCP
+        volumeMounts:
+          - name: audit-dir
+            mountPath: /tmp
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: audit-dir
+          emptyDir: {}

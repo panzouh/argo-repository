@@ -1,0 +1,77 @@
+{{- define "certmanager.enabled" -}}
+{{- or .Values.certmanager.enabled .Values.default.enabled .Values.traefik.enabled -}}
+{{- end -}}
+{{ if eq (include "certmanager.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: certmanager
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.certmanager.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.certmanager.chart.name }}
+    repoURL: {{ .Values.certmanager.chart.repo }}
+    targetRevision: {{ .Values.certmanager.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        installCRDs: true
+        {{- if and .Values.certmanager.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        prometheus:
+          enabled: true
+          servicemonitor:
+            enabled: false
+            prometheusInstance: default
+            targetPort: 9402
+            path: /metrics
+            interval: 60s
+            scrapeTimeout: 30s
+        {{- end }}
+        {{- if .Values.proxies.enabled }}
+        http_proxy: "{{ .Values.proxies.value }}"
+        https_proxy: "{{ .Values.proxies.value }}"
+        no_proxy: "{{ .Values.proxies.noProxy }}"
+        {{- end }}
+---
+{{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.stagging.enabled }}
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: {{ .Values.certmanager.values.clusterissuer.stagging.email }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging-key
+    solvers:
+    - http01:
+        ingress:
+          class: traefik
+{{- end }}
+---
+{{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.production.enabled }}
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production
+spec:
+  acme:
+    email: {{ .Values.certmanager.clusterissuer.production.email }}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-production-key
+    solvers:
+    - http01:
+        ingress:
+          class: traefik
+{{- end }}
+{{ end }}

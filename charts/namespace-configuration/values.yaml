@@ -1,0 +1,46 @@
+---
+quotas: []
+  # Ex :
+  # - quotaName: small-size
+  #   matchLabels: 
+  #     size: small
+  #   requestMem: 4Gi
+  #   requestCPU: 2
+  #   requestsPVC: 100Gi
+  #   totalPVC: 5
+  #   requestsEmptyDirs: 10Gi
+
+networkPolicies:
+  - policyName: test
+    matchLabels:
+      policy: test
+    policies: #[]
+      - name: test
+        type: Egress
+        to: []
+        podSelector: {}
+      - name: test
+        type: Ingress
+        podSelector:
+          toto: tata
+        from:
+          - namespaceSelector:
+              matchLabels:
+                a: b
+          - namespaceSelector:
+              matchLabels: {}
+          - podSelector:
+              matchLabels:
+                b: c
+          - ipBlock:
+              cidr: 192.168.0.0/24
+              except:
+                - 192.168.1.1
+          - ipBlock:
+              cidr: 192.168.0.0/24
+      - name: test-2
+        type: Ingress
+        podSelector:
+          toto: tata
+    
+tools: []

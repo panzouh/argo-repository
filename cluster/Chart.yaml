@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: cluster
+description: A Must Have Apps Cluster Management Provided by DTK (danstonkube.fr)
+type: application
+version: 0.1.0
+appVersion: "0.1"

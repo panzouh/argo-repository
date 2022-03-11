@@ -1,0 +1,63 @@
+---
+installCRDs: false
+
+redis-ha:
+  enabled: true
+
+controller:
+  enableStatefulSet: true
+
+server:
+  replicas: 2
+  ingress:
+    enabled: true
+    hosts:
+      - # ARGO URL
+    tls:
+      - secretName: argocd-certificate
+        hosts:
+          - # ARGO URL
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-production
+      cert-manager.io/acme-challenge-type: http01
+      kubernetes.io/ingress.class: "nginx"
+  env:
+    - name: ARGOCD_API_SERVER_REPLICAS
+      value: '2'
+    # Only if needed
+    # - name: http_proxy
+    #   value: 
+    # - name: https_proxy
+    #   value:
+    # - name: NO_PROXY
+    #   value: argocd-repo-server,argocd-application-controller,argocd-metrics,argocd-server,argocd-server-metrics,argocd-redis,argocd-dex-server,.cluster.local,.svc,podCIDR,svcCIDR
+
+  config:
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    url: # ARGO URL
+    repositories: |
+      - url: https://gitlab.com/a4537/repository.git
+        passwordSecret:
+          name: gitlab
+          key: password
+        usernameSecret:
+          name: gitlab
+          key: username
+  extraArgs:
+    - --insecure
+    # TBA Vault 
+
+repoServer:
+  replicas: 2
+  env:
+    - name: ARGOCD_EXEC_TIMEOUT
+      value: "300s"
+    # Only if needed
+    # - name: http_proxy
+    #   value: http://10.247.92.11:8080
+    # - name: https_proxy
+    #   value: http://10.247.92.11:8080
+    # - name: NO_PROXY
+    #   value: argocd-repo-server,argocd-application-controller,argocd-metrics,argocd-server,argocd-server-metrics,argocd-redis,argocd-dex-server,.cluster.local,.svc,podCIDR,svcCIDR

@@ -1,0 +1,38 @@
+{{- define "default.enabled" -}}
+{{- or .Values.olm.enabled .Values.default.enabled  -}}
+{{- end -}}
+{{ if eq (include "default.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.olm.appName }}
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.olm.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: {{ .Values.olm.chart.path }}
+    repoURL: {{ .Values.olm.chart.repo }}
+    targetRevision: {{ .Values.olm.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        {{- if and .Values.olm.chart.values.monitoring .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        monitoring:
+          enabled: true
+        {{- else }}
+        monitoring:
+          enabled: false
+        {{- end }}
+        {{- if .Values.olm.chart.values.debug }}
+        debug: true
+        {{- else }}
+        debug: false
+        {{- end }}
+{{ end }}

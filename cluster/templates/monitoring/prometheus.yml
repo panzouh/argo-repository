@@ -1,0 +1,52 @@
+{{- define "monitoring.enabled" -}}
+{{- or .Values.monitoring.enabled .Values.monitoring.prometheus.enabled  -}}
+{{- end -}}
+{{ if eq (include "monitoring.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.monitoring.prometheus.chart.path }}
+    repoURL: {{ .Values.monitoring.prometheus.repo }}
+    targetRevision: {{ .Values.monitoring.prometheus.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        rbac:
+          create: true
+        {{- if eq (include "alertmanager.enabled" .) "true" }}
+        alertmanager:
+          enabled: true
+          {{- if .Values.default.storageClass }}
+          persitentVolume:
+            enabled: true
+            size: {{ quote .Values.monitoring.prometheus.chart.values.pvcSize }}
+          {{- else }}
+          persitentVolume:
+            enabled: false
+          {{- end }}
+        {{- if .Values.monitoring.prometheus.chart.values.alertmanager.configurationFiles.alertmanagerYml }}
+        alertmanagerFiles:
+          alertmanager.yml:
+          {{- with .Values.monitoring.prometheus.chart.values.alertmanager.configurationFiles.alertmanagerYml }}
+            {{- toYaml . | nindent 4 }}
+          {{- end }}
+        {{- else }}
+        alertmanagerFiles: {}
+        {{- end }}
+        {{- else }}
+        alertmanager:
+          enabled: false
+        {{- end }}
+{{ end }}

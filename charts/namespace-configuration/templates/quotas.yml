@@ -1,0 +1,52 @@
+{{- range .Values.quotas }}
+---
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: NamespaceConfig
+metadata:
+  name: {{ .quotaName }}
+spec:
+  labelSelector:
+    matchLabels:
+      {{- with .matchLabels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  templates:
+  - objectTemplate: |
+      apiVersion: v1
+      kind: ResourceQuota
+      metadata:
+          name: {{ .quotaName }}-quota
+          namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        hard:
+          requests.memory: {{ quote .requestMem }}
+          requests.cpu: {{ .requestCPU }}
+          {{- if .requestsPVC }}
+          requests.storage: {{ quote .requestsPVC }} 50Gi
+          {{- end }}
+          {{- if .totalPVC }}
+          persistentvolumeclaims: {{ .totalPVC }}
+          {{- end }}
+          {{- if .requestsEmptyDirs }}
+          requests.ephemeral-storage: {{ quote .requestsEmptyDirs }}
+          {{- end }}
+      ---
+      apiVersion: v1
+      kind: LimitRange
+      metadata:
+        name: {{ .quotaName }}-limits
+        namespace: '{{ print "{{.Name }}" }}'
+      spec:
+          limits:
+          - max:
+              memory: {{ quote .requestMem }}
+              cpu: {{ quote .requestCPU }}
+              {{- if .requestsEmptyDirs }}
+              ephemeral-storage: {{ quote .requestsEmptyDirs }}
+              {{- end }}
+            min:
+              memory: "4Mi"
+              cpu: "10m"
+            type: Pod
+          type: Pod
+{{- end }}

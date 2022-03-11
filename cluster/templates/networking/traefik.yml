@@ -1,0 +1,108 @@
+{{- define "traefik.enabled" -}}
+{{- or .Values.traefik.enabled .Values.default.enabled -}}
+{{- end -}}
+{{ if eq (include "traefik.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.traefik.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.traefik.chart.name }}
+    repoURL: {{ .Values.traefik.chart.repo }}
+    targetRevision: {{ .Values.traefik.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        image:
+          name: traefik
+          tag: ""
+          pullPolicy: Always
+        deployment:
+          enabled: true
+          kind: DaemonSet
+        {{- if and .Values.traefik.chart.values.monitor .Values.monitoring.enabled }}
+          podAnnotations:
+            prometheus.io/scrape: 'true'
+            prometheus.io/port: '8888'
+          additionalArguments:
+            - --entrypoints.metrics.address=:8888
+            - --metrics.prometheus=true
+            - --metrics.prometheus.entryPoint=metrics
+        metrics:
+          serviceMonitor: true
+          prometheus:
+            enabled: true
+        {{- end }}
+
+        {{- if .Values.proxies.enabled }}
+        env:
+          - name: http_proxy
+            value: "{{ .Values.proxies.value }}"
+          - name: https_proxy
+            value: "{{ .Values.proxies.value }}"
+        {{- end }}
+
+        service:
+          enabled: true
+          {{- if eq .Values.traefik.chart.values.service.type "LoadBalancer" }}
+          type: LoadBalancer
+            {{- if .Values.traefik.chart.values.service.LoadBalancerIps }}
+            externalIPs:
+              {{- range .Values.traefik.chart.values.service.LoadBalancerIp }}
+              - {{ . }}
+              {{- end }}
+            {{- end }}
+          {{- else if eq .Values.traefik.chart.values.service.type "NodePort" }}
+          type: NodePort
+          {{- end }}
+
+        ingressClass:
+          enabled: true
+          {{- if .Values.traefik.chart.values.isDefault }}
+          isDefaultClass: true
+          {{- end }}
+
+        {{- if .Values.traefik.chart.values.ssl.strictTLS }}
+        tlsOptions:
+          default:
+            sniStrict: true
+            preferServerCipherSuites: true
+            minVersion: VersionTLS12
+            cipherSuites:
+              - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384   # TLS 1.2
+              - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305    # TLS 1.2
+              - TLS_AES_256_GCM_SHA384                  # TLS 1.3
+              - TLS_CHACHA20_POLY1305_SHA256            # TLS 1.3
+            curvePreferences:
+              - CurveP521
+              - CurveP384
+        {{- end }}
+{{- if .Values.traefik.chart.values.ssl.strictTLS }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: security
+  namespace: traefik-system
+spec:
+  headers:
+    frameDeny: true
+    sslRedirect: true
+    browserXssFilter: true
+    contentTypeNosniff: true
+    #HSTS
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 31536000
+{{- end }}
+{{ end }}

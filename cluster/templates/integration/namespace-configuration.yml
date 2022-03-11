@@ -1,0 +1,178 @@
+{{- define "namespace-configuration.enabled" -}}
+{{- and .Values.namespaceConfiguratorOperator.enabled .Values.namespaceConfiguration.enabled  -}}
+{{- end -}}
+{{ if eq (include "namespace-configuration.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: namespace-configuration
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.namespaceConfiguration.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: {{ .Values.namespaceConfiguration.chart.path }}
+    repoURL: {{ .Values.namespaceConfiguration.chart.repo }}
+    targetRevision: {{ .Values.namespaceConfiguration.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        {{- if .Values.namespaceConfiguration.chart.values.quotas }}
+        quotas:
+          {{- range .Values.namespaceConfiguration.chart.values.quotas }}
+        - quotaName: {{ .quotaName }}
+          matchLabels:
+            {{- with .matchLabels }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          requestMem: {{ quote .requestMem }}
+          requestCPU: {{ .requestCPU }}
+            {{- if .requestsPVC }}
+          requestsPVC: {{ quote .requestsPVC }}
+            {{- end }}
+            {{- if .totalPVC }}
+            totalPVC: {{ .totalPVC }}
+            {{- end }}
+            {{- if .requestsEmptyDirs }}
+          requestsEmptyDirs: {{ quote .requestsEmptyDirs }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.namespaceConfiguration.chart.values.networkPolicies }}
+        networkPolicies:
+          {{- range .Values.namespaceConfiguration.chart.values.networkPolicies }}
+          - policyName: {{ .policyName }}
+            {{- if .matchLabels }}
+            matchLabels:
+              {{- with .matchLabels }}
+                {{- toYaml . | nindent 14 }}
+              {{- end }}
+            {{- else }}
+            matchLabels: {}
+            {{- end }}
+            {{- if .policies }}
+            policies:
+              {{- range .policies }}
+              - name: {{ .name }}
+                {{- if .type }}
+                type: {{ .type }}
+                {{- else }}
+                type: null
+                {{- end }}
+                {{- if .podSelector }}
+                podSelector:
+                  {{- with .podSelector }}
+                    {{ toYaml . | nindent 12 }}
+                  {{- end }}
+                {{- else }}
+                podSelector: {}
+                {{- end }}
+                {{- if .ports }}
+                ports:
+                  {{- range .ports }}
+                  - protocol: {{ .protocol }}
+                    port: {{- .port }}
+                  {{- end }}
+                {{- else }}
+                ports: []
+                {{- end }}
+                {{- if and .from (eq .type "Ingress") }}
+                from:
+                  {{- range $index, $map := .from }}
+                    {{- range $k, $v := $map}}
+                      {{- if eq $k "namespaceSelector" }}
+                  - namespaceSelector:
+                        {{- if $v.matchLabels }}
+                      matchLabels:
+                          {{- with $v.matchLabels }}
+                            {{- toYaml . | nindent 24 }}
+                          {{- end }}
+                        {{- else }}
+                      matchLabels: {}
+                        {{- end }}
+                      {{- else if eq $k "podSelector" }}
+                  - podSelector:
+                        {{- if $v.matchLabels }}
+                      matchLabels:
+                          {{- with $v.matchLabels }}
+                            {{- toYaml . | nindent 24 }}
+                          {{- end }}
+                        {{- else }}
+                      matchLabels: {}
+                        {{- end }}
+                      {{- else if eq $k "ipBlock" }}
+                        {{- if $v.cidr }}
+                  - ipBlock:
+                      cidr: {{ $v.cidr }}
+                          {{- if $v.except }}
+                      except:
+                            {{- range $v.except}}
+                        - {{ . }}
+                            {{- end }}
+                          {{- end }}
+                        {{- else }}
+                  - ipBlock: {}
+                        {{- end }}
+                      {{- end }}
+                    {{- end }}
+                  {{- end }}
+                {{- else if and .to (eq .type "Egress") }}
+                  to:
+                  {{- range $index, $map := .to }}
+                    {{- range $k, $v := $map}}
+                      {{- if eq $k "namespaceSelector" }}
+                  - namespaceSelector:
+                        {{- if $v.matchLabels }}
+                      matchLabels:
+                          {{- with $v.matchLabels }}
+                            {{- toYaml . | nindent 24 }}
+                          {{- end }}
+                        {{- else }}
+                      matchLabels: {}
+                        {{- end }}
+                      {{- else if eq $k "podSelector" }}
+                  - podSelector:
+                        {{- if $v.matchLabels }}
+                      matchLabels:
+                          {{- with $v.matchLabels }}
+                            {{- toYaml . | nindent 24 }}
+                          {{- end }}
+                        {{- else }}
+                      matchLabels: {}
+                        {{- end }}
+                      {{- else if eq $k "ipBlock" }}
+                        {{- if $v.cidr }}
+                  - ipBlock:
+                      cidr: {{ $v.cidr }}
+                          {{- if $v.except }}
+                      except:
+                            {{- range $v.except}}
+                        - {{ . }}
+                            {{- end }}
+                          {{- end }}
+                        {{- else }}
+                  - ipBlock: {}
+                        {{- end }}
+                      {{- end }}
+                    {{- end }}
+                  {{- end }}
+                {{- else if or (eq .type "Egress") (eq .type "Ingress") }}
+                  {{- if eq .type "Egress" }}
+                to: []
+                  {{- else if eq .type "Ingress" }}
+                from: []
+                  {{- end }}  
+                {{- end }}
+              {{- end }}
+            {{- else }}
+            policies: []
+            {{- end }}
+          {{- end }}
+        {{- end }}
+{{ end }}

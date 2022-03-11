@@ -1,0 +1,202 @@
+---
+# General
+
+default:
+  enabled: false
+  storageClass: ""
+  isBareMetal: false
+
+sync:
+  objectsPrune: true
+  automated:
+    enabled: true
+    prune: true
+    selfHeal: true
+
+proxies:
+  enabled: false
+  value: ""
+  noProxy: ""
+
+# Integration
+
+argocd:
+  enabled: false
+  appName: argocd
+  namespace: argocd
+  chart:
+    repo: https://argoproj.github.io/argo-helm
+    name: argo-cd
+    version: '2.14.7'
+    values:
+      ingress:
+        enabled: true
+        name: argocd
+      insecure: false
+
+namespaceConfiguratorOperator:
+  enabled: false
+  namespace: namespace-configurator
+  chart:
+    repo: https://redhat-cop.github.io/namespace-configuration-operator
+    name: namespace-configuration-operator
+    version: v1.2.2
+    values:
+      monitor: false
+
+namespaceConfiguration:
+  enabled: false
+  namespace: namespace-configurator
+  chart:
+    repo: https://gitlab.com/a4537/repository.git
+    path: charts/namespace-configuration
+    targetRevision: HEAD
+    values:
+      quotas: []
+      networkPolicies: []
+
+olm:
+  enabled: false
+  namespace: olm
+  chart:
+    repo: https://gitlab.com/a4537/repository.git
+    path: charts/olm
+    targetRevision: HEAD
+    values:
+      monitoring: false
+      debug: false
+
+# Networking
+
+traefik:
+  enabled: false
+  namespace: traefik-system
+  chart:
+    repo: https://helm.traefik.io/traefik
+    name: traefik
+    version: "10.15.0"
+    values:
+      monitor: false
+      service:
+        type: LoadBalancer # LoadBalancer|NodePort
+        LoadBalancerIps: [] # Only for BareMetal support
+        isDefault: false
+      ingressAnnotations: {}
+      ssl:
+        strictTLS: false
+        enabled: true
+      dns:
+        mode: wildcard # domain|wildcard
+        wildcard: your-cluster.domain.tld
+        domain: domain.tld
+
+certmanager:
+  enabled: false
+  namespace: cert-manager
+  chart:
+    repo: https://charts.jetstack.io
+    name: cert-manager
+    version: '1.2.0'
+    values:
+      monitor: true
+      clusterIssuerLetsEncrypt:
+        enabled: false
+        stagging:
+          enabled: false
+          email: jdoe@domain.tld
+        production:
+          enabled: false
+          email: jdoe@domain.tld
+
+# Monitoring
+
+monitoring:
+  enabled: true
+  namespace: monitoring
+  prometheus:
+    enabled: true
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values:
+        alertmanager:
+          enabled: true
+          pvcSize: "10Gi"
+          configurationFiles: # {}
+            alertmanagerYml:
+              route:
+                group_by: ['instance', 'severity']
+                group_wait: 5m
+                group_interval: 10m
+                repeat_interval: 10m
+        kubeStateMetrics:
+          enabled: true
+        nodeExporter:
+          enabled: true
+        server:
+          enabled: true
+  grafana:
+    enabled: false
+    chart:
+      repo: grafana
+      name: https://grafana.github.io/helm-charts
+      version: "5.2.0"
+      values: {}
+  fio:
+    enabled: false
+    chart:
+      repo: https://gitlab.com/a4537/repository.git
+      path: charts/fio
+      targetRevision: HEAD
+      values: {}
+
+# Logging
+logging:
+  enabled: false
+  loki:
+    enabled: false
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values: {}
+  promtail:
+    enabled: false
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values: {}
+  fluentd:
+    enabled: false
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values: {}
+  logstash:
+    enabled: false
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values: {}
+  eck:
+    enabled: false
+    chart:
+      repo: https://prometheus-community.github.io/helm-charts
+      name: prometheus
+      version: "9.2.2"
+      values: {}
+
+# Security
+
+vault:
+  enabled: false
+  namespace: vault
+  chart:
+    repo: https://grafana.github.io/helm-charts
+    name: grafana
+    version: "5.2.0"
+    values: {}

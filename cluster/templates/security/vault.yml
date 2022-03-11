@@ -1,0 +1,26 @@
+{{- define "vault.enabled" -}}
+{{- or .Values.vault.enabled .Values.default.enabled  -}}
+{{- end -}}
+{{ if eq (include "vault.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.vault.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: {{ .Values.vault.chart.path }}
+    repoURL: {{ .Values.vault.chart.repo }}
+    targetRevision: {{ .Values.vault.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}

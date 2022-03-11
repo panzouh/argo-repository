@@ -1,0 +1,25 @@
+---
+image:
+  name: panzouh/fio-exportaire
+  tag: beta1
+  pullPolicy: Always
+  pullSecret: []
+
+installOnControllPlane: false
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+    ephemeral-storage: "1Gi"
+  requests:
+    cpu: 100m
+    memory: 200Mi
+    ephemeral-storage: "500Mi"
+
+livenessProbe:
+  initialDelaySeconds: 5
+  periodSeconds: 15
+
+prometheusScrape:
+  enabled: true

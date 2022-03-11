@@ -1,0 +1,31 @@
+{{- define "namespace-configuration-operator.enabled" -}}
+{{- or .Values.namespaceConfiguratorOperator.enabled .Values.default.enabled  -}}
+{{- end -}}
+{{ if eq (include "namespace-configuration-operator.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: namespace-configuration-operator
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.namespaceConfiguratorOperator.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.namespaceConfiguratorOperator.chart.name }}
+    repoURL: {{ .Values.namespaceConfiguratorOperator.chart.repo }}
+    targetRevision: {{ .Values.namespaceConfiguratorOperator.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        {{- if and .Values.namespaceConfiguratorOperator.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        enableMonitoring: true
+        {{- else }}
+        enableMonitoring: false
+        {{- end }}
+{{ end }}

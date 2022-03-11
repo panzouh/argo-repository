@@ -1,0 +1,130 @@
+{{- range .Values.networkPolicies }}
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: NamespaceConfig
+metadata:
+  name: {{ .policyName }}
+spec:
+  labelSelector:
+    matchLabels:
+      {{- with .matchLabels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- if .policies }}
+  templates:
+  - objectTemplate: |
+      {{- range .policies }}
+      ---
+      kind: NetworkPolicy
+      metadata:
+        name: {{ .name }}
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        {{- if .podSelector }}
+        podSelector:
+          {{- with .podSelector }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        podSelector: {}
+        {{- end }}
+        {{- if .type }}
+        policyTypes:
+          - {{ .type }}
+        {{- else }}
+        policyTypes: []
+        {{- end }}
+        {{- if and .from (eq .type "Ingress") }}
+        ingress:
+          - from:
+          {{- range $index, $map := .from }}
+            {{- range $k, $v := $map }}
+              {{- if eq $k "namespaceSelector" }}
+              - namespaceSelector:
+                {{- if $v.matchLabels }}
+                  matchLabels:
+                    {{- toYaml $v.matchLabels | nindent 20 }}
+                {{- else }}
+                  matchLabels: {}
+                {{- end }}
+              {{- else if eq $k "podSelector" }}
+              - podSelector:
+                {{- if $v.matchLabels }}
+                  matchLabels:
+                    {{- toYaml $v.matchLabels | nindent 20 }}
+                {{- else }}
+                  matchLabels: {}
+                {{- end }}
+              {{- else if eq $k "ipBlock" }}
+                {{- if $v.cidr }}
+              - ipBlock:
+                  cidr: {{ $v.cidr }}
+                  {{- if $v.except }}
+                  except:
+                    {{- range $v.except}}
+                    - {{ . }}
+                    {{- end }}
+                  {{- end }}
+                {{- else }}
+              - ipBlock: {}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- else if and .to (eq .type "Egress") }}
+        egress:
+          - to:
+          {{- range $index, $map := .to }}
+            {{- range $k, $v := $map }}
+              {{- if eq $k "namespaceSelector" }}
+              - namespaceSelector:
+                {{- if $v.matchLabels }}
+                  matchLabels:
+                    {{- toYaml $v.matchLabels | nindent 20 }}
+                {{- else }}
+                  matchLabels: {}
+                {{- end }}
+              {{- else if eq $k "podSelector" }}
+              - podSelector:
+                {{- if $v.matchLabels }}
+                  matchLabels:
+                    {{- toYaml $v.matchLabels | nindent 20 }}
+                {{- else }}
+                  matchLabels: {}
+                {{- end }}
+              {{- else if eq $k "ipBlock" }}
+                {{- if $v.cidr }}
+              - ipBlock:
+                  cidr: {{ $v.cidr }}
+                  {{- if $v.except }}
+                  except:
+                    {{- range $v.except}}
+                    - {{ . }}
+                    {{- end }}
+                  {{- end }}
+                {{- else }}
+              - ipBlock: {}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- else if or (eq .type "Ingress") (eq .type "Egress") }}
+          {{- if eq .type "Ingress" }}
+        ingress:
+          - {}
+          {{- else if eq .type "Egress" }}
+        egress:
+          - {}
+          {{- end }}
+        {{- end }}
+        {{- if .ports }}
+        ports:
+          {{- range .ports }}
+          - protocol: {{ .protocol }}
+            port: {{ .port }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+  {{- else }}
+  templates: []
+  {{- end }}
+{{- end }}

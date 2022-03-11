@@ -1,0 +1,89 @@
+{{- define "argocd.enabled" -}}
+{{- or .Values.argocd.enabled .Values.default.enabled -}}
+{{- end -}}
+{{ if eq (include "argocd.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argoception
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.argocd.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.argocd.chart.name }}
+    repoURL: {{ .Values.argocd.chart.repo }}
+    targetRevision: {{ .Values.argocd.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        installCRDs: false
+        server:
+          {{- if .Values.proxies.enabled }}
+          env:
+            - name: http_proxy
+              value: {{ .Values.proxies.value }}
+            - name: https_proxy
+              value: {{ .Values.proxies.value }}
+            - name: no_proxy
+              value: {{ .Values.proxies.noProxy }}
+        repoServer:
+            env:
+              - name: http_proxy
+                value: {{ .Values.proxies.value }}
+              - name: https_proxy
+                value: {{ .Values.proxies.value }}
+              - name: no_proxy
+                value: {{ .Values.proxies.noProxy }}
+        {{- end }}
+          {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled }}
+          ingress:
+            enabled: true
+            hosts:
+            {{- if eq .Values.trafik.chart.values.dns.mode "wildcard" }}
+              - {{ .Values.argocd.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
+            {{- else }}
+              - {{ .Values.trafik.chart.values.dns.domain }}
+            paths:
+              - /{{ .Values.argocd.ingress.name }}
+            {{- end }}
+            {{- if .Values.trafik.chart.values.ssl.enabled }}
+            tls:
+              - secretName: argocd-certificate
+                hosts:
+                {{- if eq .Values.trafik.chart.values.dns.mode "wildcard" }}
+                  - {{ .Values.argocd.chart.values.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
+                {{- else }}
+                  - {{ .Values.trafik.chart.values.dns.domain }}
+                {{- end }}
+            {{- end }}
+            annotations:
+              {{ .Values.trafik.chart.values.ingressAnnotations }}
+          {{- end }}
+          config:
+            {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled }}
+            # Argo CD's externally facing base URL (optional). Required when configuring SSO
+            {{- if eq .Values.ingress.dns.mode "wildcard"}}
+            url: https://{{ .Values.argocd.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
+            {{- else }}
+            url: https://{{ .Values.ingress.dns.domain }}/{{ .Values.argocd.ingress.name }}
+            {{- end }}
+            {{- end }}
+            # Argo CD instance label key
+            application.instanceLabelKey: argocd.argoproj.io/instance
+            repositories: []
+          extraArgs:
+          {{- if or .Values.argocd.chart.values.insecure (and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled .Values.traefik.chart.values.ssl.enabled)  }}
+            - --insecure
+          {{- end }}
+          {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled (eq .Values.traefik.chart.values.dns.mode "domain")}}
+            - --basehref 
+            - /{{ .Values.argocd.chart.values.ingress.name }}
+          {{- end }}
+{{ end }}

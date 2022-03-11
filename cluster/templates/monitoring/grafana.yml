@@ -1,0 +1,26 @@
+{{- define "monitoring.enabled" -}}
+{{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled   -}}
+{{- end -}}
+{{ if eq (include "monitoring.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.olm.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.monitoring.grafana.chart.name }}
+    repoURL: {{ .Values.monitoring.grafana.chart.repo }}
+    targetRevision: {{ .Values.monitoring.grafana.chart.version }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}
