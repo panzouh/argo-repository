@@ -1,7 +1,7 @@
-{{- define "monitoring.enabled" -}}
-{{- or .Values.monitoring.enabled .Values.monitoring.prometheus.enabled  -}}
+{{- define "prometheus.enabled" -}}
+{{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
-{{ if eq (include "monitoring.enabled" .) "true" }}
+{{ if eq (include "prometheus.enabled" .) "true" }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -17,30 +17,59 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    chart: {{ .Values.monitoring.prometheus.chart.path }}
-    repoURL: {{ .Values.monitoring.prometheus.repo }}
-    targetRevision: {{ .Values.monitoring.prometheus.targetRevision }}
+    chart: {{ .Values.monitoring.prometheus.chart.name }}
+    repoURL: {{ .Values.monitoring.prometheus.chart.repo }}
+    targetRevision: {{ .Values.monitoring.prometheus.chart.version }}
     helm:
       version: v3
       values: |-
         rbac:
           create: true
+        server:
+          enabled: true
+          retention: {{ (include "data.retention" .) }}
+          {{- if .Values.default.storageClass }}
+          persitentVolume:
+            enabled: true
+            size: {{ quote .Values.monitoring.prometheus.chart.values.server.pvcSize }}
+          {{- else }}
+          persitentVolume:
+            enabled: false
+          {{- end }}
+          {{- if and .Values.monitoring.prometheus.chart.values.server.ingress.enabled (or .Values.default.enabled .Values.traefik.enabled) }}
+          ingress:
+            enabled: true
+          {{- end }}
+        {{- if eq (include "kubeStateMetrics.enabled" .) "true" }}
+        kubeStateMetrics:
+          enabled: true
+        {{- else }}
+        kubeStateMetrics:
+          enabled: false
+        {{- end }}
+        {{- if eq (include "nodeExporter.enabled" .) "true" }}
+        nodeExporter:
+          enabled: true
+        {{- else }}
+        nodeExporter:
+          enabled: false
+        {{- end }}
         {{- if eq (include "alertmanager.enabled" .) "true" }}
         alertmanager:
           enabled: true
           {{- if .Values.default.storageClass }}
           persitentVolume:
             enabled: true
-            size: {{ quote .Values.monitoring.prometheus.chart.values.pvcSize }}
+            size: {{ quote .Values.monitoring.prometheus.chart.values.alertmanager.pvcSize }}
           {{- else }}
           persitentVolume:
             enabled: false
           {{- end }}
-        {{- if .Values.monitoring.prometheus.chart.values.alertmanager.configurationFiles.alertmanagerYml }}
+        {{- if .Values.monitoring.prometheus.chart.values.alertmanager.configurationFile }}
         alertmanagerFiles:
           alertmanager.yml:
-          {{- with .Values.monitoring.prometheus.chart.values.alertmanager.configurationFiles.alertmanagerYml }}
-            {{- toYaml . | nindent 4 }}
+          {{- with .Values.monitoring.prometheus.chart.values.alertmanager.configurationFile }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- else }}
         alertmanagerFiles: {}
@@ -48,5 +77,154 @@ spec:
         {{- else }}
         alertmanager:
           enabled: false
+        {{- end }}        
+        {{- if eq (include "preconfigureRules.enabled" .) "true" }}
+        serverFiles:
+          alerting_rules.yml:
+            groups:
+            - name: Rules
+              rules:
+                - alert: AnyDown
+                  expr: up == 0
+                  for: 5m
+                  labels:
+                    severity: average
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Component Down on instance {{ (include "labels.instance" .) }}"
+                    description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: NodeDown
+                  expr: up{job="kubernetes-nodes"} == 0
+                  for: 1m
+                  labels:
+                    severity: critical
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Node DOWN (instance {{ (include "labels.instance" .) }})"
+                    description: "K8S Node down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: OutOfMemory
+                  expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Out of memory (instance {{ (include "labels.instance" .) }})"
+                    description: "Node memory is filling up (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: OutOfDiskSpace
+                  expr: node_filesystem_free_bytes{mountpoint ="/"} / node_filesystem_size_bytes{mountpoint ="/"} * 100 < 10
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Out of disk space (instance {{ (include "labels.instance" .) }})"
+                    description: "Disk is almost full (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: OutOfInodes
+                  expr: node_filesystem_files_free{mountpoint ="/"} / node_filesystem_files{mountpoint ="/"} * 100 < 10
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Out of inodes (instance {{ (include "labels.instance" .) }})"
+                    description: "Disk is almost running out of available inodes (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: CpuLoad
+                  expr: node_load15 / (count without (cpu, mode) (node_cpu_seconds_total{mode="system"})) > 2
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "CPU load (instance {{ (include "labels.instance" .) }})"
+                    description: "CPU load (15m) is high\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKPod_Restarting_Critical
+                  expr: dtk_pod:restart:minutes_rate > 0
+                  for: 30s
+                  labels:
+                    severity: critical
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "A pod is restarting"
+                    description: "Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} is restarting {{ (include "value" .) }} during last 5 minutes."
+                - alert: DTKPod_NotReady_Warn
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }}has been in a non-ready
+                      state for longer than 2 minutes.
+                    runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
+                    summary: Pod has been in a non-ready state for more than 2 minutes.
+                  expr: dtk_pod:nonready:state
+                  for: 2m
+                - alert: DTKPod_NotReady_Critical
+                  labels:
+                    severity: critical
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }}has been in a non-ready
+                      state for longer than 5 minutes.
+                    runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
+                    summary: Pod has been in a non-ready state for more than 5 minutes.
+                  expr: dtk_pod:nonready:state
+                  for: 5m
+                - alert: DTKPod_PVC_Usage_Warning
+                  expr:  dtk_pod:pvc:available_percentage < 10 AND dtk_pod:pvc:available_percentage > 3
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Persistent Volume Claim usage is high (instance {{ (include "labels.instance" .) }})"
+                    description: "PVC usage (10m) is high\n  VALUE = {{ (include "value" .) }} % Available"
+                - alert: DTKPod_PVC_Usage_Critical
+                  expr:  dtk_pod:pvc:available_percentage < 3
+                  for: 10m
+                  labels:
+                    severity: critical
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Persistent Volume Claim usage is high (instance {{ (include "labels.instance" .) }})"
+                    description: "PVC usage (10m) is high\n  VALUE = {{ (include "value" .) }} % Available"
+                - alert: DTKPod_CPU_Usage_Warning
+                  expr:  dtk_pod:cpu:usage_percentage > 100
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Pod {{ (include "labels.name" .) }} CPU Usage is high "
+                    description: "Pod {{ (include "labels.name" .) }} CPU usage (10m) is high\n  VALUE = {{ (include "value" .) }} % Used"
+                - alert: DTKPod_RAM_Usage_Warning
+                  expr:  dtk_pod:ram:usage_percentage > 100
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Pod RAM usage is high (instance {{ (include "labels.instance" .) }})"
+                    description: "Pod {{ (include "labels.pod" .) }}usage (10m) is high\n  VALUE = {{ (include "value" .) }} %"
+            - name: Record
+              rules: 
+                - record: dtk_pod:restart:minutes_rate
+                  expr: rate(kube_pod_container_status_restarts_total{namespace!=""}[5m]) * 60*60
+                - record: dtk_pod:cpu:usage_percentage
+                  expr: (sum(rate(container_cpu_usage_seconds_total{container_name!="POD", namespace!=""}[10m])) by (pod, namespace) / sum(kube_pod_container_resource_requests_cpu_cores{container_name!="POD", namespace!=""}) by (pod, namespace)) *100
+                - record: dtk_pod:ram:usage_percentage
+                  expr: (sum(container_memory_working_set_bytes{container!="POD", namespace!="", image!=""}) by (pod, namespace) / sum(kube_pod_container_resource_requests_memory_bytes{namespace!=""}) by (pod,namespace)) * 100
+                - record: dtk_pod:pvc:available_percentage
+                  expr: max((kubelet_volume_stats_available_bytes{namespace!=""}/kubelet_volume_stats_capacity_bytes{namespace!=""})*100) by (persistentvolumeclaim,namespace)
+                - record: dtk_pod:nonready:state
+                  expr: |
+                    sum by (namespace, pod) (
+                      max by(namespace, pod) (
+                        kube_pod_status_phase{namespace!="", job="kube-state-metrics", phase=~"Pending|Unknown"}
+                      ) * on(namespace, pod) group_left(owner_kind) topk by(namespace, pod) (
+                        1, max by(namespace, pod, owner_kind) (kube_pod_owner{namespace!="", owner_kind!="Job"})
+                      )
+                    ) > 0
+        {{- else }}
+        serverFiles: {}
         {{- end }}
 {{ end }}

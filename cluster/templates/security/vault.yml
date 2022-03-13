@@ -13,13 +13,13 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy" . }}
   destination:
-    namespace: {{ .Values.vault.namespace }}
+    namespace: {{ .Values.argocd.namespace }}
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: {{ .Values.vault.chart.path }}
+    chart: {{ .Values.vault.chart.name }}
     repoURL: {{ .Values.vault.chart.repo }}
-    targetRevision: {{ .Values.vault.chart.targetRevision }}
+    targetRevision: {{ .Values.vault.chart.version }}
     helm:
       version: v3
       values: |-

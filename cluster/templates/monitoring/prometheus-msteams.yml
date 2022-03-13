@@ -1,0 +1,50 @@
+{{- define "prometheus-msteams.enabled" -}}
+{{- and .Values.monitoring.prometheusMsTeams.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.alertmanager.enabled -}}
+{{- end -}}
+{{ if eq (include "prometheus-msteams.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-msteams
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.monitoring.prometheusMsTeams.chart.name }}
+    repoURL: {{ .Values.monitoring.prometheusMsTeams.chart.repo }}
+    targetRevision: {{ .Values.monitoring.prometheusMsTeams.chart.version }}
+    helm:
+      version: v3
+      values: |-
+      {{- if .Values.proxies.enabled }}
+      extraEnvs:
+        HTTP_PROXY: {{ .Values.proxies.value }}
+        HTTPS_PROXY: {{ .Values.proxies.value }}
+      {{- end }}
+      {{- if .Values.monitoring.prometheusMsTeams.chart.values.monitor }}
+      metrics:
+        serviceMonitor:
+        enabled: true
+        additionalLabels:
+          release: prometheus
+        scrapeInterval: 30s
+      {{- else }}
+      metrics:
+        enabled: false
+      {{- end }}
+      {{- if .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
+      connectors:
+      {{- range $k, $v := .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
+        {{- range $i, $j := $v }}
+        - {{ $i }}: {{ $j }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+{{ end }}

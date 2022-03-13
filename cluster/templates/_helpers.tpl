@@ -16,9 +16,50 @@
 {{- end }}
 
 # Monitoring
+
 {{- define "alertmanager.enabled" -}}
   {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.alertmanager.enabled -}}
 {{- end }}
+
+{{- define "data.retention" -}}
+  {{- print .Values.monitoring.prometheus.chart.values.server.dataRetention -}}
+{{- end }}
+
+{{- define "kubeStateMetrics.enabled" -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.kubeStateMetrics.enabled -}}
+{{- end }}
+
+{{- define "nodeExporter.enabled" -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.nodeExporter.enabled -}}
+{{- end }}
+
+{{- define "preconfigureRules.enabled" -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.rules.preconfiguredEnabled -}}
+{{- end }}
+
+{{- define "value" -}}
+  {{- print "{{ $value }}" -}}
+{{- end -}}
+
+{{- define "labels" -}}
+  {{- print "{{ $labels }}" -}}
+{{- end -}}
+
+{{- define "labels.instance" -}}
+  {{- print "{{ $labels.instance }}" -}}
+{{- end -}}
+
+{{- define "labels.namespace" -}}
+  {{- print "{{ $labels.namespace }}" -}}
+{{- end -}}
+
+{{- define "labels.pod" -}}
+  {{- print "{{ $labels.pod }}" -}}
+{{- end -}}
+
+{{- define "labels.name" -}}
+  {{- print "{{ $labels.name }}" -}}
+{{- end -}}
 
 # Logging
 

@@ -1,5 +1,5 @@
 {{- define "fio.enabled" -}}
-{{- and .Values.monitoring.fio.enabled .Values.monitoring.enabled  -}}
+{{- and .Values.monitoring.fio.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "fio.enabled" .) "true" }}
 ---
@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: {{ .Values.fio.chart.path }}
-    repoURL: {{ .Values.fio.chart.repo }}
-    targetRevision: {{ .Values.fio.chart.targetRevision }}
+    path: {{ .Values.monitoring.fio.chart.path }}
+    repoURL: {{ .Values.monitoring.fio.chart.repo }}
+    targetRevision: {{ .Values.monitoring.fio.chart.targetRevision }}
     helm:
       version: v3
       values: |-
