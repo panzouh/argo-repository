@@ -1,5 +1,5 @@
 {{- define "monitoring.enabled" -}}
-{{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled   -}}
+{{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "monitoring.enabled" .) "true" }}
 ---
@@ -23,4 +23,59 @@ spec:
     helm:
       version: v3
       values: |-
+        adminUser: admin
+        {{- if eq .Values.monitoring.grafana.chart.values.passwordType "raw" }}
+        adminPassword: {{ .Values.monitoring.grafana.chart.values.password }}
+        {{- end }}
+        {{- if .Values.monitoring.prometheus.enabled }}
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Prometheus
+                type: prometheus
+                url: http://prometheus-server.monitoring
+                access: proxy
+        dashboardProviders:
+          dashboardproviders.yaml:
+            apiVersion: 1
+            providers:
+              - name: "default"
+                orgId: 1
+                folder: ""
+                type: file
+                disableDeletion: false
+                editable: true
+                options:
+                  path: /var/lib/grafana/dashboards/default
+        # needs to be looped
+        dashboards:
+          default:
+              gnetId: 
+              revision:
+              datasource:
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if .Values.default.storageClass }}
+        persistence:
+            enabled: true
+            size: {{ quote .Values.monitoring.grafana.chart.values.pvcSize }}
+          {{- else }}
+        persistence:
+          enabled: false
+        {{- end }}
+
+        {{- if .Values.proxies.enabled }}
+        env:
+          http_proxy: {{ .Values.proxies.value }}
+          https_proxy: {{ .Values.proxies.value }}
+          no_proxy: {{ .Values.proxies.noProxy }}
+        {{- end }}
+
+
 {{ end }}

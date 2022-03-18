@@ -1,1 +1,4 @@
----
+{{ if .Values.debug }}
+test:
+  {{- include "url-constructor.traefik" (dict "name" .Values.argocd.chart.values.ingress.name "traefik" .Values.ingress.traefik.chart.values) | nindent 2 -}}
+{{ end }}

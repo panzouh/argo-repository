@@ -23,8 +23,9 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
-        prometheusScrape:
-          enabled: true
+        {{- if and .Values.monitoring.fio.chart.values.installOnControllPlane }}
+        installOnControllPlane: true
+        {{- else }}
+        installOnControllPlane: false
         {{- end }}
 {{ end }}

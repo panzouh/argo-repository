@@ -24,7 +24,14 @@ spec:
       version: v3
       values: |-
         installCRDs: false
+        {{- if .Values.argocd.chart.values.ha }}
+        redis-ha:
+          enabled: true
+        {{- end }}
         server:
+          {{- if .Values.argocd.chart.values.ha }}
+          replicas: 2
+          {{- end }}
           {{- if .Values.proxies.enabled }}
           env:
             - name: http_proxy
@@ -33,57 +40,137 @@ spec:
               value: {{ .Values.proxies.value }}
             - name: no_proxy
               value: {{ .Values.proxies.noProxy }}
-        repoServer:
-            env:
-              - name: http_proxy
-                value: {{ .Values.proxies.value }}
-              - name: https_proxy
-                value: {{ .Values.proxies.value }}
-              - name: no_proxy
-                value: {{ .Values.proxies.noProxy }}
-        {{- end }}
-          {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled }}
-          ingress:
-            enabled: true
-            hosts:
-            {{- if eq .Values.trafik.chart.values.dns.mode "wildcard" }}
-              - {{ .Values.argocd.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
-            {{- else }}
-              - {{ .Values.trafik.chart.values.dns.domain }}
-            paths:
-              - /{{ .Values.argocd.ingress.name }}
+            {{- if .Values.argocd.chart.values.ha }}
+            - name: ARGOCD_API_SERVER_REPLICAS
+              value: '2'
             {{- end }}
-            {{- if .Values.trafik.chart.values.ssl.enabled }}
-            tls:
-              - secretName: argocd-certificate
-                hosts:
-                {{- if eq .Values.trafik.chart.values.dns.mode "wildcard" }}
-                  - {{ .Values.argocd.chart.values.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
-                {{- else }}
-                  - {{ .Values.trafik.chart.values.dns.domain }}
-                {{- end }}
-            {{- end }}
-            annotations:
-              {{ .Values.trafik.chart.values.ingressAnnotations }}
+          {{- else if .Values.argocd.chart.values.ha }}
+          - name: ARGOCD_API_SERVER_REPLICAS
+              value: '2'
+          {{- end }}
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
+            {{- include "traefik-ingress.helm" (dict "name" .Values.argocd.chart.values.ingress.name "traefik" .Values.ingress.traefik.chart.values) | nindent 10 -}}
           {{- end }}
           config:
-            {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled }}
-            # Argo CD's externally facing base URL (optional). Required when configuring SSO
-            {{- if eq .Values.ingress.dns.mode "wildcard"}}
-            url: https://{{ .Values.argocd.ingress.name }}.{{ .Values.trafik.chart.values.dns.wildcard }}
-            {{- else }}
-            url: https://{{ .Values.ingress.dns.domain }}/{{ .Values.argocd.ingress.name }}
+            {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
+            url: {{- include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.ingress.traefik.chart.values) }}
+            {{- else if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.chart.values.ingress.enabled }}
+            url: {{- include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.nginx.traefik.chart.values) }}
             {{- end }}
-            {{- end }}
-            # Argo CD instance label key
             application.instanceLabelKey: argocd.argoproj.io/instance
-            repositories: []
+            {{- if .Values.argocd.chart.values.repositories -}}
+            repositories:
+              {{- range .Values.argocd.chart.values.repositories }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.argocd.chart.values.avp.enabled }}
+            configManagementPlugins: |-
+            - name: argocd-vault-plugin
+              generate:
+                command: ["argocd-vault-plugin"]
+                args: ["generate", "./"]
+            {{- end }}
           extraArgs:
-          {{- if or .Values.argocd.chart.values.insecure (and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled .Values.traefik.chart.values.ssl.enabled)  }}
+          {{- if or .Values.argocd.chart.values.insecure (and .Values.argocd.chart.values.ingress.enabled (or (and .Values.ingress.traefik.enabled .Values.ingress.traefik.chart.values.ssl.enabled) (and .Values.ingress.nginx.enabled .Values.ingress.nginx.chart.values.ssl.enabled))) }}
             - --insecure
           {{- end }}
-          {{- if and .Values.argocd.chart.values.ingress.enabled .Values.traefik.enabled (eq .Values.traefik.chart.values.dns.mode "domain")}}
-            - --basehref 
-            - /{{ .Values.argocd.chart.values.ingress.name }}
+        {{- if .Values.proxies.enabled }}
+        repoServer:
+          env:
+            - name: http_proxy
+              value: {{ .Values.proxies.value }}
+            - name: https_proxy
+              value: {{ .Values.proxies.value }}
+            - name: no_proxy
+              value: {{ .Values.proxies.noProxy }}
+          {{- if .Values.argocd.chart.values.ha }}
+            - name: ARGOCD_EXEC_TIMEOUT
+              value: "300s"
+          replicas: 2
           {{- end }}
+          {{- if .Values.argocd.chart.values.avp.enabled }}
+          serviceAccount:
+            create: false
+            name: "avp"
+            annotations: {}
+            automountServiceAccountToken: true
+          initContainers:
+          - name: download-tools
+            image: cirrusci/wget:latest
+            command: [sh, -c]
+            env:
+              - name: AVP_VERSION
+                value: {{ quote .Values.argocd.chart.values.avp.version }}
+            args:
+              - wget -O argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 && chmod 0755 argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
+            volumeMounts:
+              - mountPath: /custom-tools
+              - name: custom-tools
+          volumeMounts:
+            - mountPath: /usr/local/bin/argocd-vault-plugin
+              name: custom-tools
+              subPath: argocd-vault-plugin
+          volumes:
+            - name: custom-tools
+              emptyDir: {}
+          {{- end }}
+        {{- else if .Values.argocd.chart.values.ha }}
+        repoServer:
+          replicas: 2
+          env:
+            - name: ARGOCD_EXEC_TIMEOUT
+              value: "300s"
+          {{- if .Values.argocd.chart.values.avp.enabled }}
+          serviceAccount:
+            create: false
+            name: "avp"
+            annotations: {}
+            automountServiceAccountToken: true
+          initContainers:
+          - name: download-tools
+            image: cirrusci/wget:latest
+            command: [sh, -c]
+            env:
+              - name: AVP_VERSION
+                value: {{ quote .Values.argocd.chart.values.avp.version }}
+            args:
+              - wget -O argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 && chmod 0755 argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
+            volumeMounts:
+              - mountPath: /custom-tools
+              - name: custom-tools
+          volumeMounts:
+            - mountPath: /usr/local/bin/argocd-vault-plugin
+              name: custom-tools
+              subPath: argocd-vault-plugin
+          volumes:
+            - name: custom-tools
+              emptyDir: {}
+          {{- end }}
+        {{- else if .Values.argocd.chart.values.avp.enabled }}
+        repoServer:
+          serviceAccount:
+            create: false
+            name: "avp"
+            annotations: {}
+            automountServiceAccountToken: true
+          initContainers:
+          - name: download-tools
+            image: cirrusci/wget:latest
+            command: [sh, -c]
+            env:
+              - name: AVP_VERSION
+                value: {{ quote .Values.argocd.chart.values.avp.version }}
+            args:
+              - wget -O argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 && chmod 0755 argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
+            volumeMounts:
+              - mountPath: /custom-tools
+              - name: custom-tools
+          volumeMounts:
+            - mountPath: /usr/local/bin/argocd-vault-plugin
+              name: custom-tools
+              subPath: argocd-vault-plugin
+          volumes:
+            - name: custom-tools
+              emptyDir: {}
+        {{- end }}
 {{ end }}

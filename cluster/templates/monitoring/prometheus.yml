@@ -36,9 +36,11 @@ spec:
           persitentVolume:
             enabled: false
           {{- end }}
-          {{- if and .Values.monitoring.prometheus.chart.values.server.ingress.enabled (or .Values.default.enabled .Values.traefik.enabled) }}
-          ingress:
-            enabled: true
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 -}}
+          {{- end }}
+          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
         {{- if eq (include "kubeStateMetrics.enabled" .) "true" }}
         kubeStateMetrics:
@@ -102,6 +104,19 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Node DOWN (instance {{ (include "labels.instance" .) }})"
                     description: "K8S Node down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                {{- if .Values.monitoring.goldpinger.chart.values.enablePrometheusRules }}
+                - alert: DTK_Goldpinger_Nodes
+                  expr: |
+                    sum(goldpinger_nodes_health_total{job="goldpinger", status="unhealthy"})
+                    BY (instance, goldpinger_instance) > 0
+                  for: 5m
+                  annotations:
+                    description: |
+                      Goldpinger instance {{ (include "labels.goldpinger_instance" .) }} has been reporting unhealthy nodes for at least 5 minutes.
+                    summary: Instance {{ (include "labels.instance" .) }} down
+                  labels:
+                    severity: warning
+                {{- end }}
                 - alert: OutOfMemory
                   expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
                   for: 10m

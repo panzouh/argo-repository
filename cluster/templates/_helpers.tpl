@@ -15,6 +15,88 @@
   {{- end }}
 {{- end }}
 
+# Networking
+
+{{- define "ingress.isTraefik" }}
+  {{- .Values.ingress.traefik.enabled }}
+{{- end }}
+
+{{- define "ingress.isNginx" }}
+  {{- .Values.ingress.nginx.enabled }}
+{{- end }}
+
+{{- define "ingress.namespace" }}
+  {{- if or (eq (include "ingress.isTraefik" .) "true") (eq (include "ingress.isNginx" .) "true") }}
+    {{- if and (eq (include "ingress.isTraefik" .) "true") (eq (include "ingress.isNginx" .) "true") }}
+      {{- print "disabled" }}
+    {{- else if eq (include "ingress.isTraefik" .) "true" }}
+      {{- print "traefik-system" }}
+    {{- else if eq (include "ingress.isNginx" .) "true" }}
+      {{- print "ingress-nginx" }}
+    {{- end }}
+  {{- else }}
+    {{- print "disabled" }}
+  {{- end }}
+{{- end }}
+
+{{- define "helm-ingress.definition" -}}
+{{- $name := .name -}}
+{{- $ingressDefinition := .ingressDefinition | default dict -}}
+{{- $annotations := .annotations | default dict -}}
+ingress:
+  enabled: true
+  {{- if $annotations }}
+  annotations:
+    {{- with $annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if and $ingressDefinition.ssl.strictTLS $ingressDefinition.ssl.enabled }}
+      {{- print "traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd" | nindent 4 }}
+    {{- end }}
+  {{- else if and $ingressDefinition.ssl.strictTLS $ingressDefinition.ssl.enabled }}
+  annotations:
+    {{- print "traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd" | nindent 4 }}
+  {{- else }}
+  annotations: {}
+  {{- end }}
+  hosts:
+  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+    - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+  {{- else if eq $ingressDefinition.dns.mode "domain" }}
+    - {{ $ingressDefinition.dns.domain }}
+  paths:
+    - /{{ $name }}
+  {{- end }}
+  {{- if $ingressDefinition.ssl.enabled }}
+  tls:
+    - secretName: {{ $name }}-certificate
+      hosts:
+      {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+        - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+      {{- else if eq $ingressDefinition.dns.mode "domain" }}
+        - {{ $ingressDefinition.dns.domain }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "url-constructor" -}}
+{{- $name := .name -}}
+{{- $ingressDefinition := .ingress | default dict -}}
+{{- if $ingressDefinition.ssl.enabled }}
+  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+    {{- printf "https://%s.%s" $name $ingressDefinition.dns.wildcard }}
+  {{- else if eq $ingressDefinition.dns.mode "domain" }}
+    {{- printf "https://%s/%s" $ingressDefinition.dns.wildcard $name }}
+  {{- end }}
+{{- else }}
+{{- if eq $ingressDefinition.dns.mode "wildcard" }}
+    {{- printf "http://%s.%s" $name $ingressDefinition.dns.wildcard }}
+  {{- else if eq $ingressDefinition.dns.mode "domain" }}
+    {{- printf "http://%s/%s" $ingressDefinition.dns.wildcard $name }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
 # Monitoring
 
 {{- define "alertmanager.enabled" -}}
@@ -59,6 +141,10 @@
 
 {{- define "labels.name" -}}
   {{- print "{{ $labels.name }}" -}}
+{{- end -}}
+
+{{- define "labels.goldpinger_instance" -}}
+  {{- print "{{ $labels.goldpinger_instance }}" -}}
 {{- end -}}
 
 # Logging

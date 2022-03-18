@@ -1,0 +1,36 @@
+{{- define "blackbox-exporter.enabled" -}}
+{{- and .Values.monitoring.blackboxExporter.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- end -}}
+{{ if eq (include "blackbox-exporter.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blackbox-exporter
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.monitoring.blackboxExporter.chart.name }}
+    repoURL: {{ .Values.monitoring.blackboxExporter.chart.repo }}
+    targetRevision: {{ .Values.monitoring.blackboxExporter.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        config:
+          modules:
+            http_2xx:
+              prober: http
+              timeout: 5s
+              http:
+                valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+                no_follow_redirects: false
+                preferred_ip_protocol: "ip4"
+                valid_status_codes: [200, 401]
+{{ end }}

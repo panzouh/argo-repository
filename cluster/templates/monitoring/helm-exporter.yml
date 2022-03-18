@@ -1,0 +1,29 @@
+{{- define "helm-exporter.enabled" -}}
+{{- and .Values.monitoring.helmExporter.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- end -}}
+{{ if eq (include "helm-exporter.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-exporter
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: {{ .Values.monitoring.blackboxExporter.chart.name }}
+    repoURL: {{ .Values.monitoring.blackboxExporter.chart.repo }}
+    targetRevision: {{ .Values.monitoring.blackboxExporter.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        {{- if .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
+        namespacesIgnore: {{ quote .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
+        {{- end }}
+{{ end }}
