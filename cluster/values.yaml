@@ -29,6 +29,7 @@ argocd:
     name: argo-cd
     version: '2.14.7'
     values:
+      ha: true
       ingress:
         enabled: true
         name: argocd
