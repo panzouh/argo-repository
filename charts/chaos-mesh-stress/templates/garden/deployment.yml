@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bozo-app.fullname" . }}-garden
+  namespace: {{ .Release.Namespace | default "" }}
+  labels:
+    {{- include "bozo-app.api.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bozo-app.api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "bozo-app.api.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-api
+          image: "panzouh/bozo-api:v1"
+          imagePullPolicy: {{ .Values.api.imagePullPolicy }}
+          ports:
+            - name: http-api
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: BOZO_DB
+              value: "mongodb://{{ .Release.Name }}-mongodb:27017/{{ .Values.mongodb.auth.database }}"
+            - name: BOZO_DB_USER
+              value: "{{ .Values.mongodb.auth.rootUser }}"
+            - name: BOZO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mongodb.secretName" . }}
+                  key: mongodb-root-password
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: http-api
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http-api
+            periodSeconds: 5          
+          resources:

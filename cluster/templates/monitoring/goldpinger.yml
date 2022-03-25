@@ -1,0 +1,33 @@
+{{- define "goldpinger.enabled" -}}
+{{- and .Values.monitoring.goldpinger.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- end -}}
+{{ if eq (include "goldpinger.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: goldpinger
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: monitoring
+  source:
+    chart: {{ .Values.monitoring.goldpinger.chart.name }}
+    repoURL: {{ .Values.monitoring.goldpinger.chart.repo }}
+    targetRevision: {{ .Values.monitoring.goldpinger.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        image:
+          repository: bloomberg/goldpinger
+          tag: v3.3.0
+          pullPolicy: IfNotPresent
+        podAnnotations:
+          prometheus.io/scrape: 'true'
+          prometheus.io/port: '8080'
+{{ end }}

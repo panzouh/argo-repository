@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.olm.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: monitoring
   source:
     path: {{ .Values.monitoring.fio.chart.path }}
     repoURL: {{ .Values.monitoring.fio.chart.repo }}
@@ -23,8 +23,9 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
-        prometheusScrape:
-          enabled: true
+        {{- if and .Values.monitoring.fio.chart.values.installOnControllPlane }}
+        installOnControllPlane: true
+        {{- else }}
+        installOnControllPlane: false
         {{- end }}
 {{ end }}

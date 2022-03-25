@@ -1,1 +1,3 @@
+{{- range .Values.tools }}
 ---
+{{- end }}

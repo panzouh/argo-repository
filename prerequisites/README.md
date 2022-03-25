@@ -39,10 +39,54 @@ helm repo update
 ## Install ArgoCD helm chart
 
 ```sh
-helm upgrade --install -n argocd -f values.yml --version 2.14.7 argocd argo/argo-cd
+helm upgrade --install -n argocd -f values.yml --version 3.35.0 argocd argo/argo-cd
 ```
 
-## Create cluster git repository path
+## Create clusters git repository path
+
+### Git repository tree
+
+```bash
+clusters/
+├── a-cluster
+│   └── cluster.yml
+└── another-cluster
+    └── cluster.yml
+```
+
+### Cluster example manifest (Clusters repository)
+
+```yaml
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster
+  namespace: argocd
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: cluster
+    targetRevision: master
+    helm:
+      values: |-
+        default:
+          enabled: true
+      version: v3
+    repoURL: https://gitlab.com/a4537/repository.git
+
+```
+
+### Apply cluster path on your cluster
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -62,7 +106,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: # YOUR PATH
+    path: # YOUR PATH (ex: a-cluster)
     targetRevision: master
     repoURL: # YOUR GIT REPOSITORY
 

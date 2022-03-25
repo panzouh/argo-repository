@@ -1,5 +1,5 @@
 {{- define "traefik.enabled" -}}
-{{- or .Values.traefik.enabled .Values.default.enabled -}}
+{{- eq (include "ingress.namespace" .) "traefik-system" -}}
 {{- end -}}
 {{ if eq (include "traefik.enabled" .) "true" }}
 ---
@@ -11,15 +11,15 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.traefik.namespace }}
+    namespace: {{ include "ingress.namespace" . }}
     server: https://kubernetes.default.svc
-  project: default
+  project: networking
   source:
-    chart: {{ .Values.traefik.chart.name }}
-    repoURL: {{ .Values.traefik.chart.repo }}
-    targetRevision: {{ .Values.traefik.chart.version }}
+    chart: {{ .Values.ingress.traefik.chart.name }}
+    repoURL: {{ .Values.ingress.traefik.chart.repo }}
+    targetRevision: {{ .Values.ingress.traefik.chart.version }}
     helm:
       version: v3
       values: |-
@@ -30,7 +30,7 @@ spec:
         deployment:
           enabled: true
           kind: DaemonSet
-        {{- if and .Values.traefik.chart.values.monitor .Values.monitoring.enabled }}
+        {{- if and .Values.ingress.traefik.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
           podAnnotations:
             prometheus.io/scrape: 'true'
             prometheus.io/port: '8888'
@@ -43,7 +43,6 @@ spec:
           prometheus:
             enabled: true
         {{- end }}
-
         {{- if .Values.proxies.enabled }}
         env:
           - name: http_proxy
@@ -51,28 +50,23 @@ spec:
           - name: https_proxy
             value: "{{ .Values.proxies.value }}"
         {{- end }}
-
         service:
           enabled: true
-          {{- if eq .Values.traefik.chart.values.service.type "LoadBalancer" }}
+          {{- if eq .Values.ingress.traefik.chart.values.service.type "LoadBalancer" }}
           type: LoadBalancer
-            {{- if .Values.traefik.chart.values.service.LoadBalancerIps }}
-            externalIPs:
-              {{- range .Values.traefik.chart.values.service.LoadBalancerIp }}
-              - {{ . }}
-              {{- end }}
+          {{- if .Values.ingress.traefik.chart.values.service.LoadBalancerIps }}
+          externalIPs:
+            {{- range .Values.ingress.traefik.chart.values.service.LoadBalancerIps }}
+            - {{ . }}
             {{- end }}
-          {{- else if eq .Values.traefik.chart.values.service.type "NodePort" }}
+            {{- end }}
+          {{- else if eq .Values.ingress.traefik.chart.values.service.type "NodePort" }}
           type: NodePort
           {{- end }}
-
         ingressClass:
           enabled: true
-          {{- if .Values.traefik.chart.values.isDefault }}
           isDefaultClass: true
-          {{- end }}
-
-        {{- if .Values.traefik.chart.values.ssl.strictTLS }}
+        {{- if .Values.ingress.ingressDefinition.strictTLS }}
         tlsOptions:
           default:
             sniStrict: true
@@ -87,7 +81,7 @@ spec:
               - CurveP521
               - CurveP384
         {{- end }}
-{{- if .Values.traefik.chart.values.ssl.strictTLS }}
+{{- if .Values.ingress.ingressDefinition.strictTLS }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

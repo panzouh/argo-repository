@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "" . }}
   destination:
     namespace: {{ .Values.monitoring.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: monitoring
   source:
     chart: {{ .Values.monitoring.prometheusMsTeams.chart.name }}
     repoURL: {{ .Values.monitoring.prometheusMsTeams.chart.repo }}
@@ -23,28 +23,28 @@ spec:
     helm:
       version: v3
       values: |-
-      {{- if .Values.proxies.enabled }}
-      extraEnvs:
-        HTTP_PROXY: {{ .Values.proxies.value }}
-        HTTPS_PROXY: {{ .Values.proxies.value }}
-      {{- end }}
-      {{- if .Values.monitoring.prometheusMsTeams.chart.values.monitor }}
-      metrics:
-        serviceMonitor:
-        enabled: true
-        additionalLabels:
-          release: prometheus
-        scrapeInterval: 30s
-      {{- else }}
-      metrics:
-        enabled: false
-      {{- end }}
-      {{- if .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
-      connectors:
-      {{- range $k, $v := .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
-        {{- range $i, $j := $v }}
-        - {{ $i }}: {{ $j }}
+        {{- if .Values.proxies.enabled }}
+        extraEnvs:
+          HTTP_PROXY: {{ .Values.proxies.value }}
+          HTTPS_PROXY: {{ .Values.proxies.value }}
         {{- end }}
-      {{- end }}
-      {{- end }}
+        {{- if .Values.monitoring.prometheusMsTeams.chart.values.monitor }}
+        metrics:
+          serviceMonitor:
+          enabled: true
+          additionalLabels:
+            release: prometheus
+          scrapeInterval: 30s
+        {{- else }}
+        metrics:
+          enabled: false
+        {{- end }}
+        {{- if .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
+        connectors:
+        {{- range $index, $map := .Values.monitoring.prometheusMsTeams.chart.values.hooks }}
+          {{- range $k, $v := $map }}
+          - {{ $k }}: {{ $v }}
+          {{- end }}
+        {{- end }}
+        {{- end }}
 {{ end }}

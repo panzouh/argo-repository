@@ -1,0 +1,89 @@
+{{- define "nginx.enabled" -}}
+{{- eq (include "ingress.namespace" .) "ingress-nginx" -}}
+{{- end -}}
+{{ if eq (include "nginx.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ include "ingress.namespace" . }}
+    server: https://kubernetes.default.svc
+  project: networking
+  source:
+    chart: {{ .Values.ingress.nginx.chart.name }}
+    repoURL: {{ .Values.ingress.nginx.chart.repo }}
+    targetRevision: {{ .Values.ingress.nginx.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        controller:
+          name: controller
+          image:
+            registry: k8s.gcr.io
+            image: ingress-nginx/controller
+            pullPolicy: Always
+          config: {}
+          proxySetHeaders: {}
+          addHeaders: {}
+          ingressClassResource:
+            name: nginx
+            enabled: true
+            default: true
+          ingressClass: nginx
+          {{- if .Values.proxies.enabled }}
+          extraEnvs:
+            - name: HTTP_PROXY
+              value: {{ quote .Values.proxies.value }}
+            - name: HTTPS_PROXY
+              value: {{ quote .Values.proxies.value }}
+            - name: NO_PROXY
+              value: {{ quote .Values.proxies.noProxy }}
+          {{- end }}
+          kind: DaemonSet
+          service:
+            enabled: true
+          {{- if eq .Values.ingress.nginx.chart.values.service.type "LoadBalancer" }}
+            type: LoadBalancer
+            labels: {}
+            {{- if .Values.ingress.nginx.chart.values.service.LoadBalancerIps }}
+            externalIPs:
+              {{- range .Values.ingress.nginx.chart.values.service.LoadBalancerIps }}
+              - {{ . }}
+              {{- end }}
+            {{- end }}
+          {{- else if eq .Values.ingress.nginx.chart.values.service.type "NodePort" }}
+            type: NodePort
+            nodePorts:
+              http: 32080
+              https: 32443
+          {{- end }}
+            external:
+              enabled: true
+          {{- if and .Values.ingress.nginx.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+          metrics:
+            port: 10254
+            enabled: true
+            service:
+              annotations: 
+                prometheus.io/scrape: "true"
+                prometheus.io/port: "10254"
+          {{- end }}
+        {{- if .Values.ingress.nginx.chart.values.defaultBackend }}
+        defaultBackend:
+          enabled: true
+          name: default-backend
+          image:
+            registry: k8s.gcr.io
+            image: defaultbackend-amd64
+            tag: "1.5"
+            pullPolicy: Always
+        {{- end }}
+        # dhParam:
+{{ end }}

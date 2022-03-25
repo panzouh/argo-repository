@@ -1,5 +1,5 @@
 {{- define "certmanager.enabled" -}}
-{{- or .Values.certmanager.enabled .Values.default.enabled .Values.traefik.enabled -}}
+{{- or .Values.certmanager.enabled (or .Values.ingress.traefik.enabled .Values.ingress.nginx.enabled) -}}
 {{- end -}}
 {{ if eq (include "certmanager.enabled" .) "true" }}
 ---
@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.certmanager.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: networking
   source:
     chart: {{ .Values.certmanager.chart.name }}
     repoURL: {{ .Values.certmanager.chart.repo }}
@@ -53,9 +53,15 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-staging-key
     solvers:
+    {{- if eq (include "ingress.namespace" .) "traefik-system" }}
     - http01:
         ingress:
           class: traefik
+    {{- else if eq (include "ingress.namespace" .) "ingress-nginx" }}
+    - http01:
+        ingress:
+          class: nginx
+    {{- end }}
 {{- end }}
 ---
 {{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.production.enabled }}
@@ -69,9 +75,14 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key
-    solvers:
+    {{- if eq (include "ingress.namespace" .) "traefik-system" }}
     - http01:
         ingress:
           class: traefik
+    {{- else if eq (include "ingress.namespace" .) "ingress-nginx" }}
+    - http01:
+        ingress:
+          class: nginx
+    {{- end }}
 {{- end }}
 {{ end }}
