@@ -1,7 +1,22 @@
-{{- define "cluster.syncPolicy" }}
+{{/*
+General
+*/}}
+
+{{- define "cluster.syncPolicy.default" }}
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+{{- if .Values.sync.automated.enabled }}
+    automated:
+      prune: {{ .Values.sync.automated.prune }}
+      selfHeal: {{ .Values.sync.automated.selfHeal }}
+{{- end }}
+{{- end }}
+
+{{- define "cluster.syncPolicy.withoutNamespace" }}
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=false
 {{- if .Values.sync.automated.enabled }}
     automated:
       prune: {{ .Values.sync.automated.prune }}
@@ -15,7 +30,9 @@
   {{- end }}
 {{- end }}
 
-# Networking
+{{/*
+Networking
+*/}}
 
 {{- define "ingress.isTraefik" }}
   {{- .Values.ingress.traefik.enabled }}
@@ -48,14 +65,9 @@ ingress:
   {{- if $annotations }}
   annotations:
     {{- with $annotations }}
-    {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- if and $ingressDefinition.ssl.strictTLS $ingressDefinition.ssl.enabled }}
-      {{- print "traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd" | nindent 4 }}
-    {{- end }}
-  {{- else if and $ingressDefinition.ssl.strictTLS $ingressDefinition.ssl.enabled }}
   annotations:
-    {{- print "traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd" | nindent 4 }}
   {{- else }}
   annotations: {}
   {{- end }}
@@ -80,24 +92,26 @@ ingress:
 {{- end }}
 
 {{- define "url-constructor" -}}
-{{- $name := .name -}}
-{{- $ingressDefinition := .ingress | default dict -}}
-{{- if $ingressDefinition.ssl.enabled }}
-  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
-    {{- printf "https://%s.%s" $name $ingressDefinition.dns.wildcard }}
-  {{- else if eq $ingressDefinition.dns.mode "domain" }}
-    {{- printf "https://%s/%s" $ingressDefinition.dns.wildcard $name }}
+  {{- $name := .name -}}
+  {{- $ingressDefinition := .ingress | default dict -}}
+  {{- if $ingressDefinition.ssl.enabled }}
+    {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+      {{- printf "https://%s.%s" $name $ingressDefinition.dns.wildcard }}
+    {{- else if eq $ingressDefinition.dns.mode "domain" }}
+      {{- printf "https://%s/%s" $ingressDefinition.dns.wildcard $name }}
+    {{- end }}
+  {{- else }}
+    {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+      {{- printf "http://%s.%s" $name $ingressDefinition.dns.wildcard }}
+    {{- else if eq $ingressDefinition.dns.mode "domain" }}
+      {{- printf "http://%s/%s" $ingressDefinition.dns.wildcard $name }}
+    {{- end }}
   {{- end }}
-{{- else }}
-{{- if eq $ingressDefinition.dns.mode "wildcard" }}
-    {{- printf "http://%s.%s" $name $ingressDefinition.dns.wildcard }}
-  {{- else if eq $ingressDefinition.dns.mode "domain" }}
-    {{- printf "http://%s/%s" $ingressDefinition.dns.wildcard $name }}
-  {{- end }}
-{{- end }}
 {{- end }}
 
-# Monitoring
+{{/*
+Monitoring
+*/}}
 
 {{- define "alertmanager.enabled" -}}
   {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.alertmanager.enabled -}}
@@ -147,14 +161,20 @@ ingress:
   {{- print "{{ $labels.goldpinger_instance }}" -}}
 {{- end -}}
 
-# Logging
+{{ define "grafana.instance" -}}
+  {{- print "{{ instance }}" -}}
+{{- end -}}
+
+{{/*
+Logging
+*/}}
 
 {{- define "elfk.enabled" }}
-  {{- (and (or .Values.logging.fluentd.enabled .Values.logging.logstash.enabled) .Values.logging.eck.enabled) }}
+  {{- (and .Values.logging.enabled (or .Values.logging.fluentd.enabled .Values.logging.logstash.enabled) .Values.logging.eck.enabled) }}
 {{- end }}
 
 {{- define "lp.enabled" }}
-  {{- and .Values.logging.loki.enabled .Values.logging.promtail.enabled }}
+  {{- and .Values.logging.loki.enabled .Values.logging.promtail.enabled .Values.logging.enabled }}
 {{- end }}
 
 {{- define "logging.namespace" }}

@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ include "ingress.namespace" . }}
     server: https://kubernetes.default.svc
-  project: default
+  project: networking
   source:
     chart: {{ .Values.ingress.nginx.chart.name }}
     repoURL: {{ .Values.ingress.nginx.chart.repo }}

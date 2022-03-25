@@ -1,6 +1,6 @@
 # Repository
 
-Argo repository for simplified cluster management based on ArgoCD [Apps of Apps Pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
+Argo repository is a meta chart for simplified cluster management based on ArgoCD [Apps of Apps Pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
 
 ## Table of Contents
 
@@ -82,16 +82,24 @@ spec:
 
 ## Roadmap
 
-- [] Add ArgoCD project folder for each theme
+- [X] Add ArgoCD project folder for each theme
+- [X] Add License
 - [] Improve documentation
-- [] Add License
 - [] Add Contribute.md documentation
+- [] Handle ArgoCD deprecation notice => WARNING: You are using configs.repositoryCredentials and/or server.config.repositories parameter that are DEPRECATED
+Instead, use configs.repositoryTemplates and/or configs.repositories parameters
 - Themes :
+  - Default:
+    - [] Work on proxies
+  - Networking:
+    - Traefik:
+      - [] Add Strict TLS annotations auto
   - Monitoring :
-    - Prometheus :
+    - Prometheus & Others :
       - [] Add the possibility to add custom rules
       - [] Add Blackbox-exporter configuration w/ url scraping
       - [] Need to work on Prometheus auth
+      - [] Configure enablePrometheusRules
     - Grafana :
       - [] Need to work on Grafana auth
   - Logging :
@@ -99,7 +107,9 @@ spec:
   - Backup :
     - [] Add backup solutions (Velero)
   - Storage :
-    - [] Add in-cluster storage solutions
+    - [] Add in-cluster storage solutions (Rook)
+  - Security :
+    - [] Add in-cluster audit tool (dunno yet)
 
 ## How to install
 
@@ -119,6 +129,8 @@ Before submitting an issue please refer to these templates :
 Any issues that does not respect the templates will be closed systematically.
 
 ## Contribute
+
+:warning: NA yet ! :warning:
 
 Refer to [Contribute documentation](./CONTRIBUTE.md)
 

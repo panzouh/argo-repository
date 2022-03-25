@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.argocd.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: integration
   source:
     chart: {{ .Values.argocd.chart.name }}
     repoURL: {{ .Values.argocd.chart.repo }}
@@ -39,23 +39,24 @@ spec:
             - name: https_proxy
               value: {{ .Values.proxies.value }}
             - name: no_proxy
-              value: {{ .Values.proxies.noProxy }}
+              value: argocd-repo-server,argocd-application-controller,argocd-metrics,argocd-server,argocd-server-metrics,argocd-redis,argocd-dex-server,{{ .Values.proxies.noProxy }}
             {{- if .Values.argocd.chart.values.ha }}
             - name: ARGOCD_API_SERVER_REPLICAS
               value: '2'
             {{- end }}
-          {{- else if .Values.argocd.chart.values.ha }}
-          - name: ARGOCD_API_SERVER_REPLICAS
-              value: '2'
-          {{- end }}
+            {{- else if .Values.argocd.chart.values.ha }}
+            - name: ARGOCD_API_SERVER_REPLICAS
+                value: '2'
+            {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
-            {{- include "traefik-ingress.helm" (dict "name" .Values.argocd.chart.values.ingress.name "traefik" .Values.ingress.traefik.chart.values) | nindent 10 -}}
+            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 -}}
+          {{- end }}
+          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.chart.values.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
           config:
-            {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
-            url: {{- include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.ingress.traefik.chart.values) }}
-            {{- else if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.chart.values.ingress.enabled }}
-            url: {{- include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.nginx.traefik.chart.values) }}
+            {{- if and (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) .Values.argocd.chart.values.ingress.enabled }}
+            url: {{ include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
             {{- end }}
             application.instanceLabelKey: argocd.argoproj.io/instance
             {{- if .Values.argocd.chart.values.repositories -}}
@@ -71,7 +72,7 @@ spec:
                 args: ["generate", "./"]
             {{- end }}
           extraArgs:
-          {{- if or .Values.argocd.chart.values.insecure (and .Values.argocd.chart.values.ingress.enabled (or (and .Values.ingress.traefik.enabled .Values.ingress.traefik.chart.values.ssl.enabled) (and .Values.ingress.nginx.enabled .Values.ingress.nginx.chart.values.ssl.enabled))) }}
+          {{- if or .Values.argocd.chart.values.insecure (and .Values.argocd.chart.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx"))) }}
             - --insecure
           {{- end }}
         {{- if .Values.proxies.enabled }}
@@ -82,7 +83,7 @@ spec:
             - name: https_proxy
               value: {{ .Values.proxies.value }}
             - name: no_proxy
-              value: {{ .Values.proxies.noProxy }}
+              value: argocd-repo-server,argocd-application-controller,argocd-metrics,argocd-server,argocd-server-metrics,argocd-redis,argocd-dex-server,{{ .Values.proxies.noProxy }}
           {{- if .Values.argocd.chart.values.ha }}
             - name: ARGOCD_EXEC_TIMEOUT
               value: "300s"

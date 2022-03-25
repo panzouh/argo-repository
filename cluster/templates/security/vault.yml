@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.argocd.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: security
   source:
     chart: {{ .Values.vault.chart.name }}
     repoURL: {{ .Values.vault.chart.repo }}
@@ -50,28 +50,32 @@ spec:
             tag: "1.7.3"
             pullPolicy: IfNotPresent
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.vault.chart.values.ingress.enabled }}
-            {{- include "traefik-ingress.helm" (dict "name" .Values.vault.chart.values.ingress.name "traefik" .Values.ingress.traefik.chart.values) | nindent 10 -}}
+            {{- include "helm-ingress.definition" (dict "name" .Values.vault.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.vault.chart.values.ingress.enabled }}
-            {{- include "traefik-ingress.helm" (dict "name" .Values.vault.chart.values.ingress.name "traefik" .Values.ingress.nginx.chart.values) | nindent 10 -}}
+            {{- include "helm-ingress.definition" (dict "name" .Values.vault.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
+          {{- if .Values.default.storageClass }}
           dataStorage:
             enabled: true
+            storageClass: {{ .Values.default.storageClass }}
             size: {{ .Values.vault.chart.values.pvcSize }}
-          auditStorage:
-            enabled: false
-          dev:
-            enabled: false
-          {{- if .Values.vault.chart.values.ha -}}
-          ha:
-            enabled: true
           {{- else }}
-          ha:
-            enabled: false
+        dev:
+          enabled: false
           {{- end }}
-          serviceAccount:
-            create: true
-        {{- if and .Values.vault.chart.values.ingress.enabled (or (eq include ("ingress.namespace" .) "traefik-system") (eq include ("ingress.namespace" .) "ingress-nginx")) }}
+        auditStorage:
+          enabled: false
+        {{- if .Values.vault.chart.values.ha -}}
+        ha:
+          enabled: true
+        {{- else }}
+        ha:
+          enabled: false
+        {{- end }}
+        serviceAccount:
+          create: true
+        {{- if and .Values.vault.chart.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         ui:
           enabled: true
         {{- end }}

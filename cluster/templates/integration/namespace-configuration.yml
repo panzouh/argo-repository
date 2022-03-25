@@ -1,5 +1,5 @@
 {{- define "namespace-configuration.enabled" -}}
-{{- and .Values.namespaceConfiguratorOperator.enabled .Values.namespaceConfiguration.enabled  -}}
+{{- and (or .Values.namespaceConfiguratorOperator.enabled .Values.default.enabled) .Values.namespaceConfiguration.enabled  -}}
 {{- end -}}
 {{ if eq (include "namespace-configuration.enabled" .) "true" }}
 ---
@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.namespaceConfiguration.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: integration
   source:
     path: {{ .Values.namespaceConfiguration.chart.path }}
     repoURL: {{ .Values.namespaceConfiguration.chart.repo }}

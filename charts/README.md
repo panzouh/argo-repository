@@ -11,3 +11,5 @@ Here is ArgoCD custom charts.
 ### [Namespace configuration](./namespace-configuration)
 
 ### [DTK Operator](./dtk-operator)
+
+### [Chaos Mesh Campains](./chaos-mesh-stress/)

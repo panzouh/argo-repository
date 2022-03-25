@@ -1,0 +1,19 @@
+{{- define "networking.enabled" -}}
+{{- or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx") -}}
+{{- end -}}
+{{ if eq (include "networking.enabled" .) "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: networking
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  sourceRepos:
+  - '*'
+{{ end }}

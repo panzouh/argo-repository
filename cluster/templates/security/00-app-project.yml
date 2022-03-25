@@ -1,0 +1,19 @@
+{{- define "security.enabled" -}}
+{{- or .Values.vault.enabled .Values.default.enabled -}}
+{{- end -}}
+{{ if eq (include "security.enabled" .) "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: security
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  sourceRepos:
+  - '*'
+{{ end }}

@@ -1,7 +1,7 @@
-{{- define "default.enabled" -}}
+{{- define "olm.enabled" -}}
 {{- or .Values.olm.enabled .Values.default.enabled  -}}
 {{- end -}}
-{{ if eq (include "default.enabled" .) "true" }}
+{{ if eq (include "olm.enabled" .) "true" }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -11,11 +11,11 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "cluster.syncPolicy" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.olm.namespace }}
     server: https://kubernetes.default.svc
-  project: default
+  project: integration
   source:
     path: {{ .Values.olm.chart.path }}
     repoURL: {{ .Values.olm.chart.repo }}

@@ -80,7 +80,7 @@ spec:
     helm:
       values: |-
         default:
-          enable: true
+          enabled: true
       version: v3
     repoURL: https://gitlab.com/a4537/repository.git
 

@@ -19,14 +19,17 @@ proxies:
   enabled: false
   value: ""
   noProxy: ""
-  # noProxy: .cluster.local,.svc,podsCIDR,svcCIDR
+  # Value should be noProxy: .cluster.local,.svc,podsCIDR,svcCIDR
 
 # Backup 
+
+backup:
+  enabled: false
 
 # Chaos engineering
 
 chaosMesh:
-  enabled: true
+  enabled: false
   namespace: chaos-mesh
   chart:
     repo: https://charts.chaos-mesh.org
@@ -107,6 +110,7 @@ ingress:
       values:
         monitor: false
         ingressAnnotations: {}
+        # if strictTLs you should be using => traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd
         service:
           type: LoadBalancer # LoadBalancer|NodePort
           LoadBalancerIps: [] # Only for BareMetal support
@@ -119,6 +123,7 @@ ingress:
       values:
         monitor: false
         service:
+          monitor: false
           type: LoadBalancer # LoadBalancer|NodePort
           LoadBalancerIps: [] # Only for BareMetal support
           isDefault: false
@@ -145,7 +150,7 @@ certmanager:
 # Monitoring
 
 monitoring:
-  enabled: true
+  enabled: false
   namespace: monitoring
   prometheus:
     enabled: false
@@ -187,19 +192,21 @@ monitoring:
             name: prometheus
           dataRetention: 720h
   grafana:
-    enabled: true
+    enabled: false
     chart:
       repo: grafana
       name: https://grafana.github.io/helm-charts
       version: "5.2.0"
       values:
         passwordType: raw # raw|vault
-        password: "changeme"
+        adminPassword: "changeme"
+        adminUser: "admin"
         avp_path: "avp/grafana"
         pvcSize: 10Gi
         ingress: 
           enabled: true
           name: grafana
+        customDashboards: {}
   fio:
     enabled: false
     chart:
@@ -224,8 +231,10 @@ monitoring:
       repo: https://prometheus-community.github.io/helm-charts
       name: prometheus-blackbox-exporter
       version: "4.10.4"
-      values: {}
       # Not yet ready for url scraping
+      values:
+        enablePrometheusRules: false
+        enableGrafanaDashboard: false
   goldpinger:
     enabled: false
     chart:
@@ -242,7 +251,7 @@ monitoring:
       name: helm-exporter
       version: "1.2.2+6766a95"
       values:
-        enablePrometheusRules: true
+        enablePrometheusRules: false
         # You can specify namespaces to ignore - comma separated list of regexps
         disabledNamespaces: null
         # Doesn't support private repos yet
@@ -305,3 +314,5 @@ vault:
 
 # Storage
 
+storage:
+  enabled: false

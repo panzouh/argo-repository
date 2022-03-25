@@ -1,0 +1,26 @@
+{{- define "logstash.enabled" -}}
+{{- and .Values.logging.enabled .Values.logging.logstash.enabled (not .Values.logging.fluentd.enabled) (eq (include "logging.namespace" .) "elastic-namespace") -}}
+{{- end -}}
+{{ if eq (include "logstash.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: olm
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ (include "logging.namespace" .) }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    path: {{ .Values.logstash.chart.path }}
+    repoURL: {{ .Values.logstash.chart.repo }}
+    targetRevision: {{ .Values.logstash.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}
