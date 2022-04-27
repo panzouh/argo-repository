@@ -1,6 +1,6 @@
 # ArgoCD DansTonKube Repository
 
-[!DTK Logo](./src/dtk-logo-transparent.png)
+![DTK Logo](./src/dtk-logo-transparent.png)
 
 Argo repository is a meta chart for simplified cluster management based on ArgoCD [Apps of Apps Pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
 
