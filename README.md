@@ -20,10 +20,6 @@ TBA
 8. [License](#license)
 9. [Authors](#authors)
 
-## Supported Kubernetes versions
-
-TBA
-
 ## Supported apps
 
 - Backup :
