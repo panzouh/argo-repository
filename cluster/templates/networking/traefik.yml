@@ -87,7 +87,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: security
-  namespace: traefik-system
+  namespace: {{ include "ingress.namespace" . }}
 spec:
   headers:
     frameDeny: true

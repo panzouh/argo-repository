@@ -1,0 +1,62 @@
+{{- define "loki.enabled" -}}
+{{- eq (include "logging.namespace" .) "monitoring" -}}
+{{- end -}}
+{{ if eq (include "loki.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ (include "logging.namespace" .) }}
+    server: https://kubernetes.default.svc
+  project: logging
+  source:
+    chart: {{ .Values.monitoring.loki.chart.name }}
+    repoURL: {{ .Values.monitoring.loki.chart.repo }}
+    targetRevision: {{ .Values.monitoring.loki.chart.version }}
+    helm: |
+      ingress:
+        enabled: false
+      config:
+        auth_enabled: false
+        ingester:
+          chunk_idle_period: 3m
+          chunk_block_size: 262144
+          chunk_retain_period: 1m
+          max_transfer_retries: 0
+          lifecycler:
+            ring:
+              kvstore:
+                store: inmemory
+              replication_factor: 1
+        limits_config:
+          enforce_metric_name: false
+          reject_old_samples: true
+          reject_old_samples_max_age: 168h
+        server:
+          http_listen_port: 3100
+      livenessProbe:
+        httpGet:
+          path: /ready
+          port: http-metrics
+        initialDelaySeconds: 45
+      {{- if .Values.default.storageClass }}
+      persistence:
+        enabled: true
+        size: {{ .Values.logging.loki.chart.values.pvcSize }}
+      {{- else }}
+      persistence:
+        enabled: false
+      {{- end }}
+      podDisruptionBudget:
+        minAvailable: 0
+      replicas: 1
+      serviceMonitor:
+        enabled: false
+{{ end }}

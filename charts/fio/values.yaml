@@ -1,25 +1,47 @@
 ---
+# -- Override chart default name
+nameOverride: ""
+
+# -- Image spec
 image:
+  # -- Image repository
   name: panzouh/fio-exportaire
+  # -- Image tag
   tag: beta1
+  # -- Image tag
   pullPolicy: Always
+  # -- Image pull secret if you are using a private repo
   pullSecret: []
 
+# -- Choose if you want to install it on controll plane as well
 installOnControllPlane: false
 
+# -- Resource spec watch [documentation](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 resources:
+  # -- Resource limits spec
   limits:
+    # -- Cpu limits
     cpu: 200m
+    # -- Memory limits
     memory: 512Mi
+    # -- Ephemeral storage limits
     ephemeral-storage: "1Gi"
   requests:
+    # -- Cpu request
     cpu: 100m
+    # -- Memory request
     memory: 200Mi
+    # -- Ephemeral storage request
     ephemeral-storage: "500Mi"
 
+# -- Liveness probe spec watch [documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 livenessProbe:
+  # -- Tells the kubelet that it should wait `x` seconds before performing the first probe
   initialDelaySeconds: 5
+  # -- Tell the kubelet that it should perform a liveness probe every `x` seconds
   periodSeconds: 15
 
+# -- Prometheus scrape section
 prometheusScrape:
+  # Enable Prometheus scrape enables these labels to the [daemoset](./templates/daemonset.yml): `prometheus.io/scrape: 'true'`, `prometheus.io/port: '1334'`, `prometheus.io/path: '/metrics'`
   enabled: true

@@ -3,6 +3,8 @@
 
 See [Argo Vault Plugin Configuration](https://argocd-vault-plugin.readthedocs.io/en/stable/config/) for further informations.
 
+## [Using an external Vault](./- [ ] Loki)
+
 ## Prerequisites (Install Vault if needed)
 
 ### Vault values

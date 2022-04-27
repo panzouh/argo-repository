@@ -1,0 +1,54 @@
+{{- define "user-management.enabled" -}}
+{{- .Values.userManagement.enabled -}}
+{{- end -}}
+{{ if eq (include "user-management.enabled" .) "true" }}
+{{- $userManagementValues := .Values.userManagement.chart.values }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: user-management
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.withoutNamespace" . }}
+  destination:
+    namespace: {{ .Values.argocd.namespace }}
+    server: https://kubernetes.default.svc
+  project: security
+  source:
+    path: {{ .Values.userManagement.chart.path }}
+    repoURL: {{ .Values.userManagement.chart.repo }}
+    targetRevision: {{ .Values.userManagement.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |
+      {{- if $userManagementValues.namespaceRoles }}
+      namespaceRoles:
+        {{- range $userManagementValues.namespaceRoles }}
+        - name: {{ .name }}
+          refNamespace: {{ .refNamespace }}
+          {{- if .rules }}
+          rules:
+            {{- toYaml .rules | nindent 12 }}
+          {{- else }}
+          rules:
+            - apiGroups: ["", "extensions", "apps"]
+              resources: ["*"]
+              verbs: ["*"]
+            - apiGroups: ["batch"]
+              resources:
+              - jobs
+              - cronjobs
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if $userManagementValues.clusterRoles }}
+      clusterRoles:
+        {{- range $userManagementValues.clusterRoles }}
+        - name: {{ .name }}
+          refRole: {{ .refRole }}
+        {{- end }}
+      {{- end }}
+{{ end }}

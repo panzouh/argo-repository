@@ -1,46 +1,51 @@
 ---
-quotas: []
-  # Ex :
-  # - quotaName: small-size
-  #   matchLabels: 
-  #     size: small
-  #   requestMem: 4Gi
-  #   requestCPU: 2
-  #   requestsPVC: 100Gi
-  #   totalPVC: 5
-  #   requestsEmptyDirs: 10Gi
+# -- Override chart default name
+nameOverride: ""
 
-networkPolicies:
-  - policyName: test
-    matchLabels:
-      policy: test
-    policies: #[]
-      - name: test
-        type: Egress
-        to: []
-        podSelector: {}
-      - name: test
-        type: Ingress
-        podSelector:
-          toto: tata
-        from:
-          - namespaceSelector:
-              matchLabels:
-                a: b
-          - namespaceSelector:
-              matchLabels: {}
-          - podSelector:
-              matchLabels:
-                b: c
-          - ipBlock:
-              cidr: 192.168.0.0/24
-              except:
-                - 192.168.1.1
-          - ipBlock:
-              cidr: 192.168.0.0/24
-      - name: test-2
-        type: Ingress
-        podSelector:
-          toto: tata
-    
+# -- Configure clusters quotas 
+quotas: []
+
+# -- Configure cluster network policies Namespace configuration template spec
+networkPolicies: []
+  # - policyName: my-policy
+  #   matchLabels:
+  #     policy: my-policy
+  #   policies:
+  #     - name: policy-1
+  #       type: Egress
+  #       to: []
+  #       podSelector: {}
+  #     - name: policy-2
+  #       type: Ingress
+  #       podSelector:
+  #         a-label: a-value
+  #       from:
+  #         - namespaceSelector:
+  #             matchLabels:
+  #               a: b
+  #         - namespaceSelector:
+  #             matchLabels: {}
+  #         - podSelector:
+  #             matchLabels:
+  #               b: c
+  #         - ipBlock:
+  #             cidr: 192.168.0.0/24
+  #             except:
+  #               - 192.168.1.1
+  #         - ipBlock:
+  #             cidr: 192.168.0.0/24
+  #     - name: policy-3
+  #       type: Ingress
+  #       podSelector:
+  #         another-label: another-value
+
+isolatedNetworkPolicy:
+  # -- Enable the default Namespace configuration template enable it with `kubectl label ns <your-namespace> network-policy=isolated`
+  enabled: false
+  # -- Allow ingress namespace to acess the namespace where the policy is applied
+  ingressNamespace: "ingress-nginx"
+  # -- Add cluster CIDR, values should be your Service CIDR & Pod CIDR
+  clusterCIDRs: []
+
+# -- :warning: Not implemented yet :warning:
 tools: []

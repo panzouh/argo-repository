@@ -1,0 +1,35 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+# -- Create a Namespace role watch [Value file](./values.yaml) 
+namespaceRoles: []
+  # - name: jdoe
+  #   refNamespace: default
+  #   rules:
+  #   - apiGroups: ["", "extensions", "apps"]
+  #     resources: ["*"]
+  #     verbs: ["*"]
+  #   - apiGroups: ["batch"]
+  #     resources:
+  #     - jobs
+  #     - cronjobs
+  #     verbs: ["*"]
+  # - name: jdoe
+  #   refNamespace: default
+  #   rules:
+  #   - apiGroups: ["", "extensions", "apps"]
+  #     resources: ["*"]
+  #     verbs: ["*"]
+  #   - apiGroups: ["batch"]
+  #     resources:
+  #     - jobs
+  #     - cronjobs
+  #     verbs: ["*"]
+
+# -- Create a Cluster role watch [Value file](./values.yaml), creating a cluster role does not allow you to customize it. It must be created first.
+clusterRoles: []
+  # - name: jdoe-adm
+  #   refRole: cluster-admin
+  # - name: svc-gitlab-ci
+  #   refRole: cluster-admin

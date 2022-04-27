@@ -2,6 +2,7 @@
 {{- and (or .Values.namespaceConfiguratorOperator.enabled .Values.default.enabled) .Values.namespaceConfiguration.enabled  -}}
 {{- end -}}
 {{ if eq (include "namespace-configuration.enabled" .) "true" }}
+{{- $namespaceConfigurationValues := .Values.namespaceConfiguration.chart.values }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -23,9 +24,9 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if .Values.namespaceConfiguration.chart.values.quotas }}
+        {{- if $namespaceConfigurationValues.quotas }}
         quotas:
-          {{- range .Values.namespaceConfiguration.chart.values.quotas }}
+          {{- range $namespaceConfigurationValues.quotas }}
         - quotaName: {{ .quotaName }}
           matchLabels:
             {{- with .matchLabels }}
@@ -44,9 +45,9 @@ spec:
             {{- end }}
           {{- end }}
         {{- end }}
-        {{- if .Values.namespaceConfiguration.chart.values.networkPolicies }}
+        {{- if $namespaceConfigurationValues.networkPolicies }}
         networkPolicies:
-          {{- range .Values.namespaceConfiguration.chart.values.networkPolicies }}
+          {{- range $namespaceConfigurationValues.networkPolicies }}
           - policyName: {{ .policyName }}
             {{- if .matchLabels }}
             matchLabels:
@@ -174,5 +175,21 @@ spec:
             policies: []
             {{- end }}
           {{- end }}
+        {{- end }}
+        {{- if $namespaceConfigurationValues.isolatedNetworkPolicy }}
+        isolatedNetworkPolicy:
+          enabled: true
+          {{- if or (eq (include "ingress.isTraefik" .) "true") (eq (include "ingress.isNginx" .) "true") }}
+          ingressNamespace: {{ (include "ingress.namespace" .) }}
+          {{- end }}
+          {{- if $namespaceConfigurationValues.isolatedNetworkPolicy.clusterCIDRs }}
+          clusterCIDRs:
+            {{- range $namespaceConfigurationValues.isolatedNetworkPolicy.clusterCIDRs }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+        {{- else }}
+        isolatedNetworkPolicy:
+          enabled: false
         {{- end }}
 {{ end }}

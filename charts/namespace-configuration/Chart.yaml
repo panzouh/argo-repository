@@ -1,4 +1,5 @@
 apiVersion: v2
-description: A Helm chart for Kubernetes
-name: fio
+description: |
+  A Chart based on Namespace Configuration Operator a project hosted by RedHat.
+name: namespace-configuration
 version: 0.0.0-dev

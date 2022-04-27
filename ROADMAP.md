@@ -1,0 +1,106 @@
+# Roadmap
+
+## Alpha
+
+- [x] Add License
+- [x] Improve documentation (./cluster/README.md redirecting to [docs](./docs/)) :
+  - [x] Integration :
+    - [x] ArgoCD
+    - [x] Namespace configurator operator
+    - [x] Namespace configuration
+    - [x] OLM
+  - [x] Logging :
+    - [x] Loki
+    - [x] Promtail
+  - [x] Monitoring :
+    - [x] Blackbox exporter
+    - [x] Fio
+    - [x] Goldpinger
+    - [x] Grafana
+    - [x] Helm exporter
+    - [x] Prometheus MsTeams
+    - [x] Prometheus
+  - [x] Networking :
+    - [x] Traefik
+    - [x] Nginx
+    - [x] Cert-manager
+    - [x] General :
+      - [x] Url constructor
+      - [x] Ingress constructor
+  - [x] Security :
+    - [x] AVP
+    - [x] User management
+    - [x] Vault
+  - [x] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs)) :
+    - [x] OLM (Official documentation)
+    - [x] Namespace Configuration Operator (Official documentation)
+    - [x] Namespace configuration
+    - [x] User management
+    - [x] Fio
+- Themes :
+  - Integration :
+    - Argocd:
+      - [x] Handle repositories loop
+  - Monitoring :
+    - Prometheus & Others :
+      - [x] Need to work on Prometheus auth
+      - [x] Add Blackbox-exporter configuration w/ url scraping
+    - Grafana :
+      - [x] Need to work on Grafana auth
+  - Logging :
+    - [x] Loki / Promtail templates
+  - Security :
+    - [x] AVP envs
+
+## Beta
+
+- [x] Add ArgoCD project folder for each theme :
+  - [ ] Provide real namespace isolation
+- Documentation :
+  - [ ] Add Contribute.md documentation
+- Themes :
+  - Integration :
+    - Argocd:
+      - [ ] Handle ArgoCD deprecation notice => `WARNING: You are using configs.repositoryCredentials and/or server.config.repositories parameters that are DEPRECATED Instead, use configs.repositoryTemplates and/or configs.repositories parameters`
+    - [ ] Gitlab runners (add first)
+  - General :
+    - [ ] Enable VPA support
+  - Default :
+    - [ ] Work on PVC access modes (RWO/RWX)
+  - Backup :
+    - [ ] Add backup solutions (Velero)
+  - Monitoring :
+    - Prometheus & Others :
+      - [ ] Add the possibility to add custom rules
+      - [ ] Take a look at Prometheus Operator
+      - [ ] Configure enablePrometheusRules
+      - [ ] Enable Grafana customDashboards & customDashboardsGNET functionatility
+  - Networking :
+    - Traefik:
+      - [ ] Add Strict TLS annotations auto
+    - Nginx:
+      - [ ] Work on nginx Strict TLS
+  - Storage :
+    - [ ] Add in-cluster storage solutions (Rook)
+  - Logging :
+    - [ ] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
+
+## V1
+
+- Documentation :
+  - [ ] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs)) :
+    - [ ] Chaos mesh stress
+- [ ] Add Gitlab CI file
+- Themes :
+  - [ ] Backup: Add Velero
+  - Chaos engineering :
+    - [ ] Enable chaos mesh support
+    - [ ] Write chaos mesh garden
+  - Default:
+    - [ ] Work on proxies
+  - Integration :
+    - Argocd:
+      - [ ] Take a look on [Argocd notifications](https://argocd-notifications.readthedocs.io/en/stable/) & [Argo Config](https://github.com/argoproj/argo-helm/blob/master/charts/argo-cd/values.yaml#L2257)
+  - Security :
+    - [ ] Add in-cluster audit tool (OctarineSec ATM)
+    - [ ] Work on Keycloak auth (Both ArgoCD & Kubernetes)

@@ -39,10 +39,23 @@ helm repo update
 ## Install ArgoCD helm chart
 
 ```sh
-helm upgrade --install -n argocd -f values.yml --version 3.35.0 argocd argo/argo-cd
+# /!\ Replcace values first !! /!\
+helm upgrade --install -n argocd -f values.yml --version 4.5.0 argocd argo/argo-cd
 ```
 
-## Create clusters git repository path
+Additionnaly you can patch ArgoCD admin password :
+
+```sh
+export ARGO_ADMIN_PASSWORD="changeme"
+
+kubectl -n argocd patch secret argocd-secret \
+  -p '{"stringData": {
+        "admin.password": "'$(htpasswd -bnBC 10 "" ${BAS_ARGOCD_ADM_PASSWD} | tr -d ':\n')'",
+        "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+      }}'
+```
+
+## Create clusters git repository
 
 ### Git repository tree
 
@@ -81,6 +94,18 @@ spec:
       values: |-
         default:
           enabled: true
+    # If you are using AVP
+    # plugin:
+    #   name: argocd-vault-plugin
+    #   env:
+    #   - name: AVP_K8S_ROLE
+    #     value: {{ .Values.argocd.chart.values.avp.saName }}
+    #   - name: AVP_TYPE
+    #     value: vault
+    #   - name: VAULT_ADDR
+    #     value: 'http://vault.{{ .Values.vault.namespace }}:8200'
+    #   - name: AVP_AUTH_TYPE
+    #     value: k8s
       version: v3
     repoURL: https://gitlab.com/a4537/repository.git
 

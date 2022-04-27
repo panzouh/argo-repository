@@ -1,4 +1,8 @@
-{{ if .Values.debug }}
-test:
-  {{- include "url-constructor.traefik" (dict "name" .Values.argocd.chart.values.ingress.name "traefik" .Values.ingress.traefik.chart.values) | nindent 2 -}}
-{{ end }}
+{{- if .Values.debug }}
+{{- $secretAuthValue := dict "traefik.ingress.kubernetes.io/router.middlewares" "traefik-system-security@kubernetescrd" -}}
+{{- $secretAuthValue := dict "nginx.ingress.kubernetes.io/auth-type" "basic" "nginx.ingress.kubernetes.io/auth-secret" "basic-auth" "nginx.ingress.kubernetes.io/auth-realm" "Authentication Required" -}}
+test: {{ include "url-constructor" (dict "name" "url-test" "ingress" .Values.ingress.ingressDefinition) }}
+htpasswd: {{ htpasswd "test" "test" | b64enc }}
+{{- $promValues := .Values.monitoring.prometheus.chart.values }}
+{{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations "authSecret" $secretAuthValue) }}
+{{- end }}

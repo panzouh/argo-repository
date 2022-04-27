@@ -13,7 +13,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.olm.namespace }}
+    namespace: {{ .Values.chaosMesh.namespace }}
     server: https://kubernetes.default.svc
   project: chaos-engineering
   source:

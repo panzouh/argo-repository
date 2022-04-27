@@ -1,6 +1,12 @@
-# Repository
+# ArgoCD DansTonKube Repository
+
+[!DTK Logo](./src/dtk-logo-transparent.png)
 
 Argo repository is a meta chart for simplified cluster management based on ArgoCD [Apps of Apps Pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
+
+## Kubernetes supported versions
+
+TBA
 
 ## Table of Contents
 
@@ -13,6 +19,10 @@ Argo repository is a meta chart for simplified cluster management based on ArgoC
 7. [Contribute](#contribute)
 8. [License](#license)
 9. [Authors](#authors)
+
+## Supported Kubernetes versions
+
+TBA
 
 ## Supported apps
 
@@ -43,6 +53,7 @@ Argo repository is a meta chart for simplified cluster management based on ArgoC
   - CertManager
 - Security :
   - Vault (w/ AVP Plugin)
+  - Simplified user management
 - Storage:
   - TBA
 
@@ -80,44 +91,15 @@ spec:
 
 ```
 
-## Roadmap
-
-- [X] Add ArgoCD project folder for each theme
-- [X] Add License
-- [] Improve documentation
-- [] Add Contribute.md documentation
-- [] Handle ArgoCD deprecation notice => WARNING: You are using configs.repositoryCredentials and/or server.config.repositories parameter that are DEPRECATED
-Instead, use configs.repositoryTemplates and/or configs.repositories parameters
-- Themes :
-  - Default:
-    - [] Work on proxies
-  - Networking:
-    - Traefik:
-      - [] Add Strict TLS annotations auto
-  - Monitoring :
-    - Prometheus & Others :
-      - [] Add the possibility to add custom rules
-      - [] Add Blackbox-exporter configuration w/ url scraping
-      - [] Need to work on Prometheus auth
-      - [] Configure enablePrometheusRules
-    - Grafana :
-      - [] Need to work on Grafana auth
-  - Logging :
-    - [] Add logging templates (Loki & Promtail stack or Elasticsearch & Log daemon (Logstash or Fluend) & Kibana)
-  - Backup :
-    - [] Add backup solutions (Velero)
-  - Storage :
-    - [] Add in-cluster storage solutions (Rook)
-  - Security :
-    - [] Add in-cluster audit tool (dunno yet)
+## [Roadmap](./ROADMAP.md)
 
 ## How to install
 
-Refer to [prequisites](./prerequisites/README.md).
+Refer to [prequisites](./prerequisites/README.md) first.
 
 ## Documentations
 
-- [AVP](./docs/avp-documention.md)
+Please refer to [docs](./docs).
 
 ## Read before commiting an issue
 
