@@ -1,0 +1,51 @@
+{{- define "promtail.enabled" -}}
+{{- eq (include "logging.namespace" .) "monitoring" -}}
+{{- end -}}
+{{ if eq (include "promtail.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ (include "logging.namespace" .) }}
+    server: https://kubernetes.default.svc
+  project: logging
+  source:
+    chart: {{ .Values.monitoring.promtail.chart.name }}
+    repoURL: {{ .Values.monitoring.promtail.chart.repo }}
+    targetRevision: {{ .Values.monitoring.promtail.chart.version }}
+    helm: |
+    {{- if .Values.logging.promtail.chart.values.installOnControllPlane }}
+    tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+    {{- end }}
+    defaultVolumes:
+      - name: containers
+        hostPath:
+          path: {{ .Values.logging.promtail.chart.values.runtimeLogs }}
+      - name: pods
+        hostPath:
+          path: /var/log/pods
+    defaultVolumeMounts:
+      - name: containers
+        path: {{ .Values.logging.promtail.chart.values.runtimeLogs }}
+        readOnly: true
+      - name: pods
+        mountPath: /var/log/pods
+        readOnly: true
+      config:
+        logLevel: info
+        serverPort: 3101
+        lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+{{ end }}

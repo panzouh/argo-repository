@@ -6,10 +6,10 @@ General
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-{{- if .Values.sync.automated.enabled }}
+{{- if .Values.sync.enabled }}
     automated:
-      prune: {{ .Values.sync.automated.prune }}
-      selfHeal: {{ .Values.sync.automated.selfHeal }}
+      prune: {{ .Values.sync.prune }}
+      selfHeal: {{ .Values.sync.selfHeal }}
 {{- end }}
 {{- end }}
 
@@ -17,15 +17,15 @@ General
   syncPolicy:
     syncOptions:
       - CreateNamespace=false
-{{- if .Values.sync.automated.enabled }}
+{{- if .Values.sync.enabled }}
     automated:
-      prune: {{ .Values.sync.automated.prune }}
-      selfHeal: {{ .Values.sync.automated.selfHeal }}
+      prune: {{ .Values.sync.prune }}
+      selfHeal: {{ .Values.sync.selfHeal }}
 {{- end }}
 {{- end }}
 
 {{- define "argocd.applications.finalizers" }}
-  {{- if .Values.sync.objectsPrune }}
+  {{- if .Values.sync.prune }}
     {{- print "- resources-finalizer.argocd.argoproj.io" }}
   {{- end }}
 {{- end }}
@@ -47,7 +47,7 @@ Networking
     {{- if and (eq (include "ingress.isTraefik" .) "true") (eq (include "ingress.isNginx" .) "true") }}
       {{- print "disabled" }}
     {{- else if eq (include "ingress.isTraefik" .) "true" }}
-      {{- print "traefik-system" }}
+      {{- print "ingress-traefik" }}
     {{- else if eq (include "ingress.isNginx" .) "true" }}
       {{- print "ingress-nginx" }}
     {{- end }}
@@ -60,6 +60,10 @@ Networking
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
+{{- $authSecret := .authSecret | default dict -}}
+{{- if $authSecret -}}
+{{- $annotations := deepCopy $authSecret | mustMerge $annotations  -}}
+{{- end -}}
 ingress:
   enabled: true
   {{- if $annotations }}
@@ -67,7 +71,6 @@ ingress:
     {{- with $annotations }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-  annotations:
   {{- else }}
   annotations: {}
   {{- end }}
@@ -186,5 +189,7 @@ Logging
     {{- else if eq (include "elfk.enabled" .) "true" }}
       {{- print "elasticsearch-logging" }}
     {{- end }}
+  {{- else }}
+    {{- print "disabled" }}
   {{- end }}
 {{- end }}

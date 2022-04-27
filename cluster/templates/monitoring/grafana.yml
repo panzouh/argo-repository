@@ -1,16 +1,16 @@
-{{- define "monitoring.enabled" -}}
+{{- define "grafana.enabled" -}}
 {{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled -}}
 {{- end -}}
-{{ if eq (include "monitoring.enabled" .) "true" }}
+{{ if eq (include "grafana.enabled" .) "true" }}
 {{- if and .Values.argocd.chart.values.avp.enabled (eq .Values.monitoring.grafana.chart.values.passwordType "vault") }}
 ---
 kind: Secret
 apiVersion: v1
 metadata:
-  namespace: monitoring
   name: grafana-credentials
+  namespace: monitoring
   annotations:
-    avp.kubernetes.io/path: {{ .Values.monitoring.grafana.chart.values.avp_path }}
+    avp.kubernetes.io/path: {{ .Values.monitoring.grafana.chart.values.avpPath }}
 type: Opaque
 stringData:
   username: <username>
@@ -27,7 +27,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.olm.namespace }}
+    namespace: {{ .Values.monitoring.namespace }}
     server: https://kubernetes.default.svc
   project: monitoring
   source:
@@ -742,7 +742,6 @@ spec:
         persistence:
           enabled: false
         {{- end }}
-
         {{- if .Values.proxies.enabled }}
         env:
           http_proxy: {{ .Values.proxies.value }}

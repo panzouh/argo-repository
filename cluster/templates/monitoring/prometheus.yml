@@ -2,6 +2,43 @@
 {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "prometheus.enabled" .) "true" }}
+{{- if or (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "vault") }}
+{{- if eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "raw" }}
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: promtheus-basic-auth
+  namespace: monitoring
+type: Opaque
+data:
+  auth: {{ htpasswd .Values.monitoring.prometheus.chart.values.server.ingress.auth.username .Values.monitoring.prometheus.chart.values.server.ingress.auth.password | b64enc }}
+{{- end }}
+{{- if eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "vault" }}
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: promtheus-basic-auth
+  namespace: monitoring
+  annotations:
+    avp.kubernetes.io/path: {{ .Values.monitoring.prometheus.chart.values.server.ingress.auth.avpPath }}
+type: Opaque
+stringData:
+  auth: <auth>
+{{- end }}
+{{- if eq (include "ingress.namespace" .) "traefik-system" }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: prometheus-auth
+  namespace: monitoring
+spec:
+  basicAuth:
+    secret: prometheus-basic-auth
+{{- end }}
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -38,10 +75,20 @@ spec:
             enabled: false
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 -}}
+            {{- if eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "none" }}
+              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 }}
+            {{- else if or (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "vault") }}
+              {{- $secretAuthValue := dict "traefik.ingress.kubernetes.io/router.middlewares" "traefik-system-security@kubernetescrd" -}}
+              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
+            {{- end }}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 -}}
+            {{- if eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "none" }}
+              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 -}}
+            {{- else if or (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.chart.values.server.ingress.auth.type "vault") }}
+              {{- $secretAuthValue := dict "nginx.ingress.kubernetes.io/auth-type" "basic" "nginx.ingress.kubernetes.io/auth-secret" "prometheus-basic-auth" "nginx.ingress.kubernetes.io/auth-realm" "Authentication Required" -}}
+              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
+            {{- end }}
           {{- end }}
         {{- if eq (include "kubeStateMetrics.enabled" .) "true" }}
         kubeStateMetrics:
@@ -80,7 +127,23 @@ spec:
         {{- else }}
         alertmanager:
           enabled: false
-        {{- end }}        
+        {{- end }}
+        {{- if .Values.monitoring.blackboxExporter.enabled }}
+        extraScrapeConfigs:
+          - job_name: blackbox-urls
+            metrics_path: /probe
+            params:
+              module: [http_2xx]
+            static_configs:
+              {{- if .Values.monitoring.blackboxExporter.chart.values.scrapeUrls }}
+              - targets:
+                  {{- range .Values.monitoring.blackboxExporter.chart.values.scrapeUrls }}
+                  - {{ . }}
+                  {{- end }}
+              {{- else }}
+              - targets: []
+              {{- end }}
+        {{- end }}
         {{- if eq (include "preconfigureRules.enabled" .) "true" }}
         serverFiles:
           alerting_rules.yml:

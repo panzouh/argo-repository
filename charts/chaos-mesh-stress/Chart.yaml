@@ -1,4 +1,4 @@
 apiVersion: v2
 description: A Helm chart for Kubernetes
-name: chaos-mesh
+name: chaos-mesh-stress
 version: 0.0.0-dev

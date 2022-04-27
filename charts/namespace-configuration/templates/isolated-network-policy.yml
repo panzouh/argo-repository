@@ -1,0 +1,96 @@
+{{ if .Values.isolatedNetworkPolicy.enabled }}
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: NamespaceConfig
+metadata:
+  name: isolation-policy
+spec:
+  labelSelector:
+    matchLabels:
+      network-policy: isolated
+  templates:
+  - objectTemplate: |
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-to-same-namespace
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        egress:
+          - to:
+              - podSelector: {}
+        policyTypes:
+          - Egress
+      ---
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-to-coredns
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        egress:
+          - ports:
+              - protocol: TCP
+                port: 53
+              - protocol: UDP
+                port: 53
+          - to:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: kube-system
+              - podSelector:
+                  matchLabels:
+                    k8s-app: kube-dns
+        policyTypes:
+          - Egress
+      ---
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-to-external-network
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        egress:
+          - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  {{- if .Values.isolatedNetworkPolicy.clusterCIDRs }}
+                  except:
+                    {{- range .Values.isolatedNetworkPolicy.clusterCIDRs }}
+                    - {{ . }}
+                    {{- end }}
+                  {{- else }}
+                  except:
+                    - 10.0.0.0/0
+                  {{- end }}
+        policyTypes:
+          - Egress
+      ---
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: allow-from-ingress-namespace
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        ingress:
+        - from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: {{ default "ingress-nginx" .Values.isolatedNetworkPolicy.ingressNamespace }}
+        podSelector: {}
+        policyTypes:
+        - Ingress
+      ---
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-from-same-namespace
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        ingress:
+        - from:
+          - podSelector: {}
+{{ end }}

@@ -1,5 +1,5 @@
 {{- define "certmanager.enabled" -}}
-{{- or .Values.certmanager.enabled (or .Values.ingress.traefik.enabled .Values.ingress.nginx.enabled) -}}
+{{- and .Values.certmanager.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) -}}
 {{- end -}}
 {{ if eq (include "certmanager.enabled" .) "true" }}
 ---
@@ -48,7 +48,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: {{ .Values.certmanager.values.clusterissuer.stagging.email }}
+    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -71,7 +71,7 @@ metadata:
   name: letsencrypt-production
 spec:
   acme:
-    email: {{ .Values.certmanager.clusterissuer.production.email }}
+    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key

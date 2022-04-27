@@ -1,0 +1,41 @@
+{{ range .Values.namespaceRoles }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .name }}
+  namespace: {{ default "default" .refNamespace }}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{ .name }}-role
+  namespace: {{ .refNamespace | default "default" }}
+{{- if .rules }}
+rules: 
+  {{- toYaml .rules | nindent 2 }}
+{{- else }}
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["*"]
+    verbs: ["*"]
+  - apiGroups: ["batch"]
+    resources:
+    - jobs
+    - cronjobs
+    verbs: ["*"]
+{{- end }}
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: {{ .name }}-rb
+  namespace: {{ default "default" .refNamespace }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .name }}
+  namespace: {{ default "default" .refNamespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .name }}-rb
+{{ end }}
