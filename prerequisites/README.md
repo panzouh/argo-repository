@@ -11,7 +11,7 @@ kubectl create ns argocd
 ## Copy [gitlab-secret.yml](gitlab-secret.yml) and modify to our needs
 
 ```sh
-wget https://gitlab.com/panzouh/a4537/repository/-/raw/master/prerequisites/gitlab-secret.yml
+wget https://github.com/panzouh/argo-repository.git
 ```
 
 ```sh
@@ -21,7 +21,7 @@ kubectl apply -f gitlab-secret.yml
 ## Copy [values.yml](values.yml) file and modify to our needs
 
 ```sh
-wget https://gitlab.com/panzouh/a4537/repository/-/raw/master/prerequisites/values.yml
+wget https://raw.githubusercontent.com/panzouh/argo-repository/master/prerequisites/values.yml
 ```
 
 ## Add ArgoCD repository
@@ -90,10 +90,6 @@ spec:
   source:
     path: cluster
     targetRevision: master
-    helm:
-      values: |-
-        default:
-          enabled: true
     # If you are using AVP
     # plugin:
     #   name: argocd-vault-plugin
@@ -106,8 +102,12 @@ spec:
     #     value: 'http://vault.{{ .Values.vault.namespace }}:8200'
     #   - name: AVP_AUTH_TYPE
     #     value: k8s
+    helm:
+      values: |-
+        default:
+          enabled: true
       version: v3
-    repoURL: https://gitlab.com/a4537/repository.git
+    repoURL: https://github.com/panzouh/argo-repository.git
 
 ```
 
@@ -134,5 +134,4 @@ spec:
     path: # YOUR PATH (ex: a-cluster)
     targetRevision: master
     repoURL: # YOUR GIT REPOSITORY
-
 ```

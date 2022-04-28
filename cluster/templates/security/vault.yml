@@ -1,5 +1,5 @@
 {{- define "vault.enabled" -}}
-{{- or .Values.vault.enabled .Values.default.enabled  -}}
+{{- .Values.vault.enabled -}}
 {{- end -}}
 {{ if eq (include "vault.enabled" .) "true" }}
 ---

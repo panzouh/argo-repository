@@ -4,6 +4,9 @@ installCRDs: false
 redis-ha:
   enabled: true
 
+applicationset:
+  enabled: false
+
 controller:
   enableStatefulSet: true
 
@@ -38,17 +41,18 @@ server:
   config:
     application.instanceLabelKey: argocd.argoproj.io/instance
     url: # ARGO URL
+    # Add other repos if you want using git secret
     repositories: |
-      - url: https://gitlab.com/a4537/repository.git
+      - url: https://github.com/panzouh/argo-repository.git
+      - url: https://git.domain.tld/private-repo.git
         passwordSecret:
-          name: git-credentials
           key: password
-        usernameSecret:
           name: git-credentials
+        usernameSecret:
           key: username
+          name: git-credentials
   extraArgs:
     - --insecure
-    # TBA Vault 
 
 repoServer:
   replicas: 2
