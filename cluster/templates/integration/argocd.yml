@@ -119,7 +119,7 @@ spec:
           {{- if .Values.argocd.chart.values.ha }}
           replicas: 2
           {{- end }}
-          {{- if .Values.argocd.chart.values.avp }}
+          {{- if .Values.argocd.chart.values.avp.enabled }}
           serviceAccount:
             create: false
             name: avp

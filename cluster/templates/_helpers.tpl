@@ -47,7 +47,7 @@ Networking
     {{- if and (eq (include "ingress.isTraefik" .) "true") (eq (include "ingress.isNginx" .) "true") }}
       {{- print "disabled" }}
     {{- else if eq (include "ingress.isTraefik" .) "true" }}
-      {{- print "ingress-traefik" }}
+      {{- print "traefik-system" }}
     {{- else if eq (include "ingress.isNginx" .) "true" }}
       {{- print "ingress-nginx" }}
     {{- end }}
