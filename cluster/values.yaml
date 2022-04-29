@@ -330,3 +330,63 @@ userManagement:
 
 storage:
   enabled: false
+
+
+argocd:
+  enabled: true
+  chart:
+    values:
+      logLevel: debug
+      avp:
+        enabled: false
+      monitor: true
+      ha: true
+      ingress:
+        enabled: true
+        name: argocd
+      insecure: true
+      repositories:
+        - url: https://gitlab.com/a4537/clusters.git
+          passwordSecret:
+            key: password
+            name: git-credentials
+          usernameSecret:
+            key: username
+            name: git-credentials
+ingress:
+  ingressDefinition:
+    ssl:
+      strictTLS: true
+      enabled: true
+    dns:
+      mode: wildcard
+      wildcard: danstonkube.fr
+  traefik:
+    enabled: false
+  nginx:
+    enabled: true
+    chart:
+      values:
+        monitor: true
+        ingressAnnotations:
+          cert-manager.io/acme-challenge-type: http01
+          cert-manager.io/cluster-issuer: letsencrypt-production
+          ingress.kubernetes.io/ssl-redirect: true
+          kubernetes.io/ingress.class: nginx
+          kubernetes.io/tls-acme: "true"
+        service:
+          type: LoadBalancer
+          LoadBalancerIps:
+            - 91.121.31.181
+certmanager:
+  enabled: true
+  chart:
+    values:
+      monitor: true
+      clusterIssuerLetsEncrypt:
+        enabled: true
+        email: "contact@panz.fr"
+        stagging:
+          enabled: true
+        production:
+          enabled: true
