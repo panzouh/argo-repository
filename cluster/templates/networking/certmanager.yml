@@ -76,7 +76,7 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-production-key
     {{- if eq (include "ingress.namespace" .) "traefik-system" }}
-    sovlers:
+    solvers:
     - http01:
         ingress:
           class: traefik
