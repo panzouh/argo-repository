@@ -37,14 +37,14 @@ By default, ArgoCD maintained by itself is not enabled. You can activate either 
 ##### Add simple repository
 
 ```yaml
-repositories: |
+repositories:
   - url: https://your-repository.domain.tld
 ```
 
 ##### Add user/password private repository
 
 ```yaml
-repositories: |
+repositories:
   - url: https://your-repository.domain.tld/a/repository.git
     passwordSecret:
     # Needs to be created first !
@@ -59,7 +59,7 @@ repositories: |
 ##### Add SSH private repository
 
 ```yaml
-repositories: |
+repositories:
   - url: git@your-repository.domain.tld:a:repository
     sshPrivateKeySecret:
     # Needs to be created first !

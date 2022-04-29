@@ -40,15 +40,15 @@ spec:
         https_proxy: "{{ .Values.proxies.value }}"
         no_proxy: "{{ .Values.proxies.noProxy }}"
         {{- end }}
----
 {{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.stagging.enabled }}
+---
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
+    email: {{ .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -63,19 +63,20 @@ spec:
           class: nginx
     {{- end }}
 {{- end }}
----
 {{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.production.enabled }}
+---
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-production
 spec:
   acme:
-    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
+    email: {{ .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key
     {{- if eq (include "ingress.namespace" .) "traefik-system" }}
+    sovlers:
     - http01:
         ingress:
           class: traefik
