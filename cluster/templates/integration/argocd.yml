@@ -78,9 +78,13 @@ spec:
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
             {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 }}
+          extraArgs:
+            - --insecure
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.chart.values.ingress.enabled }}
             {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 }}
+          extraArgs:
+            - --insecure
           {{- end }}
           logLevel: {{ .Values.argocd.chart.values.logLevel }}
           {{- if or .Values.argocd.chart.values.ha .Values.proxies.enabled }}
