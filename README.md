@@ -4,6 +4,8 @@
 
 Argo repository is a meta chart for simplified cluster management based on ArgoCD [Apps of Apps Pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
 
+> :warning: At the moment this meta chart in on tech preview, use it at our own risks.
+
 ## Kubernetes supported versions
 
 TBA
