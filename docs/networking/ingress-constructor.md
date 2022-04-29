@@ -48,10 +48,10 @@ You are able to call the constructor this way :
 
 ```yaml
 # Classic utilization
-{{- include "helm-ingress.definition" (dict "name" <ingress-name> "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) -}}
+{{- include "helm-ingress.definition" (dict "name" <ingress-name> "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) -}}
 # w/ Basic auth
 {{- $secretAuthValue := dict "nginx.ingress.kubernetes.io/auth-type" "basic" "nginx.ingress.kubernetes.io/auth-secret" "basic-auth" "nginx.ingress.kubernetes.io/auth-realm" "Authentication Required" -}}
-{{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations "authSecret" $secretAuthValue) }}
+{{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations "authSecret" $secretAuthValue) }}
 ```
 
 Here is a template block :

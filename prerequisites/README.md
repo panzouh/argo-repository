@@ -95,7 +95,7 @@ spec:
     #   name: argocd-vault-plugin
     #   env:
     #   - name: AVP_K8S_ROLE
-    #     value: {{ .Values.argocd.chart.values.avp.saName }}
+    #     value: {{ .Values.argocd.values.avp.saName }}
     #   - name: AVP_TYPE
     #     value: vault
     #   - name: VAULT_ADDR

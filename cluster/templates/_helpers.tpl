@@ -117,23 +117,23 @@ Monitoring
 */}}
 
 {{- define "alertmanager.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.alertmanager.enabled -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
 {{- end }}
 
 {{- define "data.retention" -}}
-  {{- print .Values.monitoring.prometheus.chart.values.server.dataRetention -}}
+  {{- print .Values.monitoring.prometheus.values.server.dataRetention -}}
 {{- end }}
 
 {{- define "kubeStateMetrics.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.kubeStateMetrics.enabled -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.kubeStateMetrics.enabled -}}
 {{- end }}
 
 {{- define "nodeExporter.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.nodeExporter.enabled -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.nodeExporter.enabled -}}
 {{- end }}
 
 {{- define "preconfigureRules.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.chart.values.rules.preconfiguredEnabled -}}
+  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.rules.preconfiguredEnabled -}}
 {{- end }}
 
 {{- define "value" -}}

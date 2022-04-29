@@ -22,7 +22,7 @@ By default, ArgoCD maintained by itself is not enabled. You can activate either 
 |-----|------|---------|-------------|
 | avp.enabled | boolean | false | Enable AVP extension, watch [AVP Documention](../security/avp-documention.md) first |
 | avp.saName | string | avp | Tell to Argo which SA to create |
-| avp.auth.vaultUrl | string | "1.7.0" | Only if `argocd.chart.values.avp.enabled=true` & `vault.enabled=false` for external Vault support |
+| avp.auth.vaultUrl | string | "1.7.0" | Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support |
 | avp.type.k8s | string | "1.7.0" | AVP Auth type  |
 | avp.auth.path | string | "1.7.0" | Override path, default is `auth/kubernetes` |
 | monitor | boolean | false | Enable prometheus metrics scraping, you will need to enable Prometheus as well |

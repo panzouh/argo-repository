@@ -23,7 +23,7 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.monitoring.fio.chart.values.installOnControllPlane }}
+        {{- if and .Values.monitoring.fio.values.installOnControllPlane }}
         installOnControllPlane: true
         {{- else }}
         installOnControllPlane: false

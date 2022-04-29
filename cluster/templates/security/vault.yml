@@ -49,13 +49,13 @@ spec:
             repository: "vault"
             tag: "1.7.3"
             pullPolicy: IfNotPresent
-          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.vault.chart.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.vault.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 }}
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.vault.values.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           {{- end }}
-          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.vault.chart.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.vault.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 }}
+          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.vault.values.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
           {{- end }}
-          {{- if and .Values.monitoring.prometheus.enabled .Values.vault.chart.values.monitor }}
+          {{- if and .Values.monitoring.prometheus.enabled .Values.vault.values.monitor }}
           annotations:
             prometheus.io/port: "9410"
             prometheus.io/scrape: "true"
@@ -64,7 +64,7 @@ spec:
           dataStorage:
             enabled: true
             storageClass: {{ .Values.default.storageClass }}
-            size: {{ .Values.vault.chart.values.pvcSize }}
+            size: {{ .Values.vault.values.pvcSize }}
           {{- else }}
           dataStorage:  
             enabled: false
@@ -73,7 +73,7 @@ spec:
           enabled: false
         auditStorage:
           enabled: false
-        {{- if .Values.vault.chart.values.ha -}}
+        {{- if .Values.vault.values.ha -}}
         ha:
           enabled: true
         {{- else }}
@@ -82,7 +82,7 @@ spec:
         {{- end }}
         serviceAccount:
           create: true
-        {{- if and .Values.vault.chart.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
+        {{- if and .Values.vault.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         ui:
           enabled: true
         {{- end }}

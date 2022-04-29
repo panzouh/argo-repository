@@ -30,7 +30,7 @@ spec:
         deployment:
           enabled: true
           kind: DaemonSet
-        {{- if and .Values.ingress.traefik.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.ingress.traefik.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
           podAnnotations:
             prometheus.io/scrape: 'true'
             prometheus.io/port: '8888'
@@ -52,15 +52,15 @@ spec:
         {{- end }}
         service:
           enabled: true
-          {{- if eq .Values.ingress.traefik.chart.values.service.type "LoadBalancer" }}
+          {{- if eq .Values.ingress.traefik.values.service.type "LoadBalancer" }}
           type: LoadBalancer
-          {{- if .Values.ingress.traefik.chart.values.service.LoadBalancerIps }}
+          {{- if .Values.ingress.traefik.values.service.LoadBalancerIps }}
           externalIPs:
-            {{- range .Values.ingress.traefik.chart.values.service.LoadBalancerIps }}
+            {{- range .Values.ingress.traefik.values.service.LoadBalancerIps }}
             - {{ . }}
             {{- end }}
             {{- end }}
-          {{- else if eq .Values.ingress.traefik.chart.values.service.type "NodePort" }}
+          {{- else if eq .Values.ingress.traefik.values.service.type "NodePort" }}
           type: NodePort
           {{- end }}
         ingressClass:

@@ -49,16 +49,16 @@ spec:
           kind: DaemonSet
           service:
             enabled: true
-          {{- if eq .Values.ingress.nginx.chart.values.service.type "LoadBalancer" }}
+          {{- if eq .Values.ingress.nginx.values.service.type "LoadBalancer" }}
             type: LoadBalancer
             labels: {}
-            {{- if .Values.ingress.nginx.chart.values.service.LoadBalancerIps }}
+            {{- if .Values.ingress.nginx.values.service.LoadBalancerIps }}
             externalIPs:
-              {{- range .Values.ingress.nginx.chart.values.service.LoadBalancerIps }}
+              {{- range .Values.ingress.nginx.values.service.LoadBalancerIps }}
               - {{ . }}
               {{- end }}
             {{- end }}
-          {{- else if eq .Values.ingress.nginx.chart.values.service.type "NodePort" }}
+          {{- else if eq .Values.ingress.nginx.values.service.type "NodePort" }}
             type: NodePort
             nodePorts:
               http: 32080
@@ -66,7 +66,7 @@ spec:
           {{- end }}
             external:
               enabled: true
-          {{- if and .Values.ingress.nginx.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+          {{- if and .Values.ingress.nginx.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
           metrics:
             port: 10254
             enabled: true
@@ -75,7 +75,7 @@ spec:
                 prometheus.io/scrape: "true"
                 prometheus.io/port: "10254"
           {{- end }}
-        {{- if .Values.ingress.nginx.chart.values.defaultBackend }}
+        {{- if .Values.ingress.nginx.values.defaultBackend }}
         defaultBackend:
           enabled: true
           name: default-backend

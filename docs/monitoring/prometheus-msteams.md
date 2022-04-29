@@ -32,7 +32,7 @@ hooks:
   - myhook: https://office.com/not/a/working/hook
 ```
 
-In order to enable it in Alertmanager, add this section of code in `monitoring.prometheus.chart.values.alertmanager.configurationFile` :
+In order to enable it in Alertmanager, add this section of code in `monitoring.prometheus.values.alertmanager.configurationFile` :
 
 ```yaml
 configurationFile:

@@ -2,7 +2,7 @@
 {{- and (or .Values.namespaceConfiguratorOperator.enabled .Values.default.enabled) .Values.namespaceConfiguration.enabled  -}}
 {{- end -}}
 {{ if eq (include "namespace-configuration.enabled" .) "true" }}
-{{- $namespaceConfigurationValues := .Values.namespaceConfiguration.chart.values }}
+{{- $namespaceConfigurationValues := .Values.namespaceConfiguration.values }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

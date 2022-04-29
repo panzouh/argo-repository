@@ -24,7 +24,7 @@ spec:
       version: v3
       values: |-
         installCRDs: true
-        {{- if and .Values.certmanager.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.certmanager.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
         prometheus:
           enabled: true
           servicemonitor:
@@ -40,7 +40,7 @@ spec:
         https_proxy: "{{ .Values.proxies.value }}"
         no_proxy: "{{ .Values.proxies.noProxy }}"
         {{- end }}
-{{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.stagging.enabled }}
+{{- if and .Values.certmanager.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.values.clusterIssuerLetsEncrypt.stagging.enabled }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -48,7 +48,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: {{ .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.email }}
+    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -63,7 +63,7 @@ spec:
           class: nginx
     {{- end }}
 {{- end }}
-{{- if and .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.production.enabled }}
+{{- if and .Values.certmanager.values.clusterIssuerLetsEncrypt.enabled  .Values.certmanager.values.clusterIssuerLetsEncrypt.production.enabled }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -71,7 +71,7 @@ metadata:
   name: letsencrypt-production
 spec:
   acme:
-    email: {{ .Values.certmanager.chart.values.clusterIssuerLetsEncrypt.email }}
+    email: {{ .Values.certmanager.values.clusterIssuerLetsEncrypt.email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key

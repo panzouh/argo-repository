@@ -23,7 +23,7 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
-        namespacesIgnore: {{ quote .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
+        {{- if .Values.monitoring.helmExporter.values.disabledNamespaces }}
+        namespacesIgnore: {{ quote .Values.monitoring.helmExporter.values.disabledNamespaces }}
         {{- end }}
 {{ end }}

@@ -2,7 +2,7 @@
 {{- or .Values.argocd.enabled .Values.default.enabled -}}
 {{- end -}}
 {{ if eq (include "argocd.enabled" .) "true" }}
-{{- if .Values.argocd.chart.values.avp.enabled }}
+{{- if .Values.argocd.values.avp.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -18,15 +18,15 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   avp-config.yaml: |
-    AVP_K8S_ROLE: {{ .Values.argocd.chart.values.avp.saName }}
+    AVP_K8S_ROLE: {{ .Values.argocd.values.avp.saName }}
     AVP_TYPE: vault
     {{- if .Values.vault.enabled }}
     VAULT_ADDR: 'http://vault.{{ .Values.vault.namespace }}:8200'
     {{- else }}
-    VAULT_ADDR: {{ .Values.argocd.chart.values.avp.auth.vaultUrl }}
+    VAULT_ADDR: {{ .Values.argocd.values.avp.auth.vaultUrl }}
     {{- end }}
-    AVP_AUTH_TYPE: {{ .Values.argocd.chart.values.avp.auth.type }}
-    AVP_K8S_MOUNT_PATH: {{ .Values.argocd.chart.values.avp.auth.path }}
+    AVP_AUTH_TYPE: {{ .Values.argocd.values.avp.auth.type }}
+    AVP_K8S_MOUNT_PATH: {{ .Values.argocd.values.avp.auth.path }}
 {{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -53,7 +53,7 @@ spec:
           enableStatefulSet: true
         applicationset:
           enabled: false
-        {{- if .Values.argocd.chart.values.ha }}
+        {{- if .Values.argocd.values.ha }}
         redis-ha:
           enabled: true
           securityContext: {}
@@ -62,7 +62,7 @@ spec:
         {{- end }}
         configs:
           createSecret: false
-        {{- if and .Values.argocd.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.argocd.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
         metrics:
           enabled: false
           service:
@@ -73,23 +73,23 @@ spec:
             servicePort: 8085
         {{- end }}
         server:
-          {{- if .Values.argocd.chart.values.ha }}
+          {{- if .Values.argocd.values.ha }}
           replicas: 2
           {{- end }}
-          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.chart.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 10 }}
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.values.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
           {{- end }}
-          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.chart.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.chart.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 10 }}
+          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.values.ingress.enabled }}
+            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
           {{- end }}
-          logLevel: {{ .Values.argocd.chart.values.logLevel }}
-          {{- if or .Values.argocd.chart.values.ha .Values.proxies.enabled }}
+          logLevel: {{ .Values.argocd.values.logLevel }}
+          {{- if or .Values.argocd.values.ha .Values.proxies.enabled }}
           env:
-            {{- if .Values.argocd.chart.values.ha }}
+            {{- if .Values.argocd.values.ha }}
             - name: ARGOCD_API_SERVER_REPLICAS
               value: '2'
             {{- end }}
@@ -103,11 +103,11 @@ spec:
             {{- end }}
           {{- end }}
           config:
-            {{- if .Values.argocd.chart.values.ingress.enabled }}
-            url: {{ include "url-constructor" (dict "name" .Values.argocd.chart.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
+            {{- if .Values.argocd.values.ingress.enabled }}
+            url: {{ include "url-constructor" (dict "name" .Values.argocd.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
             {{- end }}
             application.instanceLabelKey: argocd.argoproj.io/instance
-            {{- if .Values.argocd.chart.values.avp.enabled }}
+            {{- if .Values.argocd.values.avp.enabled }}
             configManagementPlugins: |-
               - name: argocd-vault-plugin
                 generate:
@@ -116,14 +116,14 @@ spec:
             {{- end }}
             repositories: |
               - url: https://github.com/panzouh/argo-repository.git
-              {{- if .Values.argocd.chart.values.repositories }}
-                {{- toYaml .Values.argocd.chart.values.repositories | nindent 14 }}
+              {{- if .Values.argocd.values.repositories }}
+                {{- toYaml .Values.argocd.values.repositories | nindent 14 }}
               {{- end }}
         repoServer:
-          {{- if .Values.argocd.chart.values.ha }}
+          {{- if .Values.argocd.values.ha }}
           replicas: 2
           {{- end }}
-          {{- if .Values.argocd.chart.values.avp.enabled }}
+          {{- if .Values.argocd.values.avp.enabled }}
           serviceAccount:
             create: false
             name: avp
@@ -147,7 +147,7 @@ spec:
             command: [sh, -c]
             env:
               - name: AVP_VERSION
-                value: {{ quote .Values.argocd.chart.values.avp.version }}
+                value: {{ quote .Values.argocd.values.avp.version }}
               {{- if .Values.proxies.enabled }}
               - name: http_proxy
                 value: {{ quote .Values.proxies.value }}

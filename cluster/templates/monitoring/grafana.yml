@@ -2,7 +2,7 @@
 {{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "grafana.enabled" .) "true" }}
-{{- if and .Values.argocd.chart.values.avp.enabled (eq .Values.monitoring.grafana.chart.values.passwordType "vault") }}
+{{- if and .Values.argocd.values.avp.enabled (eq .Values.monitoring.grafana.values.passwordType "vault") }}
 ---
 kind: Secret
 apiVersion: v1
@@ -10,7 +10,7 @@ metadata:
   name: grafana-credentials
   namespace: monitoring
   annotations:
-    avp.kubernetes.io/path: {{ .Values.monitoring.grafana.chart.values.avpPath }}
+    avp.kubernetes.io/path: {{ .Values.monitoring.grafana.values.avpPath }}
 type: Opaque
 stringData:
   username: <username>
@@ -37,10 +37,10 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if eq .Values.monitoring.grafana.chart.values.passwordType "raw" }}
-        adminUser: {{ .Values.monitoring.grafana.chart.values.adminUser }}
-        adminPassword: {{ .Values.monitoring.grafana.chart.values.adminPassword }}
-        {{- else if eq .Values.monitoring.grafana.chart.values.passwordType "vault" }}
+        {{- if eq .Values.monitoring.grafana.values.passwordType "raw" }}
+        adminUser: {{ .Values.monitoring.grafana.values.adminUser }}
+        adminPassword: {{ .Values.monitoring.grafana.values.adminPassword }}
+        {{- else if eq .Values.monitoring.grafana.values.passwordType "vault" }}
         admin:
           existingSecret: "grafana-credentials"
           userKey: username
@@ -85,13 +85,13 @@ spec:
               gnetId: 13646
               revision: 2
               datasource: Prometheus
-            {{- if and .Values.monitoring.goldpinger.enabled .Values.monitoring.goldpinger.chart.values.enableGrafanaDashboard }}
+            {{- if and .Values.monitoring.goldpinger.enabled .Values.monitoring.goldpinger.values.enableGrafanaDashboard }}
             goldpinger:
               gnetId: 10949
               revision: 1
               datasource: Prometheus
             {{- end }}
-            {{- if and .Values.monitoring.fio.enabled .Values.monitoring.fio.chart.values.enableGrafanaDashboard }}
+            {{- if and .Values.monitoring.fio.enabled .Values.monitoring.fio.values.enableGrafanaDashboard }}
             fio:
               json: |-
                 {
@@ -727,17 +727,17 @@ spec:
                 }
             {{- end }}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.chart.values.ingressAnnotations) | nindent 8 -}}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.values.server.ingress.enabled }}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.chart.values.server.ingress.enabled }}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.chart.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.chart.values.ingressAnnotations) | nindent 8 -}}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.values.server.ingress.enabled }}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if .Values.default.storageClass }}
         persistence:
           enabled: true
           storageClass: {{ .Values.default.storageClass }}
-          size: {{ quote .Values.monitoring.grafana.chart.values.pvcSize }}
+          size: {{ quote .Values.monitoring.grafana.values.pvcSize }}
           {{- else }}
         persistence:
           enabled: false

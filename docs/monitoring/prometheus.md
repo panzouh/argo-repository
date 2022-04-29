@@ -77,7 +77,7 @@ groups:
             identifiers: {{ quote (include "labels.instance" .) }}
             summary: "Node DOWN (instance {{ (include "labels.instance" .) }})"
             description: "K8S Node down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-        {{- if .Values.monitoring.goldpinger.chart.values.enablePrometheusRules }}
+        {{- if .Values.monitoring.goldpinger.values.enablePrometheusRules }}
         - alert: DTK_Goldpinger_Nodes
             expr: |
             sum(goldpinger_nodes_health_total{job="goldpinger", status="unhealthy"})

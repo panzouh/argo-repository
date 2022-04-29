@@ -23,14 +23,14 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.olm.chart.values.monitoring .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.olm.values.monitoring .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
         monitoring:
           enabled: true
         {{- else }}
         monitoring:
           enabled: false
         {{- end }}
-        {{- if .Values.olm.chart.values.debug }}
+        {{- if .Values.olm.values.debug }}
         debug: true
         {{- else }}
         debug: false

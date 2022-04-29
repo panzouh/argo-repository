@@ -2,7 +2,7 @@
 {{- .Values.userManagement.enabled -}}
 {{- end -}}
 {{ if eq (include "user-management.enabled" .) "true" }}
-{{- $userManagementValues := .Values.userManagement.chart.values }}
+{{- $userManagementValues := .Values.userManagement.values }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

@@ -21,7 +21,7 @@ spec:
     repoURL: {{ .Values.monitoring.promtail.chart.repo }}
     targetRevision: {{ .Values.monitoring.promtail.chart.version }}
     helm: |
-    {{- if .Values.logging.promtail.chart.values.installOnControllPlane }}
+    {{- if .Values.logging.promtail.values.installOnControllPlane }}
     tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
@@ -33,13 +33,13 @@ spec:
     defaultVolumes:
       - name: containers
         hostPath:
-          path: {{ .Values.logging.promtail.chart.values.runtimeLogs }}
+          path: {{ .Values.logging.promtail.values.runtimeLogs }}
       - name: pods
         hostPath:
           path: /var/log/pods
     defaultVolumeMounts:
       - name: containers
-        path: {{ .Values.logging.promtail.chart.values.runtimeLogs }}
+        path: {{ .Values.logging.promtail.values.runtimeLogs }}
         readOnly: true
       - name: pods
         mountPath: /var/log/pods

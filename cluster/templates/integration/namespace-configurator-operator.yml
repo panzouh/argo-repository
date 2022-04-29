@@ -23,7 +23,7 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.namespaceConfiguratorOperator.chart.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.namespaceConfiguratorOperator.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
         enableMonitoring: true
         {{- else }}
         enableMonitoring: false
