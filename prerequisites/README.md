@@ -50,7 +50,7 @@ export ARGO_ADMIN_PASSWORD="changeme"
 
 kubectl -n argocd patch secret argocd-secret \
   -p '{"stringData": {
-        "admin.password": "'$(htpasswd -bnBC 10 "" ${BAS_ARGOCD_ADM_PASSWD} | tr -d ':\n')'",
+        "admin.password": "'$(htpasswd -bnBC 10 "" ${ARGO_ADMIN_PASSWORD} | tr -d ':\n')'",
         "admin.passwordMtime": "'$(date +%FT%T%Z)'"
       }}'
 ```
