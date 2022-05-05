@@ -13,3 +13,5 @@ Here is ArgoCD custom charts.
 ### [Olm](./olm)
 
 ### [Users](./users)
+
+### [Vault secrets](./vault-secrets)

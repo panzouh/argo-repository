@@ -1,6 +1,9 @@
 {{ template "chart.header" . }}
 {{ template "chart.description" . }}
-{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+{{ template "chart.badgesSection" . }}
 
-{{ template "valuesSection" . }}
+## Values
+
+{{ template "chart.valuesTable" . }}
+
 {{ template "helm-docs.versionFooter" . }} `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.
