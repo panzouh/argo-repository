@@ -27,9 +27,9 @@ By default, Prometheus is not enabled. In order to enable it you will need to en
 | chart.repo | string | <https://prometheus-community.github.io/helm-charts> | Prometheus helm repository |
 | chart.name | string | prometheus| Prometheus chart name |
 | chart.version | string | 9.2.2 | Prometheus chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -51,7 +51,8 @@ By default, Prometheus is not enabled. In order to enable it you will need to en
 | auth.type | string | raw | Can be `none`, `raw` (:warning: both insecure :warning:) `vault` |
 | auth.username | string | admin | Basic auth username (only for `raw` type) |
 | auth.password | string | changeme | Basic auth password (only for `raw` type) |
-| auth.avpPath | string | avp/data/prometheus | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to put secrets here you should pass `vault kv put avp/prometheus username=admin password=changeme` |
+| auth.avpPath | string | avp/data/prometheus | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to put secrets here you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true` |
+| auth.authKey | string | "htpasswd" | Configure password key in vault kv-v2 secret, only for `auth.type: vault` |
 
 ### Preconfigured rules
 

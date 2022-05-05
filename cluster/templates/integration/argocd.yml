@@ -6,27 +6,50 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  name: {{ .Values.argocd.values.avp.saName }}
+  namespace: {{ .Values.argocd.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secrets-reader
+  namespace: {{ .Values.argocd.namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: allow-secret-read-avp
+  namespace: {{ .Values.argocd.namespace }}
+subjects:
+- kind: ServiceAccount
   name: avp
-  namespace: argocd
+roleRef:
+  kind: Role
+  name: secrets-reader
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: avp-cm
-  namespace: argocd
+  name: avp-env
+  namespace: {{ .Values.argocd.namespace }}
   labels:
     app.kubernetes.io/part-of: argocd
 data:
-  avp-config.yaml: |
-    AVP_K8S_ROLE: {{ .Values.argocd.values.avp.saName }}
-    AVP_TYPE: vault
-    {{- if .Values.vault.enabled }}
-    VAULT_ADDR: 'http://vault.{{ .Values.vault.namespace }}:8200'
-    {{- else }}
-    VAULT_ADDR: {{ .Values.argocd.values.avp.auth.vaultUrl }}
-    {{- end }}
-    AVP_AUTH_TYPE: {{ .Values.argocd.values.avp.auth.type }}
-    AVP_K8S_MOUNT_PATH: {{ .Values.argocd.values.avp.auth.path }}
+  AVP_K8S_ROLE: {{ .Values.argocd.values.avp.saName | b64enc }}
+  AVP_TYPE: {{ print "vault" | b64enc }}
+  {{- if .Values.vault.enabled }}
+  VAULT_ADDR: {{ printf "http://vault.%v:8200" .Values.vault.namespace | b64enc }}
+  {{- else }}
+  VAULT_ADDR: {{ .Values.argocd.values.avp.auth.vaultUrl | b64enc }}
+  {{- end }}
+  AVP_AUTH_TYPE: {{ .Values.argocd.values.avp.auth.type | b64enc }}
+  AVP_K8S_MOUNT_PATH: {{ .Values.argocd.values.avp.auth.path | b64enc }}
+type: Opaque
 {{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -109,10 +132,10 @@ spec:
             application.instanceLabelKey: argocd.argoproj.io/instance
             {{- if .Values.argocd.values.avp.enabled }}
             configManagementPlugins: |-
-              - name: argocd-vault-plugin
+              - name: argocd-helm-vault-plugin
                 generate:
-                  command: ["argocd-vault-plugin"]
-                  args: ["generate", "./ -c /etc/avp-config.yaml"]
+                  command: ["bash", "-c"]
+                  args: ['helm template "$ARGOCD_APP_NAME" -f <(echo "$HELM_VALUES") . | argocd-vault-plugin -s avp-env generate -']
             {{- end }}
             repositories: |
               - url: https://github.com/panzouh/argo-repository.git

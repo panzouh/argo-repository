@@ -1,0 +1,5 @@
+apiVersion: v2
+description: |
+  Vault secrets is a Helm chart for managing secrets in Vault.
+name: vault-secrets
+version: 0.0.0-dev

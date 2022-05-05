@@ -85,7 +85,7 @@ spec:
         default:
           enable: true
       version: v3
-    repoURL: https://gitlab.com/a4537/repository.git
+    repoURL: https://github.com/panzouh/argo-repository.git
 
 ```
 

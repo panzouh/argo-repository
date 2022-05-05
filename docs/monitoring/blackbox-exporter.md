@@ -14,9 +14,9 @@ By default, Blackbox exporter is not enabled. In order to enable it you will nee
 | chart.repo | string | <https://prometheus-community.github.io/helm-charts> | Blackbox exporter helm repository |
 | chart.name | string | prometheus-blackbox-exporter | Blackbox exporter chart name |
 | chart.version | string | 4.10.14 | Blackbox exporter chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

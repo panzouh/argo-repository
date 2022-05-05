@@ -42,9 +42,9 @@ To set up Loki, you will have to activate Loki and Promtail, the two being inter
 | chart.repo | string | <https://grafana.github.io/helm-charts> | Loki helm repository |
 | chart.name | string | loki | Loki chart name |
 | chart.version | string | 2.10.3 | Loki chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

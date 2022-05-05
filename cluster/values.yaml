@@ -75,7 +75,7 @@ namespaceConfiguration:
   enabled: false
   namespace: namespace-configurator
   chart:
-    repo: https://gitlab.com/a4537/repository.git
+    repo: https://github.com/panzouh/argo-repository.git
     path: charts/namespace-configuration
     targetRevision: HEAD
   values:
@@ -89,7 +89,7 @@ olm:
   enabled: false
   namespace: olm
   chart:
-    repo: https://gitlab.com/a4537/repository.git
+    repo: https://github.com/panzouh/argo-repository.git
     path: charts/olm
     targetRevision: HEAD
   values:
@@ -186,6 +186,7 @@ monitoring:
             password: changeme
             # Only for type vault
             avpPath: avp/data/prometheus
+            authKey: htpasswd
         dataRetention: 720h
   grafana:
     enabled: false
@@ -198,6 +199,9 @@ monitoring:
       adminUser: "admin"
       adminPassword: "changeme"
       avpPath: "avp/data/grafana"
+      # Only for type vault
+      userKey: username
+      passwordKey: password
       pvcSize: 10Gi
       ingress: 
         enabled: true
@@ -207,7 +211,7 @@ monitoring:
   fio:
     enabled: false
     chart:
-      repo: https://gitlab.com/a4537/repository.git
+      repo: https://github.com/panzouh/argo-repository.git
       path: charts/fio
       targetRevision: HEAD
     values:
@@ -315,11 +319,18 @@ vault:
     pvcSize: "10Gi"
     ha: false
 
+vaultSecrets:
+  namespace: argocd
+  chart:
+    repo: https://github.com/panzouh/argo-repository.git
+    path: charts/olm
+    targetRevision: HEAD
+
 userManagement:
   enabled: false
   namespace: argocd
   chart:
-    repo: https://gitlab.com/a4537/repository.git
+    repo: https://github.com/panzouh/argo-repository.git
     path: charts/users
     targetRevision: HEAD
   values:

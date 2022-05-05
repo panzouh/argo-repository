@@ -1,0 +1,20 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+# -- Create a vault secret, ex: [Value file](./values.yaml) 
+vaultSecrets: []
+  # - secretName: test-secret
+  #   secretNamespace: test
+  #   avpPath: avp/data/test-secret
+  #   stringData:
+  #     - key: username
+  #       placeholder: username
+  #     - key: password
+  #       placeholder: password
+  # - secretName: another-test-secret
+  #   secretNamespace: another-test
+  #   avpPath: avp/data/another-test-secret
+  #   stringData:
+  #     - key: auth
+  #       placeholder: auth

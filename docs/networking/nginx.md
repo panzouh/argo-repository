@@ -30,9 +30,9 @@ By default, there is no ingress enabled. You can activate either Traefik or Ngin
 | chart.repo | string | <https://kubernetes.github.io/ingress-nginx> | Nginx helm repository |
 | chart.name | string | ingress-nginx | Nginx chart name |
 | chart.version | string | 4.0.18 | Nginx chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

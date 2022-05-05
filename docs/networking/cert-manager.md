@@ -18,9 +18,9 @@ By default, if there is no ingress enabled, the chart will not be activated, in 
 | chart.repo | string | <https://charts.jetstack.io> | Cert-manager helm repository |
 | chart.name | string | cert-manager | Cert-manager chart name |
 | chart.version | string | 1.2.0 | Cert-manager chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

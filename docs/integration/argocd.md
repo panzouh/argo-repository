@@ -14,9 +14,9 @@ By default, ArgoCD maintained by itself is not enabled. You can activate either 
 | chart.repo | string | <https://argoproj.github.io/argo-helm> | ArgoCD helm repository |
 | chart.name | string | argo-cd | ArgoCD chart name |
 | chart.version | string | 3.35.0 | ArgoCD chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

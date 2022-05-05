@@ -21,16 +21,18 @@ By default, Grafana is not enabled. In order to enable it you will need to enabl
 | chart.repo | string | <https://grafana.github.io/helm-charts> | Grafana helm repository |
 | chart.name | string | grafana | Grafana chart name |
 | chart.version | string | 5.2.0 | Grafana chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | passwordType | string | raw | Can be either raw or vault in order to have vault you will need to enable AVP on ArgoCD watch [AVP documention](../security/avp-documention.md) & [Argo documentation](../integration/argocd.md) first |
 | adminUser | string | admin | Grafana default admin username, only for raw type :warning: insecure :warning: |
 | adminPassword | string | changeme | Grafana default admin password, only for raw type :warning: insecure :warning: |
-| avpPath | string | "avp/data/grafana" | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme` |
+| avpPath | string | "avp/data/grafana" | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault` |
+| userKey | string | "username" | Configure username key in vault kv-v2 secret, only for `passwordType: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true` |
+| passwordKey | string | "password" | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
 | pvcSize | string | 10Gi | Grafana persistence size, you will need to define a StorageClass in `default.storageClass` |
 | ingress.enabled | boolean | true | Enable Grafana ui |
 | ingress.name | string | grafana | Grafana ingress name or path (weither it is an ingress wildcard or domain) |

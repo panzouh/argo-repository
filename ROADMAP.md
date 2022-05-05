@@ -56,8 +56,10 @@
 
 - [x] Add ArgoCD project folder for each theme :
   - [ ] Provide real namespace isolation
+- [ ] Add lefthook support
 - Documentation :
   - [ ] Add Contribute.md documentation
+  - [ ] Migrate docs to [cluster readme](./cluster/README.md) w/ helm-docs
 - Themes :
   - Integration :
     - Argocd:

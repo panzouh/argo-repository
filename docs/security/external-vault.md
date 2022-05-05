@@ -128,7 +128,7 @@ spec:
                 path: auth/a-cluster # /!\ Change HERE /!\
         # [...]
       version: v3
-    repoURL: https://gitlab.com/a4537/repository.git
+    repoURL: https://github.com/panzouh/argo-repository.git
 ```
 
 ### Try Vault service account cluster role

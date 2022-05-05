@@ -11,12 +11,12 @@ In order to be enabled you can either activate this chart by setting `namespaceC
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | enabled | boolean | false | Enable Namespace configuration chart |
-| chart.repo | string | <https://gitlab.com/a4537/repository.git>(this repository) | Namespace configuration repository |
+| chart.repo | string | <https://github.com/panzouh/argo-repository.git>(this repository) | Namespace configuration repository |
 | chart.path | string | charts/namespace-configuration | Namespace configuration chart path |
 | chart.targetRevision | string | HEAD | Chart target revision, using HEAD allow you to use the same version of your cluster spec |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 The destination namespace will need to be created in order to create the service account. If it is a cluster role, the service account will be created in kube-system namespace.
 

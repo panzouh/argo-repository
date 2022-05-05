@@ -2,30 +2,16 @@
 {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "prometheus.enabled" .) "true" }}
-{{- if or (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "vault") }}
 {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw" }}
 ---
 kind: Secret
 apiVersion: v1
 metadata:
   name: promtheus-basic-auth
-  namespace: monitoring
+  namespace: {{ .Values.monitoring.namespace }}
 type: Opaque
 data:
   auth: {{ htpasswd .Values.monitoring.prometheus.values.server.ingress.auth.username .Values.monitoring.prometheus.values.server.ingress.auth.password | b64enc }}
-{{- end }}
-{{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "vault" }}
----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: promtheus-basic-auth
-  namespace: monitoring
-  annotations:
-    avp.kubernetes.io/path: {{ .Values.monitoring.prometheus.values.server.ingress.auth.avpPath }}
-type: Opaque
-stringData:
-  auth: <auth>
 {{- end }}
 {{- if eq (include "ingress.namespace" .) "traefik-system" }}
 ---
@@ -33,7 +19,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: prometheus-auth
-  namespace: monitoring
+  namespace: {{ .Values.monitoring.namespace }}
 spec:
   basicAuth:
     secret: prometheus-basic-auth

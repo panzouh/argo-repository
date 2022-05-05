@@ -193,3 +193,9 @@ Logging
     {{- print "disabled" }}
   {{- end }}
 {{- end }}
+
+{{- define "secrets.isVault" -}}
+  {{- $prometheusSecretType := .Values.monitoring.prometheus.values.server.ingress.auth.type -}}
+  {{- $grafanaSecretType := .Values.monitoring.grafana.values.passwordType -}}
+  {{- and .Values.argocd.values.avp.enabled (or (eq $prometheusSecretType "vault") (eq $grafanaSecretType "vault")) }}
+{{- end -}}

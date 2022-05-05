@@ -97,6 +97,8 @@ ECK docs will be released in a future version.
 
 #### [Vault chart template](./security/vault.md)
 
+#### [Vault secret chart template](./security/vault.md)
+
 #### [How to enable AVP](./security/avp-documention.md)
 
 #### [External Vault setup](./security/external-vault.md)

@@ -14,9 +14,9 @@ By default, Goldpinger is not enabled. In order to enable it you will need to en
 | chart.repo | string | <https://okgolove.github.io/helm-charts/> | Goldpinger helm repository |
 | chart.name | string | goldpinger | Goldpinger chart name |
 | chart.version | string | 5.1.0 | Goldpinger chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

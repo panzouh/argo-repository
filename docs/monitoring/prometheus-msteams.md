@@ -14,9 +14,9 @@ By default, Helm exporter is not enabled. In order to enable it you will need to
 | chart.repo | string | <https://prometheus-msteams.github.io/prometheus-msteams/> | Prometheus MsTeams helm repository |
 | chart.name | string | prometheus-blackbox-exporter | Prometheus MsTeams chart name |
 | chart.version | string | 4.10.4 | Prometheus MsTeams chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

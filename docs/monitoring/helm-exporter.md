@@ -14,9 +14,9 @@ By default, Helm exporter is not enabled. In order to enable it you will need to
 | chart.repo | string | <https://shanestarcher.com/helm-charts/> | Helm exporter helm repository |
 | chart.name | string | helm-exporter | Helm exporter chart name |
 | chart.version | string | 1.2.2+6766a95 | Helm exporter chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

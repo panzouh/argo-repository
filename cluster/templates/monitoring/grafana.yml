@@ -2,19 +2,17 @@
 {{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "grafana.enabled" .) "true" }}
-{{- if and .Values.argocd.values.avp.enabled (eq .Values.monitoring.grafana.values.passwordType "vault") }}
+{{- if and .Values.argocd.values.avp.enabled (eq .Values.monitoring.grafana.values.passwordType "raw") }}
 ---
 kind: Secret
 apiVersion: v1
 metadata:
   name: grafana-credentials
-  namespace: monitoring
-  annotations:
-    avp.kubernetes.io/path: {{ .Values.monitoring.grafana.values.avpPath }}
+  namespace: {{ .Values.monitoring.namespace }}
 type: Opaque
-stringData:
-  username: <username>
-  password: <password>
+data:
+  username: {{ .Values.monitoring.grafana.values.adminUser | b64enc }}
+  password: {{ .Values.monitoring.grafana.values.adminPassword | b64enc }}
 {{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -37,15 +35,10 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if eq .Values.monitoring.grafana.values.passwordType "raw" }}
-        adminUser: {{ .Values.monitoring.grafana.values.adminUser }}
-        adminPassword: {{ .Values.monitoring.grafana.values.adminPassword }}
-        {{- else if eq .Values.monitoring.grafana.values.passwordType "vault" }}
         admin:
           existingSecret: "grafana-credentials"
           userKey: username
           passwordKey: password
-        {{- end }}
         {{- if .Values.monitoring.prometheus.enabled }}
         datasources:
           datasources.yaml:

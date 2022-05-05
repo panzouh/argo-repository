@@ -40,9 +40,9 @@ By default, there is no ingress enabled. You can activate either Traefik or Ngin
 | chart.repo | string | <https://helm.traefik.io/traefik> | Traefik helm repository |
 | chart.name | string | traefik | Traefik chart name |
 | chart.version | string | 10.15.0 | Traefik chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

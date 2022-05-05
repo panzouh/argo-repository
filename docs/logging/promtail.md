@@ -38,9 +38,9 @@ To set up Promtail, you will have to activate Loki and Promtail, the two being i
 | chart.repo | string | <https://grafana.github.io/helm-charts> | Promtail helm repository |
 | chart.name | string | promtail | Promtail chart name |
 | chart.version | string | 3.11.0 | Promtail chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

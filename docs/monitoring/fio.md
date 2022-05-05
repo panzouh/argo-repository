@@ -11,12 +11,12 @@ By default, Fio exporter is not enabled. In order to enable it you will need to 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | enabled | boolean | false | Enable Fio chart |
-| chart.repo | string | <https://gitlab.com/a4537/repository.git> (this repository) | Fio helm repository |
+| chart.repo | string | <https://github.com/panzouh/argo-repository.git> (this repository) | Fio helm repository |
 | chart.path | string | charts/fio | Chart path on this repository |
 | chart.version | string | 4.10.14 | Chart target revision, using HEAD allow you to use the same version of your cluster spec |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

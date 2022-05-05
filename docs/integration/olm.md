@@ -11,12 +11,12 @@ By default, the OLM chart is not enabled. You can activate either by setting `ol
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | enabled | boolean | false | Enable OLM chart |
-| chart.repo | string | <https://gitlab.com/a4537/repository.git>(this repository) | OLM helm repository |
+| chart.repo | string | <https://github.com/panzouh/argo-repository.git>(this repository) | OLM helm repository |
 | chart.path | string | charts/olm | Namespace configuration operator chart path |
 | chart.targetRevision | string | HEAD | Chart target revision, using HEAD allow you to use the same version of your cluster spec |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

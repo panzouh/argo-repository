@@ -4,7 +4,7 @@ Vault is an identity-based secret and encryption management system. A secret is 
 
 ## Operating values
 
-In order to install vault you can choose if you want to enable vault specifically by doing `vault.enabled: true`, or just enable all the default stack including OLM, ArgoCD, Namespace configurator operator, Namespace configuration & Vault) by doing `default.enabled: true`.
+In order to install vault you can choose if you want to enable vault specifically by doing `vault.enabled: true`.
 
 ### Generic values
 
@@ -15,9 +15,9 @@ In order to install vault you can choose if you want to enable vault specificall
 | chart.repo | string | <https://helm.releases.hashicorp.com> | Vault helm repository |
 | chart.name | string | vault | Vault chart name |
 | chart.version | string | 0.19.0 | Vault chart version |
-| chart.values | dictionary | None | Watch section below |
+| values | dictionary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

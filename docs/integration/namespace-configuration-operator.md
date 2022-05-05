@@ -16,9 +16,9 @@ By default, the Namespace configuration operator is not enabled. You can activat
 | chart.repo | string | <https://redhat-cop.github.io/namespace-configuration-operator> | Namespace configuration operator helm repository |
 | chart.name | string | namespace-configuration-operator | Namespace configuration operator chart name |
 | chart.version | string | v1.2.2 | Namespace configuration operator chart version |
-| chart.values | dictionnary | None | Watch section below |
+| values | dictionnary | None | Watch section below |
 
-### Chart values (chart.values)
+### Chart values (values)
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
