@@ -30,4 +30,7 @@ spec:
         podAnnotations:
           prometheus.io/scrape: 'true'
           prometheus.io/port: '8080'
+        service:
+          type: LoadBalancer
+          port: 81
 {{ end }}
