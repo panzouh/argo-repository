@@ -1,5 +1,5 @@
 {{- define "prometheus.enabled" -}}
-{{- and .Values.monitoring.prometheus.enabled -}}
+{{- .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "prometheus.enabled" .) "true" }}
 {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw" }}
