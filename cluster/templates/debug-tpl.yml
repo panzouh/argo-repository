@@ -4,5 +4,5 @@
 test: {{ include "url-constructor" (dict "name" "url-test" "ingress" .Values.ingress.ingressDefinition) }}
 htpasswd: {{ htpasswd "test" "test" | b64enc }}
 {{- $promValues := .Values.monitoring.prometheus.values }}
-{{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations "authSecret" $secretAuthValue) }}
+{{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations "authSecret" $secretAuthValue) }}
 {{- end }}

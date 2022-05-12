@@ -721,10 +721,10 @@ spec:
             {{- end }}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.grafana.values.ingress.enabled}}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if .Values.default.storageClass }}
         persistence:

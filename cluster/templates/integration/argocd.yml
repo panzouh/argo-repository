@@ -100,12 +100,12 @@ spec:
           replicas: 2
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
           {{- end }}

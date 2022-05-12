@@ -50,10 +50,10 @@ spec:
             tag: "1.7.3"
             pullPolicy: IfNotPresent
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.vault.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.vault.values.ingress.enabled }}
-            {{- include "helm-ingress.definition" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
           {{- end }}
           {{- if and .Values.monitoring.prometheus.enabled .Values.vault.values.monitor }}
           annotations:

@@ -61,18 +61,18 @@ spec:
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.values.server.ingress.enabled }}
             {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "none" }}
-              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
+              {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
             {{- else if or (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "vault") }}
               {{- $secretAuthValue := dict "traefik.ingress.kubernetes.io/router.middlewares" "traefik-system-security@kubernetescrd" -}}
-              {{- include "helm-ingress.definitionWithAuth" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
+              {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
             {{- end }}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.prometheus.values.server.ingress.enabled }}
             {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "none" }}
-              {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
+              {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
             {{- else if or (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw") (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "vault") }}
               {{- $secretAuthValue := dict "nginx.ingress.kubernetes.io/auth-type" "basic" "nginx.ingress.kubernetes.io/auth-secret" "prometheus-basic-auth" "nginx.ingress.kubernetes.io/auth-realm" "Authentication Required" -}}
-              {{- include "helm-ingress.definitionWithAuth" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
+              {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
             {{- end }}
           {{- end }}
         {{- if eq (include "kubeStateMetrics.enabled" .) "true" }}
