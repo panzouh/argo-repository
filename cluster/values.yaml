@@ -190,8 +190,8 @@ monitoring:
   grafana:
     enabled: false
     chart:
-      repo: grafana
-      name: https://grafana.github.io/helm-charts
+      repo: https://grafana.github.io/helm-charts
+      name: grafana
       version: "6.29.2"
     values:
       passwordType: raw # raw|vault
