@@ -133,50 +133,6 @@ ingress:
   {{- end }}
 {{- end }}
 
-{{- define "helm-ingress.specificSpec" -}}
-{{- $name := .name -}}
-{{- $ingressDefinition := .ingressDefinition | default dict -}}
-{{- $annotations := .annotations | default dict -}}
-{{- $authSecret := .authSecret | default dict -}}
-{{- if $authSecret -}}
-{{- end -}}
-ingress:
-  enabled: true
-  {{- if $annotations }}
-  annotations:
-    {{- if $authSecret }}
-      {{- with merge $authSecret $annotations }}
-        {{- toYaml . | nindent 4 }}
-      {{- end }}
-    {{- else }}
-    {{- with merge $annotations }}
-        {{- toYaml . | nindent 4 }}
-    {{- end }}
-    {{- end }}
-    
-  {{- else }}
-  annotations: {}
-  {{- end }}
-  hosts:
-  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
-    - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
-  {{- else if eq $ingressDefinition.dns.mode "domain" }}
-    - {{ $ingressDefinition.dns.domain }}
-  paths:
-    - /{{ $name }}
-  {{- end }}
-  {{- if $ingressDefinition.ssl.enabled }}
-  tls:
-    - secretName: {{ $name }}-certificate
-      hosts:
-      {{- if eq $ingressDefinition.dns.mode "wildcard" }}
-        - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
-      {{- else if eq $ingressDefinition.dns.mode "domain" }}
-        - {{ $ingressDefinition.dns.domain }}
-      {{- end }}
-  {{- end }}
-{{- end }}
-
 {{- define "url-constructor" -}}
   {{- $name := .name -}}
   {{- $ingressDefinition := .ingress | default dict -}}
