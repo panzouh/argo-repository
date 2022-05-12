@@ -11,7 +11,7 @@ kubectl create ns argocd
 ## Copy [gitlab-secret.yml](gitlab-secret.yml) and modify to our needs
 
 ```sh
-wget https://github.com/panzouh/argo-repository.git
+wget https://raw.githubusercontent.com/panzouh/argo-repository/master/prerequisites/git-credentials.yml
 ```
 
 ```sh

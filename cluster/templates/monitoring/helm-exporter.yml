@@ -1,5 +1,5 @@
 {{- define "helm-exporter.enabled" -}}
-{{- and .Values.monitoring.helmExporter.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- and .Values.monitoring.helmExporter.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "helm-exporter.enabled" .) "true" }}
 ---

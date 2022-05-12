@@ -1,5 +1,5 @@
 {{- define "grafana.enabled" -}}
-{{- and .Values.monitoring.enabled .Values.monitoring.grafana.enabled -}}
+{{- .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "grafana.enabled" .) "true" }}
 {{- if and .Values.argocd.values.avp.enabled (eq .Values.monitoring.grafana.values.passwordType "raw") }}

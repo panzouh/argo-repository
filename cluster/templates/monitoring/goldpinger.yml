@@ -1,5 +1,5 @@
 {{- define "goldpinger.enabled" -}}
-{{- and .Values.monitoring.goldpinger.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- and .Values.monitoring.goldpinger.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "goldpinger.enabled" .) "true" }}
 ---

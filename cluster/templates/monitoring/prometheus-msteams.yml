@@ -1,5 +1,5 @@
 {{- define "prometheus-msteams.enabled" -}}
-{{- and .Values.monitoring.prometheusMsTeams.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
+{{- and .Values.monitoring.prometheusMsTeams.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
 {{- end -}}
 {{ if eq (include "prometheus-msteams.enabled" .) "true" }}
 ---

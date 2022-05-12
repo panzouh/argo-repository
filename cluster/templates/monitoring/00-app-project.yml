@@ -1,5 +1,5 @@
 {{- define "monitoring.enabled" -}}
-{{- .Values.monitoring.enabled -}}
+{{- or .Values.monitoring.prometheus.enabled .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "monitoring.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

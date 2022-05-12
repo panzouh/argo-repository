@@ -1,5 +1,5 @@
 {{- define "blackbox-exporter.enabled" -}}
-{{- and .Values.monitoring.blackboxExporter.enabled .Values.monitoring.enabled .Values.monitoring.prometheus.enabled -}}
+{{- and .Values.monitoring.blackboxExporter.enabled .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "blackbox-exporter.enabled" .) "true" }}
 ---
