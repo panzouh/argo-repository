@@ -88,22 +88,22 @@ ingress:
         - {{ $ingressDefinition.dns.domain }}
       {{- end }}
   {{- end }}
-{{- $authSecret := "" -}}
 {{- end }}
 
 {{- define "helm-ingress.definitionWithAuth" -}}
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
+{{- $cpAnnotations := $annotations -}}
 {{- $authSecret := .authSecret | default dict -}}
 {{- if $authSecret -}}
-{{- $annotations := deepCopy $authSecret | mustMerge $annotations  -}}
+{{- $cpAnnotations := deepCopy $authSecret | mustMerge $cpAnnotations  -}}
 {{- end -}}
 ingress:
   enabled: true
-  {{- if $annotations }}
+  {{- if $cpAnnotations }}
   annotations:
-    {{- with $annotations }}
+    {{- with $cpAnnotations }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- else }}
@@ -127,7 +127,6 @@ ingress:
         - {{ $ingressDefinition.dns.domain }}
       {{- end }}
   {{- end }}
-{{- $authSecret := "" -}}
 {{- end }}
 
 {{- define "url-constructor" -}}
