@@ -13,7 +13,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.fio.namespace }}
+    namespace: {{ .Values.monitoring.namespace }}
     server: https://kubernetes.default.svc
   project: monitoring
   source:
