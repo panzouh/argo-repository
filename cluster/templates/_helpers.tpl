@@ -88,6 +88,7 @@ ingress:
         - {{ $ingressDefinition.dns.domain }}
       {{- end }}
   {{- end }}
+{{- $authSecret := "" -}}
 {{- end }}
 
 {{- define "helm-ingress.definition.withAuth" -}}
@@ -126,6 +127,7 @@ ingress:
         - {{ $ingressDefinition.dns.domain }}
       {{- end }}
   {{- end }}
+{{- $authSecret := "" -}}
 {{- end }}
 
 {{- define "url-constructor" -}}
