@@ -159,7 +159,7 @@ monitoring:
     chart:
       repo: https://prometheus-community.github.io/helm-charts
       name: prometheus
-      version: "9.2.2"
+      version: "15.8.7"
     values:
       rules:
         preconfiguredEnabled: false
