@@ -60,6 +60,40 @@ Networking
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
+ingress:
+  enabled: true
+  {{- if $annotations }}
+  annotations:
+    {{- with $annotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- else }}
+  annotations: {}
+  {{- end }}
+  hosts:
+  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+    - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+  {{- else if eq $ingressDefinition.dns.mode "domain" }}
+    - {{ $ingressDefinition.dns.domain }}
+  paths:
+    - /{{ $name }}
+  {{- end }}
+  {{- if $ingressDefinition.ssl.enabled }}
+  tls:
+    - secretName: {{ $name }}-certificate
+      hosts:
+      {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+        - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+      {{- else if eq $ingressDefinition.dns.mode "domain" }}
+        - {{ $ingressDefinition.dns.domain }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "helm-ingress.definition.withAuth" -}}
+{{- $name := .name -}}
+{{- $ingressDefinition := .ingressDefinition | default dict -}}
+{{- $annotations := .annotations | default dict -}}
 {{- $authSecret := .authSecret | default dict -}}
 {{- if $authSecret -}}
 {{- $annotations := deepCopy $authSecret | mustMerge $annotations  -}}
@@ -117,7 +151,7 @@ Monitoring
 */}}
 
 {{- define "alertmanager.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
+  {{- and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
 {{- end }}
 
 {{- define "data.retention" -}}
@@ -125,15 +159,15 @@ Monitoring
 {{- end }}
 
 {{- define "kubeStateMetrics.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.kubeStateMetrics.enabled -}}
+  {{- and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.kubeStateMetrics.enabled -}}
 {{- end }}
 
 {{- define "nodeExporter.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.nodeExporter.enabled -}}
+  {{- and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.nodeExporter.enabled -}}
 {{- end }}
 
 {{- define "preconfigureRules.enabled" -}}
-  {{- and .Values.monitoring.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.rules.preconfiguredEnabled -}}
+  {{- and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.rules.preconfiguredEnabled -}}
 {{- end }}
 
 {{- define "value" -}}
