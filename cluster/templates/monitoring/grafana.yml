@@ -720,11 +720,11 @@ spec:
                 }
             {{- end }}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.monitoring.values.server.ingress.enabled }}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.grafana.values.ingress.enabled}}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.monitoring.values.server.ingress.enabled }}
-          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.monitoring.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
+          {{- include "helm-ingress.definition" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if .Values.default.storageClass }}
         persistence:
