@@ -91,7 +91,7 @@ ingress:
 {{- $authSecret := "" -}}
 {{- end }}
 
-{{- define "helm-ingress.definition.withAuth" -}}
+{{- define "helm-ingress.definitionWithAuth" -}}
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
