@@ -74,6 +74,16 @@ spec:
       values: |-
         controller:
           enableStatefulSet: true
+          {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
+          metrics:
+            enabled: true
+            service:
+              annotations:
+                prometheus.io/scrape: 'true'
+                prometheus.io/port: '8085'
+                prometheus.io/path: '/metrics'
+              servicePort: 8085
+          {{- end }}
         applicationset:
           enabled: false
         {{- if .Values.argocd.values.ha }}
@@ -85,19 +95,19 @@ spec:
         {{- end }}
         configs:
           createSecret: false
-        {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
-        metrics:
-          enabled: true
-          service:
-            annotations:
-              prometheus.io/scrape: 'true'
-              prometheus.io/port: '8085'
-              prometheus.io/path: '/metrics'
-            servicePort: 8085
-        {{- end }}
         server:
           {{- if .Values.argocd.values.ha }}
           replicas: 2
+          {{- end }}
+          {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
+          metrics:
+            enabled: true
+            service:
+              annotations:
+                prometheus.io/scrape: 'true'
+                prometheus.io/port: '8085'
+                prometheus.io/path: '/metrics'
+              servicePort: 8085
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.values.ingress.enabled }}
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
@@ -145,6 +155,16 @@ spec:
         repoServer:
           {{- if .Values.argocd.values.ha }}
           replicas: 2
+          {{- end }}
+          {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
+          metrics:
+            enabled: true
+            service:
+              annotations:
+                prometheus.io/scrape: 'true'
+                prometheus.io/port: '8085'
+                prometheus.io/path: '/metrics'
+              servicePort: 8085
           {{- end }}
           {{- if .Values.argocd.values.avp.enabled }}
           serviceAccount:
