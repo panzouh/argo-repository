@@ -292,7 +292,7 @@ spec:
                     severity: critical
                   annotations:
                     summary: Nginx high HTTP 5xx error rate (instance {{ quote (include "labels.instance" .) }})
-                    description: "Too many HTTP requests with status 5xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .)"
+                    description: "Too many HTTP requests with status 5xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
                 {{- end }}
             - name: Record
               rules:
