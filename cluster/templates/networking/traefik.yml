@@ -30,7 +30,7 @@ spec:
         deployment:
           enabled: true
           kind: DaemonSet
-        {{- if and .Values.ingress.traefik.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.ingress.traefik.values.monitor .Values.monitoring.prometheus.enabled }}
           podAnnotations:
             prometheus.io/scrape: 'true'
             prometheus.io/port: '8888'

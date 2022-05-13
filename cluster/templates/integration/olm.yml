@@ -23,7 +23,7 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.olm.values.monitoring .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.olm.values.monitoring .Values.monitoring.prometheus.enabled }}
         monitoring:
           enabled: true
         {{- else }}

@@ -85,7 +85,7 @@ spec:
         {{- end }}
         configs:
           createSecret: false
-        {{- if and .Values.argocd.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
         metrics:
           enabled: false
           service:

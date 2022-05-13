@@ -63,15 +63,11 @@ spec:
         dashboards:
           default:
             kube-monitor:
-              gnetId: 10182
-              revision: 6
-              datasource: Prometheus
-            kube-requests:
-              gnetId: 10252
-              revision: 1
+              gnetId: 11000
+              revision: 2
               datasource: Prometheus
             kube-resources:
-              gnetId: 12597
+              gnetId: 11671
               revision: 1
               datasource: Prometheus
             kube-pvc:
