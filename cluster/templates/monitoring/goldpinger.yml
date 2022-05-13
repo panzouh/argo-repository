@@ -29,7 +29,7 @@ spec:
           pullPolicy: IfNotPresent
         podAnnotations:
           prometheus.io/scrape: 'true'
-          prometheus.io/port: '8080'
+          prometheus.io/port: '80'
         service:
           type: LoadBalancer
           port: 81
