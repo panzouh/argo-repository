@@ -84,7 +84,7 @@ spec:
               revision: 1
               datasource: Prometheus
             {{- end }}
-            {{- if eq (include "ingress.namespace") "ingress-nginx"}}
+            {{- if eq (include "ingress.namespace" .) "ingress-nginx"}}
             nginx:
               gnetId: 9614
               revision: 1
