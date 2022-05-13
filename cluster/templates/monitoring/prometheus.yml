@@ -284,7 +284,7 @@ spec:
                     severity: critical
                   annotations:
                     summary: Nginx high HTTP 4xx error rate (instance {{ quote (include "labels.instance" .) }})
-                    description: "Too many HTTP requests with status 4xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .)"
+                    description: "Too many HTTP requests with status 4xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
                 - alert: DTKNginx_HighHttp5xxErrorRate
                   expr: sum(rate(nginx_ingress_controller_requests{status=~"5.."}[5m])) / sum(rate(nginx_ingress_controller_requests[5m])) * 100 > 5
                   for: 1m
