@@ -1,0 +1,60 @@
+{{- define "discord.enabled" -}}
+{{- and .Values.monitoring.discord.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
+{{- end -}}
+{{ if eq (include "prometheus-msteams.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fio-exporter
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.monitoring.namespace }}
+    server: https://kubernetes.default.svc
+  project: monitoring
+  source:
+    chart: {{ .Values.monitoring.discord.chart.name }}
+    repoURL: {{ .Values.monitoring.discord.chart.repo }}
+    targetRevision: {{ .Values.monitoring.discord.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        config:
+          prometheusURL: "http://localhost:8000"
+          messageType: severity
+          firingCountToMention: 20
+          rolesToMention:
+              - <@&974651319962959924>
+          status:
+            firing:
+              emoji: ":x:"
+              color: 10038562
+            resolved:
+              emoji: ":white_check_mark:"
+              color: 3066993
+          severity:
+              label: severity
+              values:
+              unknown:
+                  color: 9807270
+                  emoji: ":grey_question:"
+              information:
+                  color: 3447003
+                  emoji: ":information_source:"
+              warning:
+                  color: 15844367
+                  emoji: ":warning:"
+                  priority: 1
+              critical:
+                  color: 11027200
+                  emoji: ":x:"
+                  priority: 2
+              disaster:
+                  color: 10038562
+                  emoji: ":fire:"
+                  priority: 3
+{{ end }}

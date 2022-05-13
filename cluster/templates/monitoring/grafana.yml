@@ -64,8 +64,8 @@ spec:
           default:
             node-monitor-detailled:
               gnetId: 1860
-              revision:
-              datasource: 
+              revision: 27
+              datasource: Prometheus
             kube-monitor:
               gnetId: 11000
               revision: 2
