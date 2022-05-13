@@ -80,12 +80,14 @@ spec:
             service:
               annotations:
                 prometheus.io/scrape: 'true'
-                prometheus.io/port: '8085'
+                prometheus.io/port: '8082'
                 prometheus.io/path: '/metrics'
-              servicePort: 8085
+              servicePort: 8082
           {{- end }}
         applicationset:
           enabled: false
+        dex:
+          enabled: true
         {{- if .Values.argocd.values.ha }}
         redis-ha:
           enabled: true
@@ -105,9 +107,9 @@ spec:
             service:
               annotations:
                 prometheus.io/scrape: 'true'
-                prometheus.io/port: '8085'
+                prometheus.io/port: '8083'
                 prometheus.io/path: '/metrics'
-              servicePort: 8085
+              servicePort: 8083
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argocd.values.ingress.enabled }}
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
@@ -162,9 +164,9 @@ spec:
             service:
               annotations:
                 prometheus.io/scrape: 'true'
-                prometheus.io/port: '8085'
+                prometheus.io/port: '8084'
                 prometheus.io/path: '/metrics'
-              servicePort: 8085
+              servicePort: 8084
           {{- end }}
           {{- if .Values.argocd.values.avp.enabled }}
           serviceAccount:
