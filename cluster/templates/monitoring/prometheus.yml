@@ -163,7 +163,7 @@ spec:
                 {{- if .Values.monitoring.goldpinger.values.enablePrometheusRules }}
                 - alert: DTK_Goldpinger_Nodes
                   expr: |
-                    sum(goldpinger_nodes_health_total{job="goldpinger", status="unhealthy"})
+                    sum(goldpinger_nodes_health_total{status="unhealthy"})
                     BY (instance, goldpinger_instance) > 0
                   for: 5m
                   annotations:

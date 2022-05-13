@@ -87,7 +87,7 @@ spec:
           createSecret: false
         {{- if and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled }}
         metrics:
-          enabled: false
+          enabled: true
           service:
             annotations:
               prometheus.io/scrape: 'true'
