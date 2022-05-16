@@ -255,7 +255,7 @@ spec:
                         {
                           "expr": "fio_write_bandwidth_kbps",
                           "interval": "",
-                          "legendFormat": "{{ instance }}",
+                          "legendFormat": "{{ (include "grafana.instance" .) }}",
                           "refId": "A"
                         }
                       ],
