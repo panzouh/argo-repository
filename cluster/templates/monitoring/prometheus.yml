@@ -258,7 +258,7 @@ spec:
                     severity: warning
                   annotations:
                     summary: Kubernetes API server latency {{ quote (include "labels.instance" .) }}
-                    description: "Kubernetes API server has a 99th percentile latency of {{ (include "value" .) }} seconds for {{ (include "labels.verb" .) }} {{ (include "labels.resource" .)}}.\n  VALUE = {{ (include "value" .) }}\n  LABELS = {{ (include "labels" ) }}"
+                    description: "Kubernetes API server has a 99th percentile latency of {{ (include "value" .) }} seconds for {{ (include "labels.verb" .) }} {{ (include "labels.resource" .) }}.\n  VALUE = {{ (include "value" .) }}\n  LABELS = {{ (include "labels" .) }}"
                 - alert: DTKubernetes_ApiServerErrors
                   expr: sum(rate(apiserver_request_total{job="apiserver",code=~"^(?:5..)$"}[1m])) / sum(rate(apiserver_request_total{job="apiserver"}[1m])) * 100 > 3
                   for: 2m

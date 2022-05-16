@@ -162,7 +162,7 @@ monitoring:
       version: "15.8.7"
     values:
       rules:
-        preconfiguredEnabled: false
+        preconfiguredEnabled: true
         # Not available yet
         customs: {}
       alertmanager:
