@@ -226,18 +226,14 @@ monitoring:
       monitor: false
       hooks: []
   discord:
-    enabled: true
+    enabled: false
     chart:
       repo: https://masgustavos.github.io/helm
       name: alertmanager-discord
       version: "0.0.5"
     values:
-      rolesToMention:
-        - <@&974662202546073630>
-      channels:
-        default:
-          name: default
-          webhookURL: https://discord.com/api/webhooks/974662339263598593/-KWjqwSGHhEA2h65Rv2O8XyyPiN5I7ekUnnwKScg-tnULcFdB35-fAOOGDU0p1nnrWh3
+      rolesToMention: []
+      channels: {}
   blackboxExporter:
     enabled: false
     chart:

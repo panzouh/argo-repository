@@ -98,38 +98,50 @@ spec:
                     "list": [
                       {
                         "builtIn": 1,
-                        "datasource": "-- Grafana --",
+                        "datasource": {
+                          "type": "datasource",
+                          "uid": "grafana"
+                        },
                         "enable": true,
                         "hide": true,
                         "iconColor": "rgba(0, 211, 255, 1)",
                         "name": "Annotations & Alerts",
+                        "target": {
+                          "limit": 100,
+                          "matchAny": false,
+                          "tags": [],
+                          "type": "dashboard"
+                        },
                         "type": "dashboard"
                       }
                     ]
                   },
                   "editable": true,
-                  "gnetId": null,
+                  "fiscalYearStartMonth": 0,
                   "graphTooltip": 0,
-                  "id": 18,
+                  "id": 8,
                   "links": [],
+                  "liveNow": false,
                   "panels": [
                     {
-                      "cacheTimeout": null,
-                      "datasource": null,
+                      "datasource": {
+                        "type": "datasource",
+                        "uid": "grafana"
+                      },
                       "fieldConfig": {
                         "defaults": {
-                          "custom": {},
                           "decimals": 1,
                           "mappings": [
                             {
-                              "id": 0,
-                              "op": "=",
-                              "text": "N/A",
-                              "type": 1,
-                              "value": "null"
+                              "options": {
+                                "match": "null",
+                                "result": {
+                                  "text": "N/A"
+                                }
+                              },
+                              "type": "special"
                             }
                           ],
-                          "nullValueMode": "connected",
                           "thresholds": {
                             "mode": "absolute",
                             "steps": [
@@ -154,7 +166,6 @@ spec:
                         "y": 0
                       },
                       "id": 6,
-                      "interval": null,
                       "links": [],
                       "maxDataPoints": 100,
                       "options": {
@@ -173,9 +184,10 @@ spec:
                           ],
                           "fields": "",
                           "values": false
-                        }
+                        },
+                        "textMode": "auto"
                       },
-                      "pluginVersion": "7.0.3",
+                      "pluginVersion": "8.5.0",
                       "targets": [
                         {
                           "expr": "avg(fio_benchmark_duration_ms) / 1000",
@@ -187,8 +199,6 @@ spec:
                           "step": 20
                         }
                       ],
-                      "timeFrom": null,
-                      "timeShift": null,
                       "title": "Average benchmark duration",
                       "type": "stat"
                     },
@@ -197,10 +207,13 @@ spec:
                       "bars": false,
                       "dashLength": 10,
                       "dashes": false,
-                      "datasource": "Prometheus",
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                      },
                       "fieldConfig": {
                         "defaults": {
-                          "custom": {}
+                          "links": []
                         },
                         "overrides": []
                       },
@@ -227,9 +240,10 @@ spec:
                       "linewidth": 1,
                       "nullPointMode": "null",
                       "options": {
-                        "dataLinks": []
+                        "alertThreshold": true
                       },
                       "percentage": false,
+                      "pluginVersion": "8.5.0",
                       "pointradius": 2,
                       "points": false,
                       "renderer": "flot",
@@ -241,14 +255,12 @@ spec:
                         {
                           "expr": "fio_write_bandwidth_kbps",
                           "interval": "",
-                          "legendFormat": "{{ (include "grafana.instance" .) }}",
+                          "legendFormat": "{{ instance }}",
                           "refId": "A"
                         }
                       ],
                       "thresholds": [],
-                      "timeFrom": null,
                       "timeRegions": [],
-                      "timeShift": null,
                       "title": "Fio write BW",
                       "tooltip": {
                         "shared": true,
@@ -257,33 +269,24 @@ spec:
                       },
                       "type": "graph",
                       "xaxis": {
-                        "buckets": null,
                         "mode": "time",
-                        "name": null,
                         "show": true,
                         "values": []
                       },
                       "yaxes": [
                         {
                           "format": "KBs",
-                          "label": null,
                           "logBase": 1,
-                          "max": null,
-                          "min": null,
                           "show": true
                         },
                         {
                           "format": "short",
-                          "label": null,
                           "logBase": 1,
-                          "max": null,
-                          "min": null,
                           "show": true
                         }
                       ],
                       "yaxis": {
-                        "align": false,
-                        "alignLevel": null
+                        "align": false
                       }
                     },
                     {
@@ -291,10 +294,13 @@ spec:
                       "bars": false,
                       "dashLength": 10,
                       "dashes": false,
-                      "datasource": null,
+                      "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                      },
                       "fieldConfig": {
                         "defaults": {
-                          "custom": {}
+                          "links": []
                         },
                         "overrides": []
                       },
@@ -321,9 +327,10 @@ spec:
                       "linewidth": 1,
                       "nullPointMode": "null",
                       "options": {
-                        "dataLinks": []
+                        "alertThreshold": true
                       },
                       "percentage": false,
+                      "pluginVersion": "8.5.0",
                       "pointradius": 2,
                       "points": false,
                       "renderer": "flot",
@@ -333,22 +340,26 @@ spec:
                       "steppedLine": false,
                       "targets": [
                         {
-                          "expr": "avg(fio_ninety_nine_dot_nine_percentile)/1000",
-                          "interval": "",
-                          "legendFormat": "99.9th percentile",
+                          "datasource": {
+                            "type": "prometheus"
+                          },
+                          "expr": "avg(fio_ninety_nine_dot_nine_percentile) / 1000",
                           "refId": "A"
                         },
                         {
-                          "expr": "avg(fio_ninety_nine_dot_ninetyfive_percentile)/1000",
-                          "interval": "",
-                          "legendFormat": "99.95th percentile",
+                          "datasource": {
+                            "type": "prometheus"
+                          },
+                          "expr": "avg(fio_ninety_nine_dot_ninetyfive_percentile) / 1000",
+                          "hide": false,
                           "refId": "B"
                         },
                         {
-                          "expr": "avg(fio_ninety_nine_dot_ninetynine_percentile)/1000",
-                          "format": "time_series",
-                          "interval": "",
-                          "legendFormat": "99.99th percentile",
+                          "datasource": {
+                            "type": "prometheus"
+                          },
+                          "expr": "avg(fio_ninety_nine_dot_ninetynine_percentile)/ 1000",
+                          "hide": false,
                           "refId": "C"
                         }
                       ],
@@ -378,9 +389,7 @@ spec:
                           "yaxis": "left"
                         }
                       ],
-                      "timeFrom": null,
                       "timeRegions": [],
-                      "timeShift": null,
                       "title": "Fio benchmark ",
                       "tooltip": {
                         "shared": true,
@@ -389,45 +398,38 @@ spec:
                       },
                       "type": "graph",
                       "xaxis": {
-                        "buckets": null,
                         "mode": "time",
-                        "name": null,
                         "show": true,
                         "values": []
                       },
                       "yaxes": [
                         {
-                          "decimals": null,
+                          "$$hashKey": "object:69",
                           "format": "ms",
                           "label": "",
                           "logBase": 1,
-                          "max": null,
-                          "min": null,
                           "show": true
                         },
                         {
+                          "$$hashKey": "object:70",
                           "format": "short",
-                          "label": null,
                           "logBase": 1,
-                          "max": null,
-                          "min": null,
                           "show": true
                         }
                       ],
                       "yaxis": {
-                        "align": false,
-                        "alignLevel": null
+                        "align": false
                       }
                     }
                   ],
-                  "schemaVersion": 25,
+                  "schemaVersion": 36,
                   "style": "dark",
                   "tags": [],
                   "templating": {
                     "list": []
                   },
                   "time": {
-                    "from": "now-6h",
+                    "from": "now-15m",
                     "to": "now"
                   },
                   "timepicker": {
@@ -444,9 +446,10 @@ spec:
                     ]
                   },
                   "timezone": "",
-                  "title": "Fio exporter Dashboard",
-                  "uid": "qMM7xpjMz",
-                  "version": 6
+                  "title": "Fio exporter Dashboard Test",
+                  "uid": "kmJt2Du7k",
+                  "version": 1,
+                  "weekStart": ""
                 }
             {{- end }}
             {{- if eq (include "logging.namespace" .) "monitoring"}}
