@@ -1,7 +1,7 @@
 {{- define "discord.enabled" -}}
 {{- and .Values.monitoring.discord.enabled .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
 {{- end -}}
-{{ if eq (include "prometheus-msteams.enabled" .) "true" }}
+{{ if eq (include "discord.enabled" .) "true" }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -24,11 +24,17 @@ spec:
       version: v3
       values: |-
         config:
-          prometheusURL: "http://localhost:8000"
+          {{- if .Values.monitoring.prometheus.values.server.ingress.enabled }}
+          prometheusURL: {{ include "url-constructor" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
+          {{- end }}
           messageType: severity
           firingCountToMention: 20
+          {{- if .Values.monitoring.discord.values.rolesToMention }}
           rolesToMention:
-              - <@&974651319962959924>
+            {{- range .Values.monitoring.discord.values.rolesToMention }}
+              - {{ . }}
+            {{- end }}
+          {{- end }}
           status:
             firing:
               emoji: ":x:"
@@ -37,24 +43,35 @@ spec:
               emoji: ":white_check_mark:"
               color: 3066993
           severity:
-              label: severity
-              values:
+            label: severity
+            values:
               unknown:
-                  color: 9807270
-                  emoji: ":grey_question:"
+                color: 9807270
+                emoji: ":grey_question:"
               information:
-                  color: 3447003
-                  emoji: ":information_source:"
+                color: 3447003
+                emoji: ":information_source:"
               warning:
-                  color: 15844367
-                  emoji: ":warning:"
-                  priority: 1
+                color: 15844367
+                emoji: ":warning:"
+                priority: 1
               critical:
-                  color: 11027200
-                  emoji: ":x:"
-                  priority: 2
+                color: 11027200
+                emoji: ":x:"
+                priority: 2
               disaster:
-                  color: 10038562
-                  emoji: ":fire:"
-                  priority: 3
+                color: 10038562
+                emoji: ":fire:"
+                priority: 3
+          severitiesToMention:
+            - disaster
+            - critical
+            severitiesToIgnoreWhenAlone:
+              - information
+          {{- if .Values.monitoring.discord.values.channels }}  
+          channels:
+            {{- toYaml .Values.monitoring.discord.values.channels | nindent 12 }}
+          {{- else }}
+          channels: {}
+          {{- end }}
 {{ end }}

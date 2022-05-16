@@ -59,7 +59,7 @@
 - [ ] Add lefthook support
 - Documentation :
   - [ ] Add Contribute.md documentation
-  - [ ] Migrate docs to [cluster readme](./cluster/README.md) w/ helm-docs
+  - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
 - Themes :
   - Integration :
     - Argocd:
