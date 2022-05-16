@@ -155,7 +155,7 @@ certmanager:
 monitoring:
   namespace: monitoring
   prometheus:
-    enabled: true
+    enabled: false
     chart:
       repo: https://prometheus-community.github.io/helm-charts
       name: prometheus
@@ -166,7 +166,7 @@ monitoring:
         # Not available yet
         customs: {}
       alertmanager:
-        enabled: true
+        enabled: false
         pvcSize: "5Gi"
         configurationFile: {}
       kubeStateMetrics:

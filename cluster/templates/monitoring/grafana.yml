@@ -448,6 +448,7 @@ spec:
                   "uid": "qMM7xpjMz",
                   "version": 6
                 }
+            {{- end }}
             {{- if eq (include "logging.namespace" .) "monitoring"}}
             loki:
               json: |-
