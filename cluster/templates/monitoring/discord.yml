@@ -66,8 +66,8 @@ spec:
           severitiesToMention:
             - disaster
             - critical
-            severitiesToIgnoreWhenAlone:
-              - information
+          severitiesToIgnoreWhenAlone:
+            - information
           {{- if .Values.monitoring.discord.values.channels }}  
           channels:
             {{- toYaml .Values.monitoring.discord.values.channels | nindent 12 }}
