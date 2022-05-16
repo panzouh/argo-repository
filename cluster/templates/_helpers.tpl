@@ -187,6 +187,18 @@ Monitoring
   {{- print "{{ $labels.instance }}" -}}
 {{- end -}}
 
+{{- define "labels.node" -}}
+  {{- print "{{ $labels.node }}" -}}
+{{- end -}}
+
+{{- define "labels.verb" -}}
+  {{- print "{{ $labels.verb }}" -}}
+{{- end -}}
+
+{{- define "labels.resource" -}}
+  {{- print "{{ $labels.resource }}" -}}
+{{- end -}}
+
 {{- define "labels.namespace" -}}
   {{- print "{{ $labels.namespace }}" -}}
 {{- end -}}
@@ -197,6 +209,14 @@ Monitoring
 
 {{- define "labels.name" -}}
   {{- print "{{ $labels.name }}" -}}
+{{- end -}}
+
+{{- define "labels.persistentvolumeclaim" -}}
+  {{- print "{{ $labels.persistentvolumeclaim }}" -}}
+{{- end -}}
+
+{{- define "labels.exported_job" -}}
+  {{- print "{{ $labels.exported_job }}" -}}
 {{- end -}}
 
 {{- define "labels.goldpinger_instance" -}}

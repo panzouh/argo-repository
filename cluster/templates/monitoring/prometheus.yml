@@ -142,7 +142,7 @@ spec:
             groups:
             - name: Rules
               rules:
-                - alert: AnyDown
+                - alert: DTKJob_AnyDown
                   expr: up == 0
                   for: 5m
                   labels:
@@ -151,7 +151,7 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Component Down on instance {{ (include "labels.instance" .) }}"
                     description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                - alert: NodeDown
+                - alert: DTKNode_Down
                   expr: up{job="kubernetes-nodes"} == 0
                   for: 1m
                   labels:
@@ -160,8 +160,8 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Node DOWN (instance {{ (include "labels.instance" .) }})"
                     description: "K8S Node down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                {{- if .Values.monitoring.goldpinger.values.enablePrometheusRules }}
-                - alert: DTK_Goldpinger_Nodes
+                {{- if and .Values.monitoring.goldpinger.enabled .Values.monitoring.goldpinger.values.enablePrometheusRules }}
+                - alert: DTKNode_Goldpinger_Unhealthy
                   expr: |
                     sum(goldpinger_nodes_health_total{status="unhealthy"})
                     BY (instance, goldpinger_instance) > 0
@@ -173,8 +173,8 @@ spec:
                   labels:
                     severity: warning
                 {{- end }}
-                - alert: OutOfMemory
-                  expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+                - alert: DTKNode_OutOfMemory_Warning
+                  expr: 5 < node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
                   for: 10m
                   labels:
                     severity: warning
@@ -182,7 +182,16 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Out of memory (instance {{ (include "labels.instance" .) }})"
                     description: "Node memory is filling up (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                - alert: OutOfDiskSpace
+                - alert: DTKNode_OutOfMemory_Critical
+                  expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 5
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Out of memory (instance {{ (include "labels.instance" .) }})"
+                    description: "Node memory is filling up (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKNode_OutOfDiskSpace_Warning
                   expr: node_filesystem_free_bytes{mountpoint ="/"} / node_filesystem_size_bytes{mountpoint ="/"} * 100 < 10
                   for: 10m
                   labels:
@@ -191,8 +200,16 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Out of disk space (instance {{ (include "labels.instance" .) }})"
                     description: "Disk is almost full (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                - alert: OutOfInodes
-                  expr: node_filesystem_files_free{mountpoint ="/"} / node_filesystem_files{mountpoint ="/"} * 100 < 10
+                - alert: DTKNode_HostDiskWillFillIn24Hours
+                  expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) predict_linear(node_filesystem_avail_bytes{fstype!~"tmpfs"}[1h], 24 * 3600) < 0 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+                  for: 2m
+                  labels:
+                    severity: warning
+                  annotations:
+                    summary: Host disk will fill in 24 hours {{ quote (include "labels.instance" .) }}
+                    description: "Filesystem is predicted to run out of space within the next 24 hours at current write rate\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKNode_OutOfInodes_Warning
+                  expr: 5 < node_filesystem_files_free{mountpoint ="/"} / node_filesystem_files{mountpoint ="/"} * 100 < 10
                   for: 10m
                   labels:
                     severity: warning
@@ -200,7 +217,16 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "Out of inodes (instance {{ (include "labels.instance" .) }})"
                     description: "Disk is almost running out of available inodes (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                - alert: CpuLoad
+                - alert: DTKNode_OutOfInodes_Critical
+                  expr: node_filesystem_files_free{mountpoint ="/"} / node_filesystem_files{mountpoint ="/"} * 100 < 5
+                  for: 10m
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "Out of inodes (instance {{ (include "labels.instance" .) }})"
+                    description: "Disk is almost running out of available inodes (< 10% left)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKNode_HighCpuLoad
                   expr: node_load15 / (count without (cpu, mode) (node_cpu_seconds_total{mode="system"})) > 2
                   for: 10m
                   labels:
@@ -209,21 +235,94 @@ spec:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "CPU load (instance {{ (include "labels.instance" .) }})"
                     description: "CPU load (15m) is high\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_CertificateExpiresNextWeek
+                  expr: 24*60*60 < apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and histogram_quantile(0.01, sum by (job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 7*24*60*60
+                  for: 0m
+                  labels:
+                    severity: warning
+                  annotations:
+                    summary: Kubernetes client certificate expires next week ({{ quote (include "labels.instance" .) }}
+                    description: "A client certificate used to authenticate to the apiserver is expiring next week.\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_CertificateExpiresSoon
+                  expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and histogram_quantile(0.01, sum by (job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 24*60*60
+                  for: 0m
+                  labels:
+                    severity: critical
+                  annotations:
+                    summary: Kubernetes client certificate expires soon {{ quote (include "labels.instance" .) }}
+                    description: "A client certificate used to authenticate to the apiserver is expiring in less than 24.0 hours.\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_ApiServerLatency
+                  expr: histogram_quantile(0.99, sum(rate(apiserver_request_latencies_bucket{subresource!="log",verb!~"^(?:CONNECT|WATCHLIST|WATCH|PROXY)$"} [10m])) WITHOUT (instance, resource)) / 1e+06 > 1
+                  for: 2m
+                  labels:
+                    severity: warning
+                  annotations:
+                    summary: Kubernetes API server latency {{ quote (include "labels.instance" .) }}
+                    description: "Kubernetes API server has a 99th percentile latency of {{ (include "value" .) }} seconds for {{ (include "labels.verb" .) }} {{ (include "labels.resource" .)}}.\n  VALUE = {{ (include "value" .) }}\n  LABELS = {{ (include "labels" ) }}"
+                - alert: DTKubernetes_ApiServerErrors
+                  expr: sum(rate(apiserver_request_total{job="apiserver",code=~"^(?:5..)$"}[1m])) / sum(rate(apiserver_request_total{job="apiserver"}[1m])) * 100 > 3
+                  for: 2m
+                  labels:
+                    severity: critical
+                  annotations:
+                    summary: Kubernetes API server errors {{ quote (include "labels.instance" .) }}
+                    description: "Kubernetes API server is experiencing high error rate\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_NodeNotReady
+                  expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+                  for: 10m
+                  labels:
+                    severity: critical
+                  annotations:
+                    summary: Kubernetes Node ready {{ quote (include "labels.instance" .) }}
+                    description: "Node {{ (include "labels.node" .) }} has been unready for a long time\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_MemoryPressure
+                  expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+                  for: 2m
+                  labels:
+                    severity: critical
+                  annotations:
+                    summary: Kubernetes Node ready {{ quote (include "labels.instance" .) }}
+                    description: "Node {{ (include "labels.node" .) }}  has MemoryPressure condition\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_OutOfCapacity
+                  expr: sum by (node) ((kube_pod_status_phase{phase="Running"} == 1) + on(uid) group_left(node) (0 * kube_pod_info{pod_template_hash=""})) / sum by (node) (kube_node_status_allocatable{resource="pods"}) * 100 > 90
+                  for: 2m
+                  labels:
+                    severity: warning
+                  annotations:
+                    summary: Kubernetes out of capacity {{ quote (include "labels.instance" .) }}
+                    description: "Node {{ (include "labels.node" .) }} is out of capacity\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKubernetes_JobFailed
+                  expr: kube_job_status_failed > 0
+                  for: 0m
+                  labels:
+                    severity: warning
+                  annotations:
+                    summary: Kubernetes Job failed instance {{ quote (include "labels.instance" .) }}
+                    description: "Job {{ (include "labels.namespace" .) }}/{{ (include "labels.exported_job" .) }} failed to complete\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                - alert: DTKPod_Restarting_Warning
+                  expr: 5 > dtk_pod:restart:minutes_rate > 1
+                  for: 30s
+                  labels:
+                    severity: warning
+                  annotations:
+                    identifiers: {{ quote (include "labels.instance" .) }}
+                    summary: "A pod is restarting"
+                    description: "Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} has restarted {{ (include "value" .) }} times during last 5 minutes."
                 - alert: DTKPod_Restarting_Critical
-                  expr: dtk_pod:restart:minutes_rate > 0
+                  expr: dtk_pod:restart:minutes_rate > 5
                   for: 30s
                   labels:
                     severity: critical
                   annotations:
                     identifiers: {{ quote (include "labels.instance" .) }}
                     summary: "A pod is restarting"
-                    description: "Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} is restarting {{ (include "value" .) }} during last 5 minutes."
-                - alert: DTKPod_NotReady_Warn
+                    description: "Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} has restarted {{ (include "value" .) }} times during last 5 minutes."
+                - alert: DTKPod_NotReady_Warning
                   labels:
                     severity: warning
                   annotations:
                     identifiers: {{ quote (include "labels.instance" .) }}
-                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }}has been in a non-ready
+                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} has been in a non-ready
                       state for longer than 2 minutes.
                     runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
                     summary: Pod has been in a non-ready state for more than 2 minutes.
@@ -234,12 +333,28 @@ spec:
                     severity: critical
                   annotations:
                     identifiers: {{ quote (include "labels.instance" .) }}
-                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }}has been in a non-ready
+                    description: Pod {{ (include "labels.namespace" .) }}/{{ (include "labels.pod" .) }} has been in a non-ready
                       state for longer than 5 minutes.
                     runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
                     summary: Pod has been in a non-ready state for more than 5 minutes.
                   expr: dtk_pod:nonready:state
                   for: 5m
+                - alert: DTKPod_PVC_Pending
+                  expr: kube_persistentvolumeclaim_status_phase{phase="Pending"} == 1
+                  for: 2m
+                  labels:
+                    severity: info
+                  annotations:
+                    summary: Kubernetes PersistentVolumeClaim pending (instance {{ (include "labels.instance" .) }})
+                    description: "PersistentVolumeClaim {{ (include "labels.namespace" .) }}/{{ (include "labels.persistentvolumeclaim" .) }} is pending\n  VALUE = {{ (include "value" .) }}\n  LABELS = {{ (include "labels" .) }}"
+                - alert: DTKPod_PVC_FullInFourDays
+                  expr: predict_linear(kubelet_volume_stats_available_bytes[6h], 4 * 24 * 3600) < 0
+                  for: 0m
+                  labels:
+                    severity: critical
+                  annotations:
+                    summary: Kubernetes Volume full in four days (instance {{ (include "labels.instance" .) }})
+                    description: "{{ (include "labels.namespace" .) }}/{{ (include "labels.persistentvolumeclaim" .) }} is expected to fill up within four days. Currently {{ (include "value" .) }}% is available.\n LABELS = {{ (include "labels" .) }}"
                 - alert: DTKPod_PVC_Usage_Warning
                   expr:  dtk_pod:pvc:available_percentage < 10 AND dtk_pod:pvc:available_percentage > 3
                   for: 10m
@@ -281,10 +396,10 @@ spec:
                   expr: sum(rate(nginx_ingress_controller_requests{status=~"4.."}[5m])) / sum(rate(nginx_ingress_controller_requests[5m])) * 100 > 5
                   for: 1m
                   labels:
-                    severity: critical
+                    severity: warning
                   annotations:
                     summary: Nginx high HTTP 4xx error rate (instance {{ quote (include "labels.instance" .) }})
-                    description: "Too many HTTP requests with status 4xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                    description: "Too many HTTP requests with status 4xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n"
                 - alert: DTKNginx_HighHttp5xxErrorRate
                   expr: sum(rate(nginx_ingress_controller_requests{status=~"5.."}[5m])) / sum(rate(nginx_ingress_controller_requests[5m])) * 100 > 5
                   for: 1m
@@ -292,7 +407,7 @@ spec:
                     severity: critical
                   annotations:
                     summary: Nginx high HTTP 5xx error rate (instance {{ quote (include "labels.instance" .) }})
-                    description: "Too many HTTP requests with status 5xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+                    description: "Too many HTTP requests with status 5xx (> 5%)\n  VALUE = {{ (include "value" .) }}\n"
                 {{- end }}
             - name: Record
               rules:
