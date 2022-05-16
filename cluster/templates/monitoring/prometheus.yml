@@ -393,7 +393,7 @@ spec:
                     description: "Pod {{ (include "labels.pod" .) }} usage (10m) is high\n  VALUE = {{ (include "value" .) }} %"
                 {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.ingress.nginx.values.monitor }}
                 - alert: DTKNginx_HighHttp4xxErrorRate
-                  expr: sum(rate(nginx_ingress_controller_requests{status=~"4.."}[5m])) / sum(rate(nginx_ingress_controller_requests[5m])) * 100 > 5
+                  expr: sum(rate(nginx_ingress_controller_requests{status=~"4.."}[5m])) / sum(rate(nginx_ingress_controller_requests[5m])) * 100 > 15
                   for: 1m
                   labels:
                     severity: warning
