@@ -68,6 +68,13 @@ spec:
       values: |
         targetNamespaces: {{ quote .Values.starboard.values.targetNamespaces }}
         excludeNamespaces: {{ quote .Values.starboard.values.excludeNamespaces }}
+        service:
+          type: ClusterIP
+          metricsPort: 80
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/path: /metrics
+            prometheus.io/port: "80"
         trivy:
           imageRef: {{ .Values.starboard.values.trivy.imageRef }}
           mode: Standalone
