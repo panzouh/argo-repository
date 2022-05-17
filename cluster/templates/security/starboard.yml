@@ -74,7 +74,7 @@ spec:
           annotations:
             prometheus.io/scrape: "true"
             prometheus.io/path: /metrics
-            prometheus.io/port: "80"
+            prometheus.io/port: "8080"
         trivy:
           imageRef: {{ .Values.starboard.values.trivy.imageRef }}
           mode: Standalone
