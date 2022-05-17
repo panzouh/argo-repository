@@ -62,8 +62,6 @@
   - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
 - Themes :
   - Integration :
-    - Argocd:
-      - [ ] Handle ArgoCD deprecation notice => `WARNING: You are using configs.repositoryCredentials and/or server.config.repositories parameters that are DEPRECATED Instead, use configs.repositoryTemplates and/or configs.repositories parameters`
     - [ ] Gitlab runners (add first)
   - General :
     - [ ] Enable VPA support
@@ -73,8 +71,6 @@
     - [ ] Add backup solutions (Velero)
   - Monitoring :
     - Prometheus & Others :
-      - [ ] Add the possibility to add custom rules
-      - [ ] Take a look at Prometheus Operator
       - [ ] Configure enablePrometheusRules
       - [ ] Enable Grafana customDashboards & customDashboardsGNET functionatility
   - Networking :
@@ -103,6 +99,10 @@
   - Integration :
     - Argocd:
       - [ ] Take a look on [Argocd notifications](https://argocd-notifications.readthedocs.io/en/stable/) & [Argo Config](https://github.com/argoproj/argo-helm/blob/master/charts/argo-cd/values.yaml#L2257)
+  - Monitoring :
+    - Prometheus & Others :
+      - [ ] Add the possibility to add custom rules
+      - [ ] Take a look at Prometheus Operator
   - Security :
     - [ ] Add in-cluster audit tool (OctarineSec ATM)
     - [ ] Work on Keycloak auth (Both ArgoCD & Kubernetes)
