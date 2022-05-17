@@ -350,7 +350,7 @@ starboard:
   namespace: starboard-system
   chart:
     repo: https://aquasecurity.github.io/helm-charts/
-    name: charts/octarinesec
+    name: starboard-operator
     version: "0.10.4"
   values:
     targetNamespaces: ""

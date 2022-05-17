@@ -6,7 +6,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: user-management
+  name: starboard
   namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
