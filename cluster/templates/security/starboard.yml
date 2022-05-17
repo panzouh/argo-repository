@@ -22,36 +22,43 @@ spec:
     name: ciskubebenchreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
     name: clustercompliancedetailreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
     name: clustercompliancereports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
     name: clusterconfigauditreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
     name: clustervulnerabilityreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group: apiextensions.k8s.io
     kind: CustomResourceDefinition
     name: kubehunterreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   - group:
     kind: CustomResourceDefinition
     name: vulnerabilityreports.aquasecurity.github.io
     jsonPointers:
     - /status
+    - /spec/preserveUnknownFields
   source:
     chart: {{ .Values.starboard.chart.name }}
     repoURL: {{ .Values.starboard.chart.repo }}

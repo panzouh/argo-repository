@@ -254,15 +254,6 @@ monitoring:
     values:
       enablePrometheusRules: true
       enableGrafanaDashboard: true
-  helmExporter:
-    enabled: false
-    chart:
-      repo: https://shanestarcher.com/helm-charts/
-      name: helm-exporter
-      version: "1.2.2+6766a95"
-    values:
-      enablePrometheusRules: false
-      disabledNamespaces: null
 
 # Logging
 
