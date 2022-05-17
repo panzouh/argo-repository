@@ -18,40 +18,40 @@ spec:
   project: security
   ignoreDifferences:
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: ciskubebenchreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: ciskubebenchreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: clustercompliancedetailreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: clustercompliancedetailreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: clustercompliancereports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: clustercompliancereports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: clusterconfigauditreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: clusterconfigauditreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: clustervulnerabilityreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: clustervulnerabilityreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group: apiextensions.k8s.io
-      kind: CustomResourceDefinition
-      name: kubehunterreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: kubehunterreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   - group:
-      kind: CustomResourceDefinition
-      name: vulnerabilityreports.aquasecurity.github.io
-      jsonPointers:
-      - /status
+    kind: CustomResourceDefinition
+    name: vulnerabilityreports.aquasecurity.github.io
+    jsonPointers:
+    - /status
   source:
     chart: {{ .Values.starboard.chart.name }}
     repoURL: {{ .Values.starboard.chart.repo }}
