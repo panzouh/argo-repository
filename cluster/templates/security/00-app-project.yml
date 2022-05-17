@@ -1,5 +1,5 @@
 {{- define "security.enabled" -}}
-{{- or .Values.vault.enabled .Values.userManagement.enabled -}}
+{{- or .Values.vault.enabled .Values.starboard.enabled .Values.userManagement.enabled -}}
 {{- end -}}
 {{ if eq (include "security.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

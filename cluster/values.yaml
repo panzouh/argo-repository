@@ -345,6 +345,21 @@ userManagement:
     namespaceRoles: []
     clusterRoles: []
 
+starboard:
+  enabled: false
+  namespace: starboard-system
+  chart:
+    repo: https://aquasecurity.github.io/helm-charts/
+    name: charts/octarinesec
+    version: "0.10.4"
+  values:
+    targetNamespaces: ""
+    excludeNamespaces: ""
+    trivy:
+      imageRef: docker.io/aquasec/trivy:0.25.2
+      severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+      nonSslRegistries: {}
+
 # Storage
 
 storage:

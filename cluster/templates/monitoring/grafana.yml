@@ -93,7 +93,7 @@ spec:
             {{- if and .Values.monitoring.fio.enabled .Values.monitoring.fio.values.enableGrafanaDashboard }}
             fio:
               gnetId: 16284
-              revision: 2
+              revision: 3
               datasource: Prometheus
             {{- end }}
             {{- if eq (include "logging.namespace" .) "monitoring"}}
