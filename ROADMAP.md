@@ -82,6 +82,8 @@
     - [ ] Add in-cluster storage solutions (Rook)
   - Logging :
     - [ ] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
+  - Security :
+    - [x] Add in-cluster audit tool => Starboard
 
 ## V1
 
@@ -104,5 +106,5 @@
       - [ ] Add the possibility to add custom rules
       - [ ] Take a look at Prometheus Operator
   - Security :
-    - [ ] Add in-cluster audit tool (OctarineSec ATM)
     - [ ] Work on Keycloak auth (Both ArgoCD & Kubernetes)
+    - [ ] Add cluster campain policies on Starboard
