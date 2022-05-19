@@ -93,11 +93,12 @@ spec:
 
 ## How to install
 
-Refer to [prequisites](./prerequisites/README.md) first.
+Refer to [prequisites](./prerequisites/README.md).
 
 ## Documentations
 
-Please refer to [docs](./docs).
+If you are looking how to operate the value file, you should refer to [cluster chart documentation](./cluster/)
+Although, If you are looking for a specific documentation you should refer to [docs](./cluster). And finally, if you are looking for custom charts documentations, you will find it [here](./charts/).
 
 ## Read before commiting an issue
 

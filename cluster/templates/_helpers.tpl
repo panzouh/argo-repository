@@ -232,7 +232,22 @@ Logging
 */}}
 
 {{- define "elfk.enabled" }}
-  {{- (and .Values.logging.enabled (or .Values.logging.fluentd.enabled .Values.logging.logstash.enabled) .Values.logging.eck.enabled) }}
+  {{- and .Values.logging.eck.enabled .Values.logging.eckTpl.enabled }}
+{{- end }}
+
+{{- define "eck.verbosity" }}
+    {{- if eq .Values.logging.eck.values.verbosity "error" }}
+      {{- print "-2" }}
+    {{- end }}
+    {{- if eq .Values.logging.eck.values.verbosity "warning" }}
+      {{- print "-1" }}
+    {{- end }}
+    {{- if eq .Values.logging.eck.values.verbosity "info" }}
+      {{- print "0" }}
+    {{- end }}
+    {{- if eq .Values.logging.eck.values.verbosity "debug" }}
+      {{- print "1" }}
+    {{- end }}
 {{- end }}
 
 {{- define "lp.enabled" }}
@@ -246,7 +261,7 @@ Logging
     {{- else if eq (include "lp.enabled" .) "true" }}
       {{- print "monitoring" }}
     {{- else if eq (include "elfk.enabled" .) "true" }}
-      {{- print "elasticsearch-logging" }}
+      {{- print "elastics-system" }}
     {{- end }}
   {{- else }}
     {{- print "disabled" }}

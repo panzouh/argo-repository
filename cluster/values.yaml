@@ -2,20 +2,30 @@
 # General
 
 default:
+  # -- Enable default charts (ArgoCD, Namespace configurator operator & Namespace configuration)
   enabled: false
+  # -- Define storageClass in order to persistence to work
   storageClass: ""
+  # -- Smtp server to configure notifications :warning: not working yet :warning:
   smtpServer: "0.0.0.0:25"
 
+# -- If you want to do some debug you can modify the [debug-file](./templates/debug-tpl.yml) template to try some of your functions
 debug: false
 
 sync:
+  # -- Allow you to activate auto-sync w/ selfHeal & prune mecanism
   enabled: true
+  # -- y default changes that are made to the live cluster will not trigger automated sync. This variable allow to enable automatic sync when the live cluster's state deviates from the state defined in Git
   selfHeal: true
+  # -- By default (and as a safety mechanism), automated sync will not delete resources but on this chart it is enabled by default
   prune: true
 
 proxies:
+  # -- Enable proxy support for all charts
   enabled: false
+  # -- Define http(s) proxy
   value: ""
+  # -- Define noProxy value should be `noProxy: .cluster.local,.svc,podsCIDR,svcCIDR`
   noProxy: ""
 
 # Backup 
@@ -37,318 +47,484 @@ chaosMesh:
 # Integration
 
 argocd:
+  # -- Enable ArgoCD chart
   enabled: false
+  # -- Destination namespace & Applications source namespace
   namespace: argocd
   chart:
+    # -- Helm repository
     repo: https://argoproj.github.io/argo-helm
+    # -- chart name
     name: argo-cd
+    # -- chart version
     version: "4.5.0"
   values:
+    # -- Application controller logLevel 
     logLevel: debug
     avp:
+      # -- Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first
       enabled: false
+      # -- Tell to Argo which SA to create
       saName: avp
+      # -- AVP version to install
       version: "1.10.1"
       auth:
+        # -- Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only
         vaultUrl: "https://your-vault.domain.tld"
+        # -- AVP auth type
         type: k8s
+        # AVP auth path
         path: auth/kubernetes
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
+    # -- Enable ArgoCD on HA mode
     ha: true
     ingress:
+      # -- Enable ArgoCD UI ingress
       enabled: true
+      # -- ArgoCD ingress name or path (weither it is an ingress wildcard or domain
       name: argocd
+    # -- Enable ArgoCD all the way TLS, will be deactivated if ingress are enabled
     insecure: false
+    # -- Registered repositories not handled yet, watch section below :warning: Credentials not handled yet :warning:
     repositories: []
 
 namespaceConfiguratorOperator:
+  # -- Enable Namespace configuration operator chart
   enabled: false
-  namespace: namespace-configurator
+  # -- Destination namespace
+  namespace: namespace-configuration
   chart:
+    # -- Helm repository
     repo: https://redhat-cop.github.io/namespace-configuration-operator
+    # -- Chart name
     name: namespace-configuration-operator
+    # -- Chart version
     version: v1.2.2
   values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
 
 namespaceConfiguration:
+  # -- Enable Namespace configuration chart
   enabled: false
+  # -- Destination namespace
   namespace: namespace-configurator
   chart:
+    # -- Helm repository (This own repository)
     repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path on repository
     path: charts/namespace-configuration
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
     targetRevision: HEAD
   values:
+    # -- Create *n* resources quotas so your users does not overconsume compute resources
     quotas: []
+    # -- Create *n* network policies
     networkPolicies: []
     isolatedNetworkPolicy:
+      # -- Create the isolated networkPolicy (Full access on current namespace, access outside the cluster, accessible by ingress & monitoring, restricted to every other namespaces)
       enabled: false
+      # -- You will need to specify podCIDR & serviceCIDR you can get it by running `kubectl cluster-info dump | grep -m 1 service-cluster-ip-range` & `kubectl cluster-info dump | grep -m 1 cluster-cidr`
       clusterCIDRs: []
 
-olm:
-  enabled: false
-  namespace: olm
-  chart:
-    repo: https://github.com/panzouh/argo-repository.git
-    path: charts/olm
-    targetRevision: HEAD
-  values:
-    monitoring: false
-    debug: false
+# Logging
+
+logging:
+  loki:
+    # -- Enable Loki chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://grafana.github.io/helm-charts
+      # -- Chart name
+      name: loki
+      # -- Chart version
+      version: "2.10.3"
+    values:
+      # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
+      monitor: false
+      # -- Loki PVC size, you will need to define a StorageClass in `default.storageClass``
+      pvcSize: 100Gi
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
+  promtail:
+    # -- Enable Promtail chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://grafana.github.io/helm-charts
+      # -- Chart name
+      name: promtail
+      # -- Chart version
+      version: "3.11.0"
+    values:
+      # -- Enable Promtail on the controll plane
+      installOnControllPlane: true
+      # -- Path to runtime containers
+      runtimeLogs: "/var/lib/docker/containers"
+  eck:
+    # -- Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://prometheus-community.github.io/helm-charts
+      # -- Chart name
+      name: prometheus
+      # -- Chart version
+      version: "9.2.2"
+    values:
+      # -- Filter namespaces to watch you can leave it empty to watch all namespaces
+      watchNamespaces:
+        - elastic-system
+      # -- Enable telemetry
+      telemetryEnabled: true
+      # -- Operator verbosity
+      verbosity: warning
+      # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
+      monitor: false
+  eckTpl:
+    # -- Enable ECK Tpl chart
+    enabled: false
+    chart:
+      # -- Helm repository (This own repository)
+      repo: https://github.com/panzouh/argo-repository.git
+      # -- Chart path
+      path: charts/eck-tpl
+      # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+      targetRevision: HEAD
+    values: {}
+
+# Monitoring
+
+monitoring:
+  # -- Monitoring destination namespace
+  namespace: monitoring
+  prometheus:
+    # -- Enable Prometheus chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://prometheus-community.github.io/helm-charts
+      # -- Chart name
+      name: prometheus
+      # Chart version
+      version: "15.8.7"
+    values:
+      rules:
+        # -- Enable Prometheus rules watch preconfigured rules below
+        preconfiguredEnabled: true
+        # -- Create Prometheus custom rules (not available yet)
+        customs: {}
+      alertmanager:
+        # -- Enable Alertmanager in the chart
+        enabled: false
+        # -- Alertmanager PVC size, you will need to define a StorageClass in `default.storageClass`
+        pvcSize: "5Gi"
+        # Alertmanager configuration file, example below
+        configurationFile: {}
+      kubeStateMetrics:
+        # Enable kubeStateMetrics in the chart
+        enabled: true
+      nodeExporter:
+        # Enable nodeExporter in the chart
+        enabled: true
+      server:
+        # -- Prometheus PVC size, you will need to define a StorageClass in `default.storageClass`
+        pvcSize: "30Gi"
+        # -- Prometheus data retention
+        dataRetention: 720h
+        ingress:
+          # -- Enable Prometheus UI Ingress
+          enabled: true
+          # -- Prometheus ingress name or path (weither it is an ingress wildcard or domain)
+          name: prometheus
+          auth:
+            # -- Can be `none`, `raw` (:warning: both insecure :warning:) `vault`
+            type: raw
+            # -- Basic auth username (only for `raw` type)
+            username: admin
+            # -- Basic auth password (only for `raw` type) 
+            password: changeme
+            # -- Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true`
+            avpPath: avp/data/prometheus
+            # -- Configure password key in vault kv-v2 secret, only for `auth.type: vault`
+            authKey: htpasswd
+  grafana:
+    # -- Enable Grafana chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://grafana.github.io/helm-charts
+      # -- Chart name
+      name: grafana
+      # -- Chart version
+      version: "6.29.2"
+    values:
+      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true`
+      passwordType: raw
+      # -- Grafana default admin username, only for raw type :warning: insecure :warning
+      adminUser: "admin"
+      # -- Grafana default admin password, only for raw type :warning: insecure :warning:
+      adminPassword: "changeme"
+      # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
+      avpPath: "avp/data/grafana"
+      # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
+      userKey: username
+      # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
+      passwordKey: password
+      # -- Grafana PVC size, you will need to define a StorageClass in `default.storageClass`
+      pvcSize: 10Gi
+      ingress:
+        # -- Enable Grafana UI ingress
+        enabled: true
+        # -- Grafana ingress name or path (weither it is an ingress wildcard or domain)
+        name: grafana
+      # -- Create Grafana custom dashoards (Json Formated), not available at the moment
+      customDashboards: {}
+      # -- Create Grafana Dashboard available on Grafana Net, not available at the moment
+      customDashboardsGNET: {}
+  fio:
+    # -- Enable Fio chart you will need to enable Prometheus as well
+    enabled: false
+    chart:
+      # -- Helm repository (This own repository)
+      repo: https://github.com/panzouh/argo-repository.git
+      # -- Chart path
+      path: charts/fio
+      # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+      targetRevision: HEAD
+    values:
+      # Enable Fio exporter on the controll plane, by default Prometheus scraping is enabled
+      installOnControllPlane: true
+      # Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
+  prometheusMsTeams:
+    # -- Enable Prometheus Ms Teams Alert chart, you will need to enable Prometheus & Alertmanager as well
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://prometheus-msteams.github.io/prometheus-msteams/
+      # -- Chart name
+      name: prometheus-msteams
+      # -- Chart version
+      version: "1.3.0"
+    values:
+      # -- Enable Prometheus scraping
+      monitor: false
+      # -- Hooks list, watch section below for more informations
+      hooks: []
+  discord:
+    # -- Enable Discord alerting hooks, you will need to enable Prometheus & Alertmanager as well
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://masgustavos.github.io/helm
+      # -- Chart name
+      name: alertmanager-discord
+      # -- Chart version
+      version: "0.0.5"
+    values:
+      # -- Roles to mention in discord you can obtain the id by typing `\@Role_Name` in discord's chat
+      rolesToMention: []
+      # -- Channels list, watch section below for more informations
+      channels: {}
+  blackboxExporter:
+    # -- Enable Blackbox exporter chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://prometheus-community.github.io/helm-charts
+      # -- Chart name
+      name: prometheus-blackbox-exporter
+      # -- Chart version
+      version: "4.10.4"
+    values:
+      # -- Enable prometheus default Prometheus rules (Will be announced in a future release)
+      enablePrometheusRules: false
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: false
+      # -- Create Url get configs accepted code are `200` & `403` (If you are using authentication)
+      scrapeUrls: []
+  goldpinger:
+    # -- Enable Goldpinger chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://okgolove.github.io/helm-charts
+      # -- Chart name
+      name: goldpinger
+      # -- Chart version
+      version: "5.1.0"
+    values:
+      # -- Enable prometheus default Prometheus rules (not ready yet)
+      enablePrometheusRules: true
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
 
 # Networking
 
 ingress:
   ingressDefinition:
     ssl:
+      # -- Enforce strictTls :warning: not working yet :warning:
       strictTLS: false
+      # -- Force TLS certificate section
       enabled: true
     dns:
-      mode: wildcard # domain|wildcard
+      # -- DNS declaration of your cluster can be `domain` or `wildcard`
+      mode: wildcard
+      # -- Cluster DNS wildcard entry, it generate this kind of urls : `https://prometheus.your-cluster.domain.tld`
       wildcard: your-cluster.domain.tld
+      # Cluster DNS entry, it generate this kind of urls : `https://domain.tld/prometheus`
       domain: domain.tld
   traefik:
+    # -- Enable Traefik chart, you should know that you can't activate Traefik & Nginx
     enabled: false
     chart:
+      # Helm repository
       repo: https://helm.traefik.io/traefik
+      # Chart name
       name: traefik
+      # Chart version
       version: "10.15.0"
     values:
+      # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
+      # -- Allow to add ingress annotations manually
       ingressAnnotations: {}
-      # if strictTLs you should be using => traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd
       service:
-        type: LoadBalancer # LoadBalancer|NodePort
-        LoadBalancerIps: [] # Only for BareMetal support
+        # -- Can be either Loadbalancer or NodePort
+        type: LoadBalancer
+        # -- Only for BareMetal support if you want to enforce Traefik's service IP
+        LoadBalancerIps: []
   nginx:
+    # -- Enable Nginx chart, you should know that you can't activate Traefik & Nginx
     enabled: false
     chart:
+      # -- Helm repository
       repo: https://kubernetes.github.io/ingress-nginx
+      # -- Chart name
       name: ingress-nginx
+      # -- Chart version
       version: "4.0.18"
     values:
+      # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
-      service:
-        type: LoadBalancer # LoadBalancer|NodePort
-        LoadBalancerIps: [] # Only for BareMetal support
+      # -- Allow to add ingress annotations manually
       ingressAnnotations: {}
+      service:
+        # -- Can be either Loadbalancer or NodePort
+        type: LoadBalancer
+        # -- Only for BareMetal support if you want to enforce Traefik's service IP
+        LoadBalancerIps: []
         
 certmanager:
+  # -- Enable Cert-manager chart
   enabled: false
+  # -- Destination namespace
   namespace: cert-manager
   chart:
+    # -- Helm repository
     repo: https://charts.jetstack.io
+    # -- Chart name
     name: cert-manager
+    # -- Chart version
     version: '1.8.0'
   values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
     clusterIssuerLetsEncrypt:
+      # -- Enable Let's encrypt cluster issuers
       enabled: false
+      # -- Configure certificate expiracy notice notifications
       email: jdoe@domain.tld
       stagging:
+        # -- Enable LetsEncrypt stagging issuer
         enabled: false
       production:
+        # -- Enable Let's Encrypt production issuer
         enabled: false
-
-# Monitoring
-
-monitoring:
-  namespace: monitoring
-  prometheus:
-    enabled: false
-    chart:
-      repo: https://prometheus-community.github.io/helm-charts
-      name: prometheus
-      version: "15.8.7"
-    values:
-      rules:
-        preconfiguredEnabled: true
-        # Not available yet
-        customs: {}
-      alertmanager:
-        enabled: false
-        pvcSize: "5Gi"
-        configurationFile: {}
-      kubeStateMetrics:
-        enabled: true
-      nodeExporter:
-        enabled: true
-      server:
-        pvcSize: "30Gi"
-        ingress:
-          enabled: true
-          name: prometheus
-          auth: 
-            type: raw # Can be none|raw|vault
-            # Only for type raw
-            username: admin
-            password: changeme
-            # Only for type vault
-            avpPath: avp/data/prometheus
-            authKey: htpasswd
-        dataRetention: 720h
-  grafana:
-    enabled: false
-    chart:
-      repo: https://grafana.github.io/helm-charts
-      name: grafana
-      version: "6.29.2"
-    values:
-      passwordType: raw # raw|vault
-      adminUser: "admin"
-      adminPassword: "changeme"
-      avpPath: "avp/data/grafana"
-      # Only for type vault
-      userKey: username
-      passwordKey: password
-      pvcSize: 10Gi
-      ingress: 
-        enabled: true
-        name: grafana
-      customDashboards: {}
-      customDashboardsGNET: {}
-  fio:
-    enabled: false
-    chart:
-      repo: https://github.com/panzouh/argo-repository.git
-      path: charts/fio
-      targetRevision: HEAD
-    values:
-      installOnControllPlane: true
-      enableGrafanaDashboard: true
-  prometheusMsTeams:
-    enabled: false
-    chart:
-      repo: https://prometheus-msteams.github.io/prometheus-msteams/
-      name: prometheus-msteams
-      version: "1.3.0"
-    values:
-      monitor: false
-      hooks: []
-  discord:
-    enabled: false
-    chart:
-      repo: https://masgustavos.github.io/helm
-      name: alertmanager-discord
-      version: "0.0.5"
-    values:
-      rolesToMention: []
-      channels: {}
-  blackboxExporter:
-    enabled: false
-    chart:
-      repo: https://prometheus-community.github.io/helm-charts
-      name: prometheus-blackbox-exporter
-      version: "4.10.4"
-      # Not yet ready for url scraping
-    values:
-      enablePrometheusRules: false
-      enableGrafanaDashboard: false
-      scrapeUrls: []
-  goldpinger:
-    enabled: false
-    chart:
-      repo: https://okgolove.github.io/helm-charts
-      name: goldpinger
-      version: "5.1.0"
-    values:
-      enablePrometheusRules: true
-      enableGrafanaDashboard: true
-
-# Logging
-
-logging:
-  enabled: false
-  loki:
-    enabled: false
-    chart:
-      repo: https://grafana.github.io/helm-charts
-      name: loki
-      version: "2.10.3"
-    values:
-      monitor: false
-      pvcSize: 100Gi
-      enableGrafanaDashboard: true
-  promtail:
-    enabled: false
-    chart:
-      repo: https://grafana.github.io/helm-charts
-      name: promtail
-      version: "3.11.0"
-    values:
-      installOnControllPlane: true
-      runtimeLogs: "/var/lib/docker/containers"
-  # Will be released in Beta version
-  fluentd:
-    enabled: false
-    chart:
-      repo: https://prometheus-community.github.io/helm-charts
-      name: prometheus
-      version: "9.2.2"
-    values: {}
-  logstash:
-    enabled: false
-    chart:
-      repo: https://prometheus-community.github.io/helm-charts
-      name: prometheus
-      version: "9.2.2"
-    values: {}
-  eck:
-    enabled: false
-    chart:
-      repo: https://prometheus-community.github.io/helm-charts
-      name: prometheus
-      version: "9.2.2"
-    values: {}
 
 # Security
 
 vault:
+  # -- Enable Vault chart
   enabled: false
+  # -- Vault destination namespace
   namespace: argocd
   chart:
+    # -- Helm repository
     repo: https://helm.releases.hashicorp.com
+    # Chart name
     name: vault
+    # Chart version
     version: "0.19.0"
   values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
     ingress:
+      # -- Enable Vault UI Ingress
       enabled: true
+      # --  Vault ingress name or path (weither it is an ingress wildcard or domain)
       name: vault
+    # -- Vault persistence size, you will need to define a StorageClass in `default.storageClass`
     pvcSize: "10Gi"
+    # -- Enable vault HA 
     ha: false
 
 vaultSecrets:
+  # Destination namespace
   namespace: argocd
   chart:
+    # -- Helm repository (This own repository)
     repo: https://github.com/panzouh/argo-repository.git
-    path: charts/olm
+    # -- Chart path
+    path: charts/vault-secrets
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
     targetRevision: HEAD
 
 userManagement:
+  # -- Enable User Management chart
   enabled: false
+  # Destination namespace
   namespace: argocd
   chart:
+    # -- Helm repository (This own repository)
     repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path
     path: charts/users
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
     targetRevision: HEAD
   values:
+    # -- Create a Service account and a role if specified, if no role is specified default is namespace admin
     namespaceRoles: []
+    # -- Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles
     clusterRoles: []
 
 starboard:
+  # -- Enable Starboard chart
   enabled: false
+  # -- Destination namespace
   namespace: starboard-system
   chart:
+    # -- Helm repository
     repo: https://aquasecurity.github.io/helm-charts/
+    # -- Chart name
     name: starboard-operator
+    # -- Chart version
     version: "0.10.4"
   values:
+    # -- Namespaces to target, default to all
     targetNamespaces: ""
+    # -- Namespaces to exclude, default to none
     excludeNamespaces: ""
     trivy:
+      # -- Trivy imageRef
       imageRef: docker.io/aquasec/trivy:0.25.2
+      # -- Trivy report severity filters
       severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+      # -- Add non SSL registries, watch section below
       nonSslRegistries: {}
 
 # Storage

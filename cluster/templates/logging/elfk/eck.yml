@@ -1,12 +1,9 @@
-{{- define "eck.enabled" -}}
-{{- and .Values.logging.enabled (eq (include "logging.namespace" .) "elastic-namespace") -}}
-{{- end -}}
-{{ if eq (include "eck.enabled" .) "true" }}
+{{ if eq (include "logging.namespace" .) "elastic-system" }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: olm
+  name: eck
   namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
@@ -17,10 +14,55 @@ spec:
     server: https://kubernetes.default.svc
   project: integration
   source:
-    path: {{ .Values.eck.chart.path }}
+    chart: {{ .Values.eck.chart.name }}
     repoURL: {{ .Values.eck.chart.repo }}
-    targetRevision: {{ .Values.eck.chart.targetRevision }}
+    targetRevision: {{ .Values.eck.chart.version }}
     helm:
       version: v3
       values: |-
+        {{- if .Values.logging.eck.values.watchNamespaces }}
+        managedNamespaces:
+          {{- range .Values.logging.eck.values.watchNamespaces }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+        installCRDs: true
+        replicaCount: 1
+        image:
+          pullPolicy: Always
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 150Mi
+        podSecurityContext:
+          runAsNonRoot: true
+        createClusterScopedResources: true
+        tracing:
+          enabled: false
+        refs:
+          enforceRBAC: true
+        telemetry:
+          {{- if .Values.logging.eck.values.telemetryEnabled }}
+          disabled: false
+          {{- else }}
+          disabled: false
+          {{- end -}}
+          distributionChannel: "helm"
+        config:
+          logVerbosity: {{ quote (include "eck.verbosity" .) }}
+        {{- if and .Values.monitoring.prometheus.enabled .Values.logging.eck.values.monitor }}
+          metricsPort: "8500"
+        podMonitor:
+          enabled: false
+          annotations:
+            prometheus.io/scrape: 'true'
+            prometheus.io/port: '8500'
+          namespace: {{ .Values.monitoring.namespace }}
+          interval: 5m
+          scrapeTimeout: 30s
+        {{- end }}
+        global:
+          kubeVersion: {{ .Capabilities.KubeVersion }}
 {{ end }}

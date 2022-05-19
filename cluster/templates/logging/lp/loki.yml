@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
   project: logging
   source:
-    chart: {{ .Values.monitoring.loki.chart.name }}
-    repoURL: {{ .Values.monitoring.loki.chart.repo }}
-    targetRevision: {{ .Values.monitoring.loki.chart.version }}
+    chart: {{ .Values.logging.loki.chart.name }}
+    repoURL: {{ .Values.logging.loki.chart.repo }}
+    targetRevision: {{ .Values.logging.loki.chart.version }}
     helm: |
       ingress:
         enabled: false

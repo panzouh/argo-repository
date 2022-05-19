@@ -1,0 +1,646 @@
+# ArgoCD Cluster Chart
+
+{{ template "chart.description" . }}
+
+{{ template "chart.badgesSection" . }}
+
+## Index 
+
+1. [General](#general)
+2. [Integration](#integration)
+3. [Logging](#logging)
+4. [Monitoring](#monitoring)
+5. [Networking](#networking)
+6. [Security](#security)
+
+## General
+
+### Debug template
+
+If you want to do some debug you can modify the [debug-file](./templates/debug-tpl.yml) template to try some of your functions. To generate the debug file, the command below should work like a charm :
+
+```sh
+helm template <repository-git-dir>/cluster --set debug=true
+```
+
+### Default values
+
+Because some vars are generic to other charts, some are defined by default.
+
+#### Operating default values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "default" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Operating proxies values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "proxies" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Sync policies
+
+If you want to generate your own charts in this repository, you should know how sync is implemented in this project. If you want to have further informations on ArgoCD Automated Sync Policy on the [official documentation](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/).
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "sync" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## Tools
+
+### Integration
+
+By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
+
+#### ArgoCD
+
+Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "argocd" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Repositories
+
+###### Without authentication
+
+```yaml
+repositories:
+  - url: https://your-repository.domain.tld/a-repo.git
+```
+
+###### With user/password authentication
+
+```yaml
+repositories:
+  - url: https://your-repository.domain.tld/a/repository.git
+    passwordSecret:
+    # Needs to be created first !
+      name: gitlab-secret
+      key: password
+    usernameSecret:
+    # Needs to be created first !
+      name: gitlab-secret
+      key: username  
+```
+
+###### With SSH private key authentication
+
+```yaml
+repositories:
+  - url: git@your-repository.domain.tld:a:repository
+    sshPrivateKeySecret:
+    # Needs to be created first !
+      name: my-ssh-key
+      key: sshPrivateKey
+```
+
+#### Namespace configuration operator
+
+The namespace-configuration-operator is a project hosted by RedHat. It helps keeping configurations related to Users, Groups and Namespaces aligned with one of more policies specified as a CRs. The purpose is to provide the foundational building block to create an end-to-end onboarding process. By onboarding process we mean all the provisioning steps needed to a developer team working on one or more applications to OpenShift. This usually involves configuring resources such as: Groups, RoleBindings, Namespaces, ResourceQuotas, NetworkPolicies, EgressNetworkPolicies, etc... Depending on the specific environment the list could continue. Naturally such a process should be as automatic and scalable as possible.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "namespaceConfiguratorOperator" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Namespace configuration
+
+Namespace configuration is a chart hosted on this repository, you can retrieve templates [here](../charts/namespaceConfiguration). It is based on the Namespace configuration operator hosted by RedHat.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "namespaceConfiguration" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Quota example
+
+```yaml
+quotas:
+  - quotaName: small-size
+    matchLabels: 
+      size: small
+    requestMem: 4Gi
+    requestCPU: 2
+    requestsPVC: 100Gi
+    totalPVC: 5
+    requestsEmpt
+```
+
+##### Network Policy example
+
+```yaml
+networkPolicies:
+  - policyName: demo
+    matchLabels:
+      policy: demo
+    policies:
+      - name: allow-all-egress
+        type: Egress
+        to: []
+        podSelector: {}
+      - name: a-very-complicated-rule
+        type: Ingress
+        podSelector:
+          app: a-kubernetes-app
+        from:
+          - namespaceSelector:
+              matchLabels:
+                a: b
+          - namespaceSelector:
+              matchLabels: {}
+          - podSelector:
+              matchLabels:
+                b: c
+          - ipBlock:
+              cidr: 192.168.0.0/24
+              except:
+                - 192.168.1.1
+          - ipBlock:
+              cidr: 192.168.0.0/24
+```
+
+#### Olm
+
+Operator Lifecycle Manager (OLM) helps users install, update, and manage the lifecycle of Kubernetes native applications (Operators) and their associated services running across their Kubernetes clusters.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "olm" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Logging
+
+You should note that you can either activate Loki & Promtail stack or ECK and Kibana / Elasticsearch. 
+For example, To set up Loki, you will have to activate Loki and Promtail, the two being interdependent. Note that if you activate Loki, Promtail and the ECK suite, a safety mechanism will prevent the installation.
+
+#### ECK & Others
+
+##### ECK
+
+Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kubernetes: configuration, upgrades, snapshots, scaling, high availability & security.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "logging.eck" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### ECK Tpl
+
+ECK Tpl is a custom chart, which, as its name suggests, allows you to simply create Kibana / Elasticearch & Fluentd resources.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "logging.eckTpl" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Loki & Promtail
+
+##### Loki
+
+Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.
+The Loki project was started at Grafana Labs in 2018, and announced at KubeCon Seattle. Loki is released under the AGPLv3 license.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "logging.loki" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Promtail
+
+Promtail is an agent which ships the contents of local logs to a Loki instance.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "logging.promtail" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Monitoring
+
+#### Define Monitoring global variables
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if (hasPrefix "monitoring" .Key) }}
+    {{- if not (or (hasPrefix "monitoring.blackboxExporter" .Key) (hasPrefix "monitoring.discord" .Key) (hasPrefix "monitoring.fio" .Key) (hasPrefix "monitoring.goldpinger" .Key) (hasPrefix "monitoring.grafana" .Key) (hasPrefix "monitoring.prometheusMsTeams" .Key) (hasPrefix "monitoring.prometheus" .Key)) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+#### Blackbox exporter 
+
+The Blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.blackboxExporter" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Scrape Url example
+
+```yaml
+scrapeUrls:
+  - https://an-app.domain.tld
+  - https://another-app.domain.tld
+```
+
+#### Discord alerting
+
+The goal of this applications is to serve as a customizable Discord webhook for Alertmanager.
+With its default configuration, the application behaves similarly to [benjojo's alertmanager-discord](https://github.com/benjojo/alertmanager-discord), aggregating alerts by status and sending them with a colored embed accordingly. Adding to that, we're able to route alerts to multiple channels in a single instance and group by `alertname`.
+However, there are a few other things you might want in a production environment, such as:
+
+- Define Discord Roles to be mentioned when:
+  - There are too many firing alerts;
+  - Any of the alerts contains a specified severity value, like "critical" or "disaster";
+- Change Embed appearance to provide better visual clues of what is going on;
+- Define a priority to each severity, so the alerts are always shown in an expected order.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.discord" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Fio
+
+The purpose of this helm chart is to expose Fio metrics to Prometheus, it is writen in Golang, you can find the official repository [here](https://gitlab.com/panzouh/fio-exportaire).
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.fio" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Goldpinger
+
+Goldpinger makes calls between its instances for visibility and alerting.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.goldpinger" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Grafana
+
+Grafana allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share dashboards with your team and foster a data-driven culture:
+
+- **Visualizations:** Fast and flexible client side graphs with a multitude of options. Panel plugins offer many different ways to visualize metrics and logs.
+- **Dynamic Dashboards:** Create dynamic & reusable dashboards with template variables that appear as dropdowns at the top of the dashboard.
+- **Explore Metrics:** Explore your data through ad-hoc queries and dynamic drilldown. Split view and compare different time ranges, queries and data sources side by side.
+- **Explore Logs:** Experience the magic of switching from metrics to logs with preserved label filters. Quickly search through all your logs or streaming them live.
+- **Alerting:** Visually define alert rules for your most important metrics. Grafana will continuously evaluate and send notifications to systems like Slack, PagerDuty, VictorOps, OpsGenie.
+- **Mixed Data Sources:** Mix different data sources in the same graph! You can specify a data source on a per-query basis. This works for even custom datasources.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.grafana" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Prometheus MsTeams alerting
+
+Prometheus MS Teams chart allow you to write alerts on Microsoft Teams. In order to do that you will need to create a webhook on Teams ([Documentation](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook))
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.grafana" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Add Hooks
+
+First you will need to create an incoming webhook on teams, once you have it you will have to add the hook like this :
+
+```yaml
+hooks:
+  - myhook: https://office.com/not/a/working/hook
+```
+
+In order to enable it in Alertmanager, add this section of code in `monitoring.prometheus.values.alertmanager.configurationFile` :
+
+```yaml
+configurationFile:
+  route:
+    group_by: ['instance', 'severity']
+    group_wait: 5m
+    group_interval: 10m
+    repeat_interval: 10m
+    receiver: "myhook"
+  receivers:
+    - name: updates
+      webhook_configs:
+        - url: "http://prometheus-msteams.<prometheus-namespace>:2000/myhook"
+        # If you did not changed it default is monitoring
+```
+
+#### Prometheus
+
+Prometheus, a [Cloud Native Computing Foundation](https://cncf.io/) project, is a systems and service monitoring system. It collects metrics
+from configured targets at given intervals, evaluates rule expressions,
+displays the results, and can trigger alerts when specified conditions are observed.
+
+The features that distinguish Prometheus from other metrics and monitoring systems are:
+
+- A **multi-dimensional** data model (time series defined by metric name and set of key/value dimensions)
+- PromQL, a **powerful and flexible query language** to leverage this dimensionality
+- No dependency on distributed storage; **single server nodes are autonomous**
+- An HTTP **pull model** for time series collection
+- **Pushing time series** is supported via an intermediary gateway for batch jobs
+- Targets are discovered via **service discovery** or **static configuration**
+- Multiple modes of **graphing and dashboarding support**
+- Support for hierarchical and horizontal **federation**
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.prometheus" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Alertmanager example configuration file
+
+```yaml
+route:
+  group_by: ['instance', 'severity']
+  group_wait: 5m
+  group_interval: 10m
+  repeat_interval: 10m
+  receiver: "slack"
+receivers:
+  - name: 'slack'
+    slack_configs:
+      - send_resolved: true
+        text: '{{ print "{{ .CommonAnnotations.description }}" }}'
+        username: 'alertmanager-bot'
+        channel: 'alertmanager'
+        api_url: 'https://hooks.slack.com/not/working'
+```
+
+### Networking
+
+You should note that you can either activate Nginx or Traefik.
+If you activate both Nginx & Traefik, a safety mechanism will prevent the installation.
+
+#### Block constructors
+
+##### Ingress constructor
+
+The Helm ingress block constructor in [helpers.tpl](./templates/_helpers.tpl) it allow you to generate a classic Helm ingress block, 
+The template is affected by `ingress.ingressDefinition`, selected ingress annotations (Traefik or Nginx) and the ingress name it can generate this type of block template :
+
+```yaml
+# Classic utilization
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - test.your-cluster.domain.tld
+  tls:
+    - secretName: test-certificate
+      hosts:
+        - test.your-cluster.domain.tld
+# w/ Basic Auth
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-type: basic
+  hosts:
+    - prometheus.your-cluster.domain.tld
+  tls:
+    - secretName: prometheus-certificate
+      hosts:
+        - prometheus.your-cluster.domain.tld
+```
+
+##### Url constructor
+
+The Helm url block constructor in [helpers.tpl](./templates/_helpers.tpl) it allow you to generate a classic http(s) url block, such as this template block :
+
+```yaml
+# /w dict "name" == test
+# ingressDefinition:
+#   ssl:
+#     strictTLS: false
+#     enabled: true
+#   dns:
+#     mode: wildcard # domain|wildcard
+#     wildcard: your-cluster.domain.tld
+#     domain: domain.tld
+url: https://test.your-cluster.domain.tld
+```
+
+This block template is also affected by `ingress.ingressDefinition`.
+
+#### Cert-manager
+
+Cert-manager adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates.
+It can issue certificates from a variety of supported sources, including Let's Encrypt, HashiCorp Vault, and Venafi as well as private PKI.
+It will ensure certificates are valid and up to date, and attempt to renew certificates at a configured time before expiry.
+It is loosely based upon the work of kube-lego and has borrowed some wisdom from other similar projects such as kube-cert-manager.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "certmanager" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Ingress definition
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "ingress.ingressDefinition" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Nginx
+
+NGINX Ingress Controller is a best-in-class traffic management solution for cloud‑native apps in Kubernetes and containerized environments.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "ingress.nginx" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Traefik
+
+Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "ingress.traefik" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+> :warning: Traefik is not currently well implemented, if you are using strictTLS you should add this key : `traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd`
+
+### Security
+
+#### Starboard
+
+There are lots of security tools in the cloud native world, created by Aqua and by others, for identifying and informing
+users about security issues in Kubernetes workloads and infrastructure components. However powerful and useful they
+might be, they tend to sit alongside Kubernetes, with each new product requiring users to learn a separate set of
+commands and installation steps in order to operate them and find critical security information.
+
+Starboard attempts to integrate heterogeneous security tools by incorporating their outputs into Kubernetes CRDs
+(Custom Resource Definitions) and from there, making security reports accessible through the Kubernetes API. This way
+users can find and view the risks that relate to different resources in what we call a Kubernetes-native way.
+
+Starboard provides:
+
+- Automated vulnerability scanning for Kubernetes workloads.
+- Automated configuration audits for Kubernetes resources with predefined rules or custom Open Policy Agent (OPA) policies.
+- Automated infrastructures scanning and compliance checks with CIS Benchmarks published by the Center for Internet Security (CIS).
+- Automated compliance report - NSA, CISA Kubernetes Hardening Kubernetes Guidance v1.0 
+- Penetration test results for a Kubernetes cluster.
+- [Custom Resource Definitions] and a [Go module] to work with and integrate a range of security scanners.
+- The [Octant Plugin] and the [Lens Extension] that make security reports available through familiar Kubernetes interfaces
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "starboard" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### User management
+
+User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "userManagement" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### `namespaceRoles` examples
+
+#### Namespace specific role
+
+```yaml
+namespaceRoles:
+- name: jdoe
+  refNamespace: default
+  rules:
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["*"]
+    verbs: ["*"]
+  - apiGroups: ["batch"]
+    resources:
+    - jobs
+    - cronjobs
+    verbs: ["*"]
+```
+
+#### Namespace w/ no defined role (Namespace admin)
+
+```yaml
+namespaceRoles:
+- name: jdoe
+  refNamespace: default
+  rules: []
+```
+
+#### `clusterRoles` example
+
+```yaml
+clusterRoles:
+  - name: jdoe-adm
+    refRole: cluster-admin
+```
+
+#### Vault
+
+Vault is an identity-based secret and encryption management system. A secret is anything you want to tightly control access to, such as API encryption keys, passwords, or certificates. Vault provides encryption services that are controlled by authentication and authorization methods. Using the Vault user interface, CLI, or HTTP API, access to secrets and other sensitive data can be securely stored and managed, tightly controlled (restricted), and auditable.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "vault" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Vault secrets
+
+Vault secrets is a chart hosted on this repository, you can retrieve templates [here](../charts/vault-secrets/). This chart is mandatory in order to use AVP and generate secrets pulled from Vault.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "vaultSecrets" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+{{ template "helm-docs.versionFooter" . }} `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.

@@ -6,17 +6,4 @@
 
 {{ template "chart.valuesTable" . }}
 
-### Vault secret example
-
-```yaml
-  - secretName: test-secret
-    secretNamespace: test
-    avpPath: avp/data/test-secret
-    stringData:
-      - key: username
-        placeholder: username
-      - key: password
-        placeholder: password
-```
-
 {{ template "helm-docs.versionFooter" . }} `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.

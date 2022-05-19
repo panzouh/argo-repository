@@ -1,5 +1,5 @@
 {{- define "logging.enabled" -}}
-{{- .Values.logging.enabled -}}
+{{- or (eq (include "logging.namespace" .) "elastic-system") (eq (include "logging.namespace" .) "monitoring") -}}
 {{- end -}}
 {{ if eq (include "logging.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

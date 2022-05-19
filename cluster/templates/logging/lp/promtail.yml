@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
   project: logging
   source:
-    chart: {{ .Values.monitoring.promtail.chart.name }}
-    repoURL: {{ .Values.monitoring.promtail.chart.repo }}
-    targetRevision: {{ .Values.monitoring.promtail.chart.version }}
+    chart: {{ .Values.logging.promtail.chart.name }}
+    repoURL: {{ .Values.logging.promtail.chart.repo }}
+    targetRevision: {{ .Values.logging.promtail.chart.version }}
     helm: |
     {{- if .Values.logging.promtail.values.installOnControllPlane }}
     tolerations:

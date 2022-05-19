@@ -1,0 +1,11 @@
+---
+nameOverride: ""
+
+garden:
+  enabled: true
+  namespace: chaos-garden
+  labels:
+    chaos-type: garden
+  # kind: Deployment
+
+experiments: []
