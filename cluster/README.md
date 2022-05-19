@@ -31,7 +31,7 @@ Because some vars are generic to other charts, some are defined by default.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| default.enabled | bool | `false` | Enable default charts (ArgoCD, OLM, Namespace configurator operator & Namespace configuration) |
+| default.enabled | bool | `false` | Enable default charts (ArgoCD, Namespace configurator operator & Namespace configuration) |
 | default.smtpServer | string | `"0.0.0.0:25"` | Smtp server to configure notifications :warning: not working yet :warning: |
 | default.storageClass | string | `""` | Define storageClass in order to persistence to work |
 
@@ -57,7 +57,7 @@ If you want to generate your own charts in this repository, you should know how 
 
 ### Integration
 
-By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including OLM, ArgoCD, Namespace configurator operator).
+By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
 
 #### ArgoCD
 
@@ -201,13 +201,6 @@ Operator Lifecycle Manager (OLM) helps users install, update, and manage the lif
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| olm.chart.path | string | `"charts/olm"` | Chart path |
-| olm.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
-| olm.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
-| olm.enabled | bool | `false` | Enable OLM chart |
-| olm.namespace | string | `"olm"` | Destination |
-| olm.values.debug | bool | `false` | Enable debug stdout |
-| olm.values.monitoring | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 
 ### Logging
 
@@ -225,7 +218,7 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 | logging.eck.chart.name | string | `"prometheus"` | Chart name |
 | logging.eck.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
 | logging.eck.chart.version | string | `"9.2.2"` | Chart version |
-| logging.eck.enabled | bool | `false` | Enable ECK chart |
+| logging.eck.enabled | bool | `false` | Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory |
 | logging.eck.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | logging.eck.values.telemetryEnabled | bool | `true` | Enable telemetry |
 | logging.eck.values.verbosity | string | `"warning"` | Operator verbosity |
@@ -700,6 +693,7 @@ namespaceRoles:
 clusterRoles:
   - name: jdoe-adm
     refRole: cluster-admin
+```
 
 #### Vault
 
