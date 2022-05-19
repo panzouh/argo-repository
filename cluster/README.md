@@ -65,9 +65,9 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| argocd.chart.name | string | `"argo-cd"` | chart name |
+| argocd.chart.name | string | `"argo-cd"` | Chart name |
 | argocd.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
-| argocd.chart.version | string | `"4.5.0"` | chart version |
+| argocd.chart.version | string | `"4.5.0"` | Chart version |
 | argocd.enabled | bool | `false` | Enable ArgoCD chart |
 | argocd.namespace | string | `"argocd"` | Destination namespace & Applications source namespace |
 | argocd.values.avp.auth.path | string | `"auth/kubernetes"` |  |
@@ -223,11 +223,6 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 | logging.eck.values.telemetryEnabled | bool | `true` | Enable telemetry |
 | logging.eck.values.verbosity | string | `"warning"` | Operator verbosity |
 | logging.eck.values.watchNamespaces | list | `["elastic-system"]` | Filter namespaces to watch you can leave it empty to watch all namespaces |
-| logging.eckTpl.chart.path | string | `"charts/eck-tpl"` | Chart path |
-| logging.eckTpl.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
-| logging.eckTpl.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
-| logging.eckTpl.enabled | bool | `false` | Enable ECK Tpl chart |
-| logging.eckTpl.values | object | `{}` |  |
 
 ##### ECK Tpl
 
@@ -332,8 +327,8 @@ The purpose of this helm chart is to expose Fio metrics to Prometheus, it is wri
 | monitoring.fio.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | monitoring.fio.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | monitoring.fio.enabled | bool | `false` | Enable Fio chart you will need to enable Prometheus as well |
-| monitoring.fio.values.enableGrafanaDashboard | bool | `true` |  |
-| monitoring.fio.values.installOnControllPlane | bool | `true` |  |
+| monitoring.fio.values.enableGrafanaDashboard | bool | `true` | fio Enable a Grafana specific dashboard, you will need to have Grafana enabled |
+| monitoring.fio.values.installOnControllPlane | bool | `true` | Enable Fio exporter on the controll plane, by default Prometheus scraping is enabled |
 
 #### Goldpinger
 
@@ -446,13 +441,13 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 |-----|------|---------|-------------|
 | monitoring.prometheus.chart.name | string | `"prometheus"` | Chart name |
 | monitoring.prometheus.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
-| monitoring.prometheus.chart.version | string | `"15.8.7"` |  |
+| monitoring.prometheus.chart.version | string | `"15.8.7"` | Chart version |
 | monitoring.prometheus.enabled | bool | `false` | Enable Prometheus chart |
-| monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` |  |
+| monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` | Alertmanager configuration file, example below |
 | monitoring.prometheus.values.alertmanager.enabled | bool | `false` | Enable Alertmanager in the chart |
 | monitoring.prometheus.values.alertmanager.pvcSize | string | `"5Gi"` | Alertmanager PVC size, you will need to define a StorageClass in `default.storageClass` |
-| monitoring.prometheus.values.kubeStateMetrics.enabled | bool | `true` |  |
-| monitoring.prometheus.values.nodeExporter.enabled | bool | `true` |  |
+| monitoring.prometheus.values.kubeStateMetrics.enabled | bool | `true` | Enable kubeStateMetrics in the chart |
+| monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
 | monitoring.prometheus.values.rules.customs | object | `{}` | Create Prometheus custom rules (not available yet) |
 | monitoring.prometheus.values.rules.preconfiguredEnabled | bool | `true` | Enable Prometheus rules watch preconfigured rules below |
 | monitoring.prometheus.values.server.dataRetention | string | `"720h"` | Prometheus data retention |
@@ -571,7 +566,7 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| ingress.ingressDefinition.dns.domain | string | `"domain.tld"` |  |
+| ingress.ingressDefinition.dns.domain | string | `"domain.tld"` | Cluster DNS entry, it generate this kind of urls : `https://domain.tld/prometheus` |
 | ingress.ingressDefinition.dns.mode | string | `"wildcard"` | DNS declaration of your cluster can be `domain` or `wildcard` |
 | ingress.ingressDefinition.dns.wildcard | string | `"your-cluster.domain.tld"` | Cluster DNS wildcard entry, it generate this kind of urls : `https://prometheus.your-cluster.domain.tld` |
 | ingress.ingressDefinition.ssl.enabled | bool | `true` | Force TLS certificate section |
@@ -598,9 +593,9 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| ingress.traefik.chart.name | string | `"traefik"` |  |
-| ingress.traefik.chart.repo | string | `"https://helm.traefik.io/traefik"` |  |
-| ingress.traefik.chart.version | string | `"10.15.0"` |  |
+| ingress.traefik.chart.name | string | `"traefik"` | Chart name |
+| ingress.traefik.chart.repo | string | `"https://helm.traefik.io/traefik"` | Helm repository |
+| ingress.traefik.chart.version | string | `"10.15.0"` | Chart version |
 | ingress.traefik.enabled | bool | `false` | Enable Traefik chart, you should know that you can't activate Traefik & Nginx |
 | ingress.traefik.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.traefik.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
@@ -655,7 +650,7 @@ User management is a chart hosted on this repository, you can retrieve templates
 | userManagement.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | userManagement.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | userManagement.enabled | bool | `false` | Enable User Management chart |
-| userManagement.namespace | string | `"argocd"` |  |
+| userManagement.namespace | string | `"argocd"` | Destination namespace |
 | userManagement.values.clusterRoles | list | `[]` | Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles |
 | userManagement.values.namespaceRoles | list | `[]` | Create a Service account and a role if specified, if no role is specified default is namespace admin |
 

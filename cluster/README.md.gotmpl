@@ -210,7 +210,9 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 |-----|------|---------|-------------|
 {{- range .Values }}
   {{- if hasPrefix "logging.eck" .Key }}
+    {{- if not (hasPrefix "logging.eckTpl" .Key)}}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+    {{- end }}
   {{- end }}
 {{- end }}
 
