@@ -629,7 +629,9 @@ Vault is an identity-based secret and encryption management system. A secret is 
 |-----|------|---------|-------------|
 {{- range .Values }}
   {{- if hasPrefix "vault" .Key }}
+    {{- if not (hasPrefix "vaultSecrets" .Key)}}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+    {{- end }}
   {{- end }}
 {{- end }}
 

@@ -474,7 +474,7 @@ vault:
     ha: false
 
 vaultSecrets:
-  # Destination namespace
+  # -- Destination namespace
   namespace: argocd
   chart:
     # -- Helm repository (This own repository)
