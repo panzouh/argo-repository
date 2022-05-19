@@ -159,7 +159,7 @@ quotas:
     requestCPU: 2
     requestsPVC: 100Gi
     totalPVC: 5
-    requestsEmpt
+    requestsEmptyDirs: 5Gi
 ```
 
 ##### Network Policy example
