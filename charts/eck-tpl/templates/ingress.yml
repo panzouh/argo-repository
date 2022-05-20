@@ -1,6 +1,6 @@
 {{- if .Values.clusterSpec.kibana.ingress.enabled }}
 {{ $clusterName := .Values.clusterSpec.name }}
-{{ $kubeGitVersion := }.Capabilities.KubeVersion.GitVersion }}
+{{ $kubeGitVersion := .Capabilities.KubeVersion.GitVersion }}
 {{- if semverCompare ">=1.14-0" $kubeGitVersion -}}
 apiVersion: networking.k8s.io/v1
 {{- else -}}
