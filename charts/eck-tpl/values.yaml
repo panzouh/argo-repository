@@ -38,10 +38,9 @@ clusterSpec:
         # kubernetes.io/tls-acme: "true"
       # -- Kibana ingress hostnames
       hosts:
-        - host: chart-example.local
+        - chart-example.local
       # -- Kibana ingress TLS configuration
       tls: []
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
-
