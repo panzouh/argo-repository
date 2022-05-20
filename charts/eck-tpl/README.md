@@ -14,6 +14,10 @@ A Helm chart for Kubernetes
 | clusterSpec.elasticsearch.persistence.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
 | clusterSpec.elasticsearch.persistence.storageClassName | string | `""` | Storage class name, you can get it by executing this command `kubectl get sc` |
 | clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
+| clusterSpec.filebeat.config."filebeat.inputs"[0].paths[0] | string | `"/var/log/containers/*.log"` |  |
+| clusterSpec.filebeat.config."filebeat.inputs"[0].type | string | `"container"` |  |
+| clusterSpec.filebeat.enabled | bool | `false` | Enable Filebeat instances |
+| clusterSpec.filebeat.mounts | list | `[]` | Set Filebeat mounts |
 | clusterSpec.kibana.config | object | `{}` | Kibana configuration |
 | clusterSpec.kibana.count | int | `1` | Kibana instance count |
 | clusterSpec.kibana.ingress.annotations | object | `{}` | Kibana ingress annotations |
