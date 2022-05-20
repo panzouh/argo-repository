@@ -1,11 +1,58 @@
 ---
 nameOverride: ""
 
-garden:
-  enabled: true
-  namespace: chaos-garden
-  labels:
-    chaos-type: garden
-  # kind: Deployment
+clusterSpec:
+  # -- ECK Cluster name
+  name: eck-cluster
+  # -- ECK Cluster version
+  version: 8.2.0
+  elasticsearch:
+    # -- Elasticsearch instance count
+    count: 3
+    # -- Elasticsearch configuration
+    config:
+      path.repo: ["/usr/share/elasticsearch/backups"]
+      node.roles: [data, master]
+      node.ingest: true
+      node.store.allow_mmap: false
+      xpack.monitoring.enabled: true
+      xpack.monitoring.collection.enabled: true
+      xpack.security.authc.realms:
+        native:
+          native1:
+            order: 1
+    # -- Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort`
+    serviceType: ClusterIP
+    persistence:
+      # -- Enable Elasticsearch persitence
+      enabled: false
+      # -- PVC access modes can be either `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany` or `ReadWriteOncePod` watch [Official Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for more informations
+      accessModes: ReadWriteOnce
+      # -- Elasticsearch PVC size, it will create *n* PVC of `50Gi`
+      pvcSize: 50Gi
+      # -- Storage class name, you can get it by executing this command `kubectl get sc`
+      storageClassName: ""
+  kibana:
+    # -- Kibana instance count
+    count: 1
+    # -- Kibana application base path
+    kibanaPath: "/"
+    # -- Kibana configuration
+    config:
+      xpack.monitoring.enabled: true
+    ingress:
+      # -- Enable Kibana UI ingress
+      enabled: false
+      # -- Kibana ingress annotations
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      # -- Kibana ingress hostnames
+      hosts:
+        - host: chart-example.local
+      # -- Kibana ingress TLS configuration
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
 
-experiments: []

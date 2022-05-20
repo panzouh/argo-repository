@@ -1,0 +1,19 @@
+---
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: {{ .Values.clusterSpec.name }}
+  namespace: {{ .Release.Namespace | default "" }}
+spec:
+  version: {{ .Values.clusterSpec.version }}
+  count: {{ .Values.clusterSpec.kibana.count }}
+  config: {{ toYaml .Values.clusterSpec.kibana.config | nindent 6 }}
+  elasticsearchRef:
+    name: {{ .Values.clusterSpec.name }}
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        env:
+        - name: SERVER_BASEPATH
+          value: {{ .Values.clusterSpec.kibana.kibanaPath }}

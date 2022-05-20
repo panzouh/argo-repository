@@ -20,4 +20,32 @@ spec:
     helm:
       version: v3
       values: |-
+      clusterSpec:
+        name: {{ .Values.logging.eckTpl.values.clusterSpec.name }}
+        version: {{ .Values.logging.eckTpl.values.clusterSpec.version }}
+        elasticsearch:
+          count: {{ .Values.logging.eckTpl.values.clusterSpec.elasticsearch.count }}
+          config: {{ toYaml .Values.logging.eckTpl.values.clusterSpec.elasticsearch.config | nindent 12 }}
+          serviceType: {{ .Values.logging.eckTpl.values.clusterSpec.elasticsearch.serviceType }}
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            storageClass: {{ .Values.default.storageClass }}
+            size: {{ quote .Values.logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize }}
+            {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
+        kibana:
+          count: {{ .Values.logging.eckTpl.values.clusterSpec.kibana.count }}
+          {{- if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
+          kibanaPath: "/{{ .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name }}"
+          {{- end }}
+          config:
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 12 -}}
+          {{- end }}
+          {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.enabled }}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 12 -}}
+          {{- end }}
 {{ end }}

@@ -17,6 +17,12 @@ spec:
     chart: {{ .Values.logging.eck.chart.name }}
     repoURL: {{ .Values.logging.eck.chart.repo }}
     targetRevision: {{ .Values.logging.eck.chart.version }}
+    ignoreDifferences:
+      - group: admissionregistration.k8s.io
+        kind: ValidatingWebhookConfiguration
+        name: elastic-operator.elastic-system.k8s.elastic.co
+        jqPathExpressions:
+        - .webhooks[].namespaceSelector.matchExpressions[] | select(.key == "control-plane")
     helm:
       version: v3
       values: |-

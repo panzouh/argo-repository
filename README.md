@@ -31,7 +31,6 @@ TBA
 - Integration :
   - ArgoCD (Argoception)
   - Namespace Configuration Operator
-  - OLM
 - Logging :
   - ECK Operator
   - Logstash or Fluentd
@@ -52,6 +51,7 @@ TBA
 - Security :
   - Vault (w/ AVP Plugin)
   - Simplified user management
+  - Starboard
 - Storage:
   - TBA
 

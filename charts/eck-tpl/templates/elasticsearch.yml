@@ -1,0 +1,27 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ .Values.clusterSpec.name }}
+  namespace: {{ .Release.Namespace | default "" }}
+spec:
+  version: {{ .Values.clusterSpec.version }}
+  http:
+    service:
+      spec:
+        type: {{ .Values.clusterSpec.elasticsearch.serviceType }}
+  nodeSets:
+  - name: default
+    count: {{ .Values.clusterSpec.elasticsearch.count }}
+    config: {{ toYaml .Values.clusterSpec.elasticsearch.config | nindent 6 }}
+    {{- if .Values.clusterSpec.elasticsearch.persistence.enabled }}
+    volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.clusterSpec.name }}-data
+      spec:
+        accessModes:
+        - {{ .Values.clusterSpec.elasticsearch.persistence.accessModes }}
+        resources:
+          requests:
+            storage: {{ .Values.clusterSpec.elasticsearch.persistence.pvcSize }}
+        storageClassName: {{ .Values.clusterSpec.elasticsearch.persistence.storageClassName }}
+    {{- end }}
