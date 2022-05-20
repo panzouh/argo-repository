@@ -221,14 +221,29 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| logging.eck.chart.name | string | `"prometheus"` | Chart name |
-| logging.eck.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
-| logging.eck.chart.version | string | `"9.2.2"` | Chart version |
+| logging.eck.chart.name | string | `"eck-operator"` | Chart name |
+| logging.eck.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
+| logging.eck.chart.version | string | `"2.2.0"` | Chart version |
 | logging.eck.enabled | bool | `false` | Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory |
 | logging.eck.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | logging.eck.values.telemetryEnabled | bool | `true` | Enable telemetry |
 | logging.eck.values.verbosity | string | `"warning"` | Operator verbosity |
 | logging.eck.values.watchNamespaces | list | `["elastic-system"]` | Filter namespaces to watch you can leave it empty to watch all namespaces |
+| logging.eckCrds.chart.name | string | `"eck-operator-crds"` | Chart name |
+| logging.eckCrds.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
+| logging.eckCrds.chart.version | string | `"2.2.0"` | Chart version |
+| logging.eckCrds.values | object | `{}` | No specific values needs to be specified |
+
+##### ECK Crds
+
+Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kubernetes: configuration, upgrades, snapshots, scaling, high availability & security.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| logging.eckCrds.chart.name | string | `"eck-operator-crds"` | Chart name |
+| logging.eckCrds.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
+| logging.eckCrds.chart.version | string | `"2.2.0"` | Chart version |
+| logging.eckCrds.values | object | `{}` | No specific values needs to be specified |
 
 ##### ECK Tpl
 
@@ -384,21 +399,12 @@ Prometheus MS Teams chart allow you to write alerts on Microsoft Teams. In order
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| monitoring.grafana.chart.name | string | `"grafana"` | Chart name |
-| monitoring.grafana.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| monitoring.grafana.chart.version | string | `"6.29.2"` | Chart version |
-| monitoring.grafana.enabled | bool | `false` | Enable Grafana chart |
-| monitoring.grafana.values.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
-| monitoring.grafana.values.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
-| monitoring.grafana.values.avpPath | string | `"avp/data/grafana"` | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault` |
-| monitoring.grafana.values.customDashboards | object | `{}` | Create Grafana custom dashoards (Json Formated), not available at the moment |
-| monitoring.grafana.values.customDashboardsGNET | object | `{}` | Create Grafana Dashboard available on Grafana Net, not available at the moment |
-| monitoring.grafana.values.ingress.enabled | bool | `true` | Enable Grafana UI ingress |
-| monitoring.grafana.values.ingress.name | string | `"grafana"` | Grafana ingress name or path (weither it is an ingress wildcard or domain) |
-| monitoring.grafana.values.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
-| monitoring.grafana.values.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true` |
-| monitoring.grafana.values.pvcSize | string | `"10Gi"` | Grafana PVC size, you will need to define a StorageClass in `default.storageClass` |
-| monitoring.grafana.values.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
+| monitoring.prometheusMsTeams.chart.name | string | `"prometheus-msteams"` | Chart name |
+| monitoring.prometheusMsTeams.chart.repo | string | `"https://prometheus-msteams.github.io/prometheus-msteams/"` | Helm repository |
+| monitoring.prometheusMsTeams.chart.version | string | `"1.3.0"` | Chart version |
+| monitoring.prometheusMsTeams.enabled | bool | `false` | Enable Prometheus Ms Teams Alert chart, you will need to enable Prometheus & Alertmanager as well |
+| monitoring.prometheusMsTeams.values.hooks | list | `[]` | Hooks list, watch section below for more informations |
+| monitoring.prometheusMsTeams.values.monitor | bool | `false` | Enable Prometheus scraping |
 
 ##### Add Hooks
 
