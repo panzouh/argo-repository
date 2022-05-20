@@ -33,9 +33,17 @@ spec:
           - path: /
             {{- if semverCompare ">=1.14-0" $kubeGitVersion }}
             pathType: Prefix
-            {{- end }}
             backend:
-              serviceName: {{ $clusterName }}-kb-http
-              servicePort: 80
+              service:
+                name: {{ $clusterName }}-kb-http
+                port: 
+                  number: 5601
+            {{- else }}
+            backend:
+              service:
+                name: {{ $clusterName }}-kb-http
+                port: 
+                  number: 5601
+            {{- end }}
     {{- end }}
 {{- end }}

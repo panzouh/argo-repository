@@ -8,21 +8,45 @@ A Helm chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | clusterSpec.elasticsearch.config | object | `{}` | Elasticsearch configuration |
+| clusterSpec.elasticsearch.config."node.ingest" | bool | `true` |  |
+| clusterSpec.elasticsearch.config."node.roles"[0] | string | `"data"` |  |
+| clusterSpec.elasticsearch.config."node.roles"[1] | string | `"master"` |  |
+| clusterSpec.elasticsearch.config."node.store.allow_mmap" | bool | `false` |  |
+| clusterSpec.elasticsearch.config."path.repo"[0] | string | `"/usr/share/elasticsearch/backups"` |  |
+| clusterSpec.elasticsearch.config."xpack.monitoring.collection.enabled" | bool | `true` |  |
+| clusterSpec.elasticsearch.config."xpack.monitoring.enabled" | bool | `true` |  |
+| clusterSpec.elasticsearch.config."xpack.security.authc.realms".native.native1.order | int | `1` |  |
+| clusterSpec.elasticsearch.count | int | `3` |  |
 | clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
 | clusterSpec.elasticsearch.persistence.accessModes | string | `"ReadWriteOnce"` | PVC access modes can be either `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany` or `ReadWriteOncePod` watch [Official Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for more informations |
 | clusterSpec.elasticsearch.persistence.enabled | bool | `false` | Enable Elasticsearch persitence |
+| clusterSpec.elasticsearch.persistence.enabled | bool | `false` |  |
 | clusterSpec.elasticsearch.persistence.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
 | clusterSpec.elasticsearch.persistence.storageClassName | string | `""` | Storage class name, you can get it by executing this command `kubectl get sc` |
 | clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
+| clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` |  |
 | clusterSpec.kibana.config | object | `{}` | Kibana configuration |
+| clusterSpec.kibana.config."xpack.monitoring.enabled" | bool | `true` |  |
+| clusterSpec.kibana.count | int | `1` |  |
 | clusterSpec.kibana.count | int | `1` | Kibana instance count |
 | clusterSpec.kibana.ingress.annotations | object | `{}` | Kibana ingress annotations |
+| clusterSpec.kibana.ingress.annotations."cert-manager.io/acme-challenge-type" | string | `"http01"` |  |
+| clusterSpec.kibana.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"letsencrypt-production"` |  |
+| clusterSpec.kibana.ingress.annotations."ingress.kubernetes.io/ssl-redirect" | string | `"true"` |  |
+| clusterSpec.kibana.ingress.annotations."kubernetes.io/ingress.class" | string | `"nginx"` |  |
+| clusterSpec.kibana.ingress.annotations."kubernetes.io/tls-acme" | string | `"true"` |  |
 | clusterSpec.kibana.ingress.enabled | bool | `false` | Enable Kibana UI ingress |
+| clusterSpec.kibana.ingress.enabled | bool | `true` |  |
 | clusterSpec.kibana.ingress.hosts | list | `["chart-example.local"]` | Kibana ingress hostnames |
+| clusterSpec.kibana.ingress.hosts[0] | string | `"kibana.danstonkube.fr"` |  |
 | clusterSpec.kibana.ingress.tls | list | `[]` | Kibana ingress TLS configuration |
+| clusterSpec.kibana.ingress.tls[0].hosts[0] | string | `"kibana.danstonkube.fr"` |  |
+| clusterSpec.kibana.ingress.tls[0].secretName | string | `"kibana-certificate"` |  |
 | clusterSpec.kibana.kibanaPath | string | `"/"` | Kibana application base path |
 | clusterSpec.name | string | `"eck-cluster"` | ECK Cluster name |
+| clusterSpec.name | string | `"eck-cluster"` |  |
 | clusterSpec.version | string | `"8.2.0"` | ECK Cluster version |
+| clusterSpec.version | string | `"8.2.0"` |  |
 | nameOverride | string | `""` |  |
 
 ----------------------------------------------
