@@ -7,7 +7,7 @@ metadata:
 spec:
   version: {{ .Values.clusterSpec.version }}
   count: {{ .Values.clusterSpec.kibana.count }}
-  config: {{ toYaml .Values.clusterSpec.kibana.config | nindent 6 }}
+  config: {{- toYaml .Values.clusterSpec.kibana.config | nindent 4 }}
   elasticsearchRef:
     name: {{ .Values.clusterSpec.name }}
   http:

@@ -228,6 +228,12 @@ logging:
             enabled: true
             # -- Kibana ingress name or path (weither it is an ingress wildcard or domain)
             name: kibana
+        filebeat:
+          # -- Enable Filebeat instances
+          enabled: false
+          # -- Set Filebeat mounts
+          mounts: []
+          config: {s}
 
 # Monitoring
 

@@ -12,7 +12,7 @@ spec:
   nodeSets:
   - name: default
     count: {{ .Values.clusterSpec.elasticsearch.count }}
-    config: {{ toYaml .Values.clusterSpec.elasticsearch.config | nindent 6 }}
+    config: {{- toYaml .Values.clusterSpec.elasticsearch.config | nindent 6 }}
     {{- if .Values.clusterSpec.elasticsearch.persistence.enabled }}
     volumeClaimTemplates:
     - metadata:

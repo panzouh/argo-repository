@@ -48,4 +48,16 @@ spec:
             {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.enabled }}
               {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 12 -}}
             {{- end }}
+          filebeat:
+            {{- if .Values.logging.eckTpl.values.clusterSpec.filebeat.enabled }}
+            enabled: true
+            {{- end }}
+            {{- if .Values.logging.eckTpl.values.clusterSpec.filebeat.mounts }}
+            mounts:
+              {{- range .Values.logging.eckTpl.values.clusterSpec.filebeat.mounts }}
+              - name: {{ .name }}
+                path: {{ .path }}
+              {{- end }}
+            {{- end }}
+            config: {{- toYaml .Values.logging.eckTpl.values.clusterSpec.filebeat.config | nindent 14 }}
 {{ end }}

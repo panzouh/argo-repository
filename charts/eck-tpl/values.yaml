@@ -44,3 +44,13 @@ clusterSpec:
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
+  filebeat:
+    # -- Enable Filebeat instances
+    enabled: false
+    # -- Set Filebeat mounts
+    mounts: []
+    config: 
+      filebeat.inputs:
+      - type: container
+        paths:
+        - /var/log/containers/*.log
