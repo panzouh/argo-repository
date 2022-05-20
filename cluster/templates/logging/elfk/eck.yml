@@ -30,6 +30,7 @@ spec:
         replicaCount: 1
         image:
           pullPolicy: Always
+        resources:
           limits:
             cpu: 1
             memory: 1Gi
@@ -47,8 +48,8 @@ spec:
           {{- if .Values.logging.eck.values.telemetryEnabled }}
           disabled: false
           {{- else }}
-          disabled: false
-          {{- end -}}
+          disabled: true
+          {{- end }}
           distributionChannel: "helm"
         config:
           logVerbosity: {{ quote (include "eck.verbosity" .) }}
