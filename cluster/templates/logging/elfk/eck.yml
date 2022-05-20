@@ -32,7 +32,7 @@ spec:
           - {{ . }}
           {{- end }}
         {{- end }}
-        installCRDs: true
+        installCRDs: false
         replicaCount: 1
         image:
           pullPolicy: Always
@@ -49,7 +49,7 @@ spec:
         tracing:
           enabled: false
         refs:
-          enforceRBAC: true
+          enforceRBAC: false
         telemetry:
           {{- if .Values.logging.eck.values.telemetryEnabled }}
           disabled: false
