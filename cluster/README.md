@@ -81,7 +81,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.avp.auth.vaultUrl | string | `"https://your-vault.domain.tld"` | Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only |
 | argocd.values.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
 | argocd.values.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
-| argocd.values.avp.version | string | `"1.10.1"` | AVP version to install |
+| argocd.values.avp.version | string | `"1.11.0"` | AVP version to install |
 | argocd.values.ha | bool | `true` | Enable ArgoCD on HA mode |
 | argocd.values.ingress.enabled | bool | `true` | Enable ArgoCD UI ingress |
 | argocd.values.ingress.name | string | `"argocd"` | ArgoCD ingress name or path (weither it is an ingress wildcard or domain |
@@ -255,7 +255,16 @@ ECK Tpl is a custom chart, which, as its name suggests, allows you to simply cre
 | logging.eckTpl.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | logging.eckTpl.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | logging.eckTpl.enabled | bool | `false` | Enable ECK Tpl chart |
-| logging.eckTpl.values | object | `{}` |  |
+| logging.eckTpl.values.clusterSpec.elasticsearch.config | object | `{}` | Elasticsearch configuration |
+| logging.eckTpl.values.clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
+| logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass`` |
+| logging.eckTpl.values.clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
+| logging.eckTpl.values.clusterSpec.kibana.config | object | `{}` | Kibana configuration |
+| logging.eckTpl.values.clusterSpec.kibana.count | int | `1` | Kibana instance count |
+| logging.eckTpl.values.clusterSpec.kibana.ingress.enabled | bool | `true` | Enable Kibana UI Ingress |
+| logging.eckTpl.values.clusterSpec.kibana.ingress.name | string | `"kibana"` | Kibana ingress name or path (weither it is an ingress wildcard or domain) |
+| logging.eckTpl.values.clusterSpec.name | string | `"eck-cluster"` | ECK Cluster name |
+| logging.eckTpl.values.clusterSpec.version | string | `"8.2.0"` | ECK Cluster version |
 
 #### Loki & Promtail
 
