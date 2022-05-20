@@ -7,14 +7,14 @@ A Helm chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| clusterSpec.elasticsearch.config | object | `{"node.ingest":true,"node.roles":["data","master"],"node.store.allow_mmap":false,"path.repo":["/usr/share/elasticsearch/backups"],"xpack.monitoring.collection.enabled":true,"xpack.monitoring.enabled":true,"xpack.security.authc.realms":{"native":{"native1":{"order":1}}}}` | Elasticsearch configuration |
+| clusterSpec.elasticsearch.config | object | `{}` | Elasticsearch configuration |
 | clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
 | clusterSpec.elasticsearch.persistence.accessModes | string | `"ReadWriteOnce"` | PVC access modes can be either `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany` or `ReadWriteOncePod` watch [Official Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for more informations |
 | clusterSpec.elasticsearch.persistence.enabled | bool | `false` | Enable Elasticsearch persitence |
 | clusterSpec.elasticsearch.persistence.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
 | clusterSpec.elasticsearch.persistence.storageClassName | string | `""` | Storage class name, you can get it by executing this command `kubectl get sc` |
 | clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
-| clusterSpec.kibana.config | object | `{"xpack.monitoring.enabled":true}` | Kibana configuration |
+| clusterSpec.kibana.config | object | `{}` | Kibana configuration |
 | clusterSpec.kibana.count | int | `1` | Kibana instance count |
 | clusterSpec.kibana.ingress.annotations | object | `{}` | Kibana ingress annotations |
 | clusterSpec.kibana.ingress.enabled | bool | `false` | Enable Kibana UI ingress |
