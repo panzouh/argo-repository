@@ -261,7 +261,7 @@ Logging
     {{- else if eq (include "lp.enabled" .) "true" }}
       {{- print "monitoring" }}
     {{- else if eq (include "elfk.enabled" .) "true" }}
-      {{- print "elastics-system" }}
+      {{- print "elastic-system" }}
     {{- end }}
   {{- else }}
     {{- print "disabled" }}
