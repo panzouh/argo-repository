@@ -18,7 +18,7 @@ A Helm chart for Kubernetes
 | clusterSpec.kibana.count | int | `1` | Kibana instance count |
 | clusterSpec.kibana.ingress.annotations | object | `{}` | Kibana ingress annotations |
 | clusterSpec.kibana.ingress.enabled | bool | `false` | Enable Kibana UI ingress |
-| clusterSpec.kibana.ingress.hosts | list | `[{"host":"chart-example.local"}]` | Kibana ingress hostnames |
+| clusterSpec.kibana.ingress.hosts | list | `["chart-example.local"]` | Kibana ingress hostnames |
 | clusterSpec.kibana.ingress.tls | list | `[]` | Kibana ingress TLS configuration |
 | clusterSpec.kibana.kibanaPath | string | `"/"` | Kibana application base path |
 | clusterSpec.name | string | `"eck-cluster"` | ECK Cluster name |
