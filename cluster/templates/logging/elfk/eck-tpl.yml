@@ -12,7 +12,7 @@ spec:
   destination:
     namespace: {{ (include "logging.namespace" .) }}
     server: https://kubernetes.default.svc
-  project: integration
+  project: logging
   source:
     path: {{ .Values.logging.eckTpl.chart.path }}
     repoURL: {{ .Values.logging.eckTpl.chart.repo }}
@@ -41,11 +41,11 @@ spec:
           {{- if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
           kibanaPath: "/{{ .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name }}"
           {{- end }}
-          config:
+          config: {{ toYaml .Values.logging.eckTpl.values.clusterSpec.kibana.config | nindent 12 }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.enabled }}
-          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 12 -}}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.enabled }}
-            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 12 -}}
+            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.eckTpl.values.clusterSpec.kibana.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
           {{- end }}
 {{ end }}

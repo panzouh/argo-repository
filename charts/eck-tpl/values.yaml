@@ -10,17 +10,7 @@ clusterSpec:
     # -- Elasticsearch instance count
     count: 3
     # -- Elasticsearch configuration
-    config:
-      path.repo: ["/usr/share/elasticsearch/backups"]
-      node.roles: [data, master]
-      node.ingest: true
-      node.store.allow_mmap: false
-      xpack.monitoring.enabled: true
-      xpack.monitoring.collection.enabled: true
-      xpack.security.authc.realms:
-        native:
-          native1:
-            order: 1
+    config: {}
     # -- Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort`
     serviceType: ClusterIP
     persistence:
@@ -38,8 +28,7 @@ clusterSpec:
     # -- Kibana application base path
     kibanaPath: "/"
     # -- Kibana configuration
-    config:
-      xpack.monitoring.enabled: true
+    config: {}
     ingress:
       # -- Enable Kibana UI ingress
       enabled: false

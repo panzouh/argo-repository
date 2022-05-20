@@ -12,7 +12,7 @@ spec:
   destination:
     namespace: {{ (include "logging.namespace" .) }}
     server: https://kubernetes.default.svc
-  project: integration
+  project: logging
   source:
     chart: {{ .Values.logging.eckCrds.chart.name }}
     repoURL: {{ .Values.logging.eckCrds.chart.repo }}
