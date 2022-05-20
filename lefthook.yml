@@ -1,8 +1,10 @@
 pre-commit:
-  scripts:
-    echo-test:
-      skip_empty: false
-      run: echo "{staged_files}"
+  commands:
     helm-docs:
       skip_empty: false
-      runner: docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest -l trace
+      run: |-
+        if ! command -v docker &> /dev/null; then
+          echo "Docker not found switching to Podman"
+          alias docker=podman
+        fi
+        docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest -l trace
