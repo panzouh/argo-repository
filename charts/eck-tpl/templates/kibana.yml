@@ -10,6 +10,7 @@ spec:
   config: {{ toYaml .Values.clusterSpec.kibana.config | nindent 6 }}
   elasticsearchRef:
     name: {{ .Values.clusterSpec.name }}
+  {{- if not (eq .Values.clusterSpec.kibana.kibanaPath "/") }}
   podTemplate:
     spec:
       containers:
@@ -17,3 +18,4 @@ spec:
         env:
         - name: SERVER_BASEPATH
           value: {{ .Values.clusterSpec.kibana.kibanaPath }}
+  {{- end }}
