@@ -30,6 +30,9 @@ spec:
       http:
         paths:
           - path: /
+            {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+            pathType: Prefix
+            {{- end }}
             backend:
               serviceName: {{ $clusterName }}-kb-http
               servicePort: 80
