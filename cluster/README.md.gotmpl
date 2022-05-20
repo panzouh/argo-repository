@@ -212,9 +212,21 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 |-----|------|---------|-------------|
 {{- range .Values }}
   {{- if hasPrefix "logging.eck" .Key }}
-    {{- if not (hasPrefix "logging.eckTpl" .Key)}}
+    {{- if not (and (hasPrefix "logging.eckTpl" .Key) (hasPrefix "logging.eckTpl" .Key)) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
     {{- end }}
+  {{- end }}
+{{- end }}
+
+##### ECK Crds
+
+Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kubernetes: configuration, upgrades, snapshots, scaling, high availability & security.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "logging.eckCrds" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
 
@@ -361,7 +373,7 @@ Prometheus MS Teams chart allow you to write alerts on Microsoft Teams. In order
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
-  {{- if hasPrefix "monitoring.grafana" .Key }}
+  {{- if hasPrefix "monitoring.prometheusMsTeams" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}

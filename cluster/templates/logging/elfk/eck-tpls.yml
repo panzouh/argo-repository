@@ -1,0 +1,23 @@
+{{ if and .Values.logging.eckTpl.enabled (eq (include "logging.namespace" .) "elastic-system") }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eck
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ (include "logging.namespace" .) }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    path: {{ .Values.logging.eckTpl.chart.path }}
+    repoURL: {{ .Values.logging.eckTpl.chart.repo }}
+    targetRevision: {{ .Values.logging.eckTpl.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}

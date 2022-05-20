@@ -14,9 +14,9 @@ spec:
     server: https://kubernetes.default.svc
   project: integration
   source:
-    chart: {{ .Values.eck.chart.name }}
-    repoURL: {{ .Values.eck.chart.repo }}
-    targetRevision: {{ .Values.eck.chart.version }}
+    chart: {{ .Values.logging.eck.chart.name }}
+    repoURL: {{ .Values.logging.eck.chart.repo }}
+    targetRevision: {{ .Values.logging.eck.chart.version }}
     helm:
       version: v3
       values: |-

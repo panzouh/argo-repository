@@ -232,7 +232,7 @@ Logging
 */}}
 
 {{- define "elfk.enabled" }}
-  {{- and .Values.logging.eck.enabled .Values.logging.eckTpl.enabled }}
+  {{- and .Values.logging.eck.enabled }}
 {{- end }}
 
 {{- define "eck.verbosity" }}
@@ -251,7 +251,7 @@ Logging
 {{- end }}
 
 {{- define "lp.enabled" }}
-  {{- and .Values.logging.loki.enabled .Values.logging.promtail.enabled .Values.logging.enabled }}
+  {{- and .Values.logging.loki.enabled .Values.logging.promtail.enabled }}
 {{- end }}
 
 {{- define "logging.namespace" }}

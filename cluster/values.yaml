@@ -168,11 +168,11 @@ logging:
     enabled: false
     chart:
       # -- Helm repository
-      repo: https://prometheus-community.github.io/helm-charts
+      repo: https://helm.elastic.co
       # -- Chart name
-      name: prometheus
+      name: eck-operator
       # -- Chart version
-      version: "9.2.2"
+      version: "2.2.0"
     values:
       # -- Filter namespaces to watch you can leave it empty to watch all namespaces
       watchNamespaces:
@@ -183,6 +183,16 @@ logging:
       verbosity: warning
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
+  eckCrds:
+    chart:
+      # -- Helm repository
+      repo: https://helm.elastic.co
+      # -- Chart name
+      name: eck-operator-crds
+      # -- Chart version
+      version: "2.2.0"
+    # -- No specific values needs to be specified
+    values: {}
   eckTpl:
     # -- Enable ECK Tpl chart
     enabled: false
