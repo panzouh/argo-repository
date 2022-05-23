@@ -13,7 +13,9 @@ A Helm chart for Kubernetes
 | clusterSpec.elasticsearch.persistence.enabled | bool | `false` | Enable Elasticsearch persitence |
 | clusterSpec.elasticsearch.persistence.size | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
 | clusterSpec.elasticsearch.persistence.storageClassName | string | `""` | Storage class name, you can get it by executing this command `kubectl get sc` |
-| clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
+| clusterSpec.elasticsearch.serviceType | string | `"LoadBalancer"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
+| clusterSpec.elasticsearch.tls.enabled | bool | `true` | Enable TLS Generation |
+| clusterSpec.elasticsearch.tls.subjectAltNames | list | `[]` | To use a custom domain name and / or IP with the self-signed certificate `clusterSpec.elasticsearch.serviceType` must be `LoadBalancer` & must be not empty |
 | clusterSpec.filebeat.config."filebeat.inputs"[0].paths[0] | string | `"/var/log/containers/*.log"` |  |
 | clusterSpec.filebeat.config."filebeat.inputs"[0].type | string | `"container"` |  |
 | clusterSpec.filebeat.enabled | bool | `false` | Enable Filebeat instances |

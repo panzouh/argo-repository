@@ -259,7 +259,9 @@ ECK Tpl is a custom chart, which, as its name suggests, allows you to simply cre
 | logging.eckTpl.values.clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
 | logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass`` |
 | logging.eckTpl.values.clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
-| logging.eckTpl.values.clusterSpec.filebeat.config.s | string | `nil` |  |
+| logging.eckTpl.values.clusterSpec.elasticsearch.tls.enabled | bool | `true` | Enable TLS Generation |
+| logging.eckTpl.values.clusterSpec.elasticsearch.tls.subjectAltNames | list | `[]` | To use a custom domain name and / or IP with the self-signed certificate `clusterSpec.elasticsearch.serviceType` must be `LoadBalancer` & must be not empty |
+| logging.eckTpl.values.clusterSpec.filebeat.config | object | `{}` |  |
 | logging.eckTpl.values.clusterSpec.filebeat.enabled | bool | `false` | Enable Filebeat instances |
 | logging.eckTpl.values.clusterSpec.filebeat.mounts | list | `[]` | Set Filebeat mounts |
 | logging.eckTpl.values.clusterSpec.kibana.config | object | `{}` | Kibana configuration |
