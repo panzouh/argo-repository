@@ -19,7 +19,7 @@ clusterSpec:
       # -- PVC access modes can be either `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany` or `ReadWriteOncePod` watch [Official Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for more informations
       accessModes: ReadWriteOnce
       # -- Elasticsearch PVC size, it will create *n* PVC of `50Gi`
-      pvcSize: 50Gi
+      size: 50Gi
       # -- Storage class name, you can get it by executing this command `kubectl get sc`
       storageClassName: ""
   kibana:

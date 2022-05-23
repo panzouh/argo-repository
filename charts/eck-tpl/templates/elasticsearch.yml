@@ -16,12 +16,12 @@ spec:
     {{- if .Values.clusterSpec.elasticsearch.persistence.enabled }}
     volumeClaimTemplates:
     - metadata:
-        name: {{ .Values.clusterSpec.name }}-data
+        name: elasticsearch-data
       spec:
         accessModes:
         - {{ .Values.clusterSpec.elasticsearch.persistence.accessModes }}
         resources:
           requests:
-            storage: {{ .Values.clusterSpec.elasticsearch.persistence.pvcSize }}
+            storage: {{ .Values.clusterSpec.elasticsearch.persistence.size }}
         storageClassName: {{ .Values.clusterSpec.elasticsearch.persistence.storageClassName }}
     {{- end }}
