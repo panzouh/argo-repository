@@ -154,6 +154,7 @@ spec:
               {{- if .Values.argocd.values.repositories }}
                 {{- toYaml .Values.argocd.values.repositories | nindent 14 }}
               {{- end }}
+        {{- if or .Values.argocd.values.ha (and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled) .Values.proxies.enabled .Values.argocd.values.avp.enabled }}
         repoServer:
           {{- if .Values.argocd.values.ha }}
           replicas: 2
@@ -216,4 +217,5 @@ spec:
               value: argocd-repo-server,argocd-application-controller,argocd-metrics,argocd-server,argocd-server-metrics,argocd-redis,argocd-dex-server,{{ .Values.proxies.noProxy }}
             {{- end }}
           {{- end }}
+        {{- end }}
 {{ end }}
