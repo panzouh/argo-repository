@@ -103,7 +103,7 @@ spec:
         {{- if .Values.monitoring.prometheus.values.alertmanager.configurationFile }}
         alertmanagerFiles:
           alertmanager.yml:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml .Values.monitoring.prometheus.values.alertmanager.configurationFile | nindent 12 }}
         {{- else }}
         alertmanagerFiles: {}
         {{- end }}
