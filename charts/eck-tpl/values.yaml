@@ -12,7 +12,12 @@ clusterSpec:
     # -- Elasticsearch configuration
     config: {}
     # -- Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort`
-    serviceType: ClusterIP
+    serviceType: LoadBalancer
+    tls:
+      # -- Enable TLS Generation
+      enabled: true
+      # -- To use a custom domain name and / or IP with the self-signed certificate `clusterSpec.elasticsearch.serviceType` must be `LoadBalancer` & must be not empty
+      subjectAltNames: []
     persistence:
       # -- Enable Elasticsearch persitence
       enabled: false

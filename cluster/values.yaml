@@ -218,6 +218,11 @@ logging:
           serviceType: ClusterIP
           # -- Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass``
           pvcSize: 50Gi
+          tls:
+            # -- Enable TLS Generation
+            enabled: true
+            # -- To use a custom domain name and / or IP with the self-signed certificate `clusterSpec.elasticsearch.serviceType` must be `LoadBalancer` & must be not empty
+            subjectAltNames: []
         kibana:
           # -- Kibana instance count
           count: 1
@@ -233,7 +238,7 @@ logging:
           enabled: false
           # -- Set Filebeat mounts
           mounts: []
-          config: {s}
+          config: {}
 
 # Monitoring
 

@@ -27,6 +27,16 @@ spec:
             count: {{ .Values.logging.eckTpl.values.clusterSpec.elasticsearch.count }}
             config: {{ toYaml .Values.logging.eckTpl.values.clusterSpec.elasticsearch.config | nindent 14 }}
             serviceType: {{ .Values.logging.eckTpl.values.clusterSpec.elasticsearch.serviceType }}
+            tls:
+              enabled: {{ .Values.logging.eckTpl.values.clusterSpec.elasticsearch.tls.enabled }}
+              {{- if .Values.logging.eckTpl.values.clusterSpec.elasticsearch.tls.subjectAltNames }}
+              subjectAltNames:
+                {{- range $index, $map := .Values.logging.eckTpl.values.clusterSpec.elasticsearch.tls.subjectAltNames }}
+                {{- range $k, $v := $map }}
+                - {{ $k }}: {{ $v }}
+                {{- end }}
+                {{- end }}
+              {{- end }}
             {{- if .Values.default.storageClass }}
             persistence:
               enabled: true
