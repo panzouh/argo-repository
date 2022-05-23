@@ -11,7 +11,7 @@ metadata:
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
-  {{- template "" . }}
+  {{- template "cluster.syncPolicy.default" . }}
   destination:
     namespace: {{ .Values.monitoring.namespace }}
     server: https://kubernetes.default.svc
