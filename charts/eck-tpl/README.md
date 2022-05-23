@@ -11,7 +11,7 @@ A Helm chart for Kubernetes
 | clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
 | clusterSpec.elasticsearch.persistence.accessModes | string | `"ReadWriteOnce"` | PVC access modes can be either `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany` or `ReadWriteOncePod` watch [Official Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for more informations |
 | clusterSpec.elasticsearch.persistence.enabled | bool | `false` | Enable Elasticsearch persitence |
-| clusterSpec.elasticsearch.persistence.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
+| clusterSpec.elasticsearch.persistence.size | string | `"50Gi"` | Elasticsearch PVC size, it will create *n* PVC of `50Gi` |
 | clusterSpec.elasticsearch.persistence.storageClassName | string | `""` | Storage class name, you can get it by executing this command `kubectl get sc` |
 | clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
 | clusterSpec.filebeat.config."filebeat.inputs"[0].paths[0] | string | `"/var/log/containers/*.log"` |  |
