@@ -1,0 +1,21 @@
+{{- define "gitlab-runners.app-project.enabled" -}}
+{{- gt (len .Values.gitlabRunners.values) 0 -}}
+{{- end -}}
+{{ if eq (include "gitlab-runners.app-project.enabled" .) "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: gitlab-runners
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  {{- range .Values.gitlabRunners.values }}
+  - namespace: '{{ .runnerNamespace | default }}'
+    server: '*'
+  {{- end }}
+  sourceRepos:
+  - '*'
+{{ end }}

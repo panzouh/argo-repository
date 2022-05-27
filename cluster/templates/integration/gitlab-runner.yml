@@ -1,0 +1,85 @@
+{{- define "gitlab-runners.enabled" -}}
+{{- gt (len .Values.gitlabRunners.values) 0 -}}
+{{- end -}}
+{{ if eq (include "gitlab-runners.enabled" .) "true" }}
+{{ $argoFinalizers := (include "argocd.applications.finalizers" .) }}
+{{ $argoSyncPolicy := (include "cluster.syncPolicy.default" .) }}
+{{ $gitlabChart := .Values.gitlabRunners.chart }}
+{{- range .Values.gitlabRunners.values }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .runnerName }}
+  namespace: {{ .runnerNamespace | default "gitlab" }}
+  finalizers:
+  {{- $argoFinalizers | nindent 4 }}
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  destination:
+    namespace: {{ .runnerNamespace | default "gitlab" }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    chart: {{ $gitlabChart.name }}
+    repoURL: {{ $gitlabChart.repo }}
+    targetRevision: {{ $gitlabChart.version }}
+    helm:
+      version: v3
+      values: |-
+        replicas: {{ .replicas | default 1 }}
+        imagePullPolicy: {{ .imagePullPolicy | default "IfNotPresent" }}
+        terminationGracePeriodSeconds: 3600
+        gitlabUrl: {{ .gitlabUrl }}
+        runnerRegistrationToken: {{ .runnerToken }}
+        concurrent: 10
+        checkInterval: 30
+        rbac:
+          create: true
+          clusterWideAccess: false
+          podSecurityPolicy:
+            enabled: false
+        runners:
+          disable_cache: false
+          tags: {{ .runnerTags }}
+          cache_dir: "/cache"
+          config: |-
+            [[runners]]
+              executor = "docker"
+              [runners.docker]
+                tls_verify = false
+                image = "docker:{{ .dockerVersion | default "19.03.12" }}"
+                {{- if .isPrivileged }}
+                privileged = true
+                {{- end }}
+                disable_cache = false
+                volumes = ["/cache"]
+          runUntagged: false
+          protected: false
+          {{- if .isPrivileged }}
+          privileged: true
+          {{- end }}
+          cache: {}
+          builds:
+            cpuRequests: 100m
+            memoryRequests: 128Mi
+          services:
+            cpuRequests: 100m
+            memoryRequests: 128Mi
+          helpers:
+            cpuRequests: 100m
+            memoryRequests: 128Mi
+        securityContext:
+          fsGroup: 65533
+          runAsUser: 100
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+{{- end }}
+{{ end }}

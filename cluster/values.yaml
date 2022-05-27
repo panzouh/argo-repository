@@ -86,8 +86,19 @@ argocd:
       name: argocd
     # -- Enable ArgoCD all the way TLS, will be deactivated if ingress are enabled
     insecure: false
-    # -- Registered repositories not handled yet, watch section below :warning: Credentials not handled yet :warning:
+    # -- Registered repositories, watch section below :warning: Credentials creation not handled yet :warning:
     repositories: []
+
+gitlabRunners:
+  chart:
+    # -- Gitlab runners Helm repository
+    repo: https://charts.gitlab.io
+    # -- Chart name
+    name: gitlab-runner
+    # -- Chart version
+    version: 0.41.0
+  # -- Create runner watch section below
+  values: {}
 
 namespaceConfiguratorOperator:
   # -- Enable Namespace configuration operator chart
