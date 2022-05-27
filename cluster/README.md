@@ -88,7 +88,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.insecure | bool | `false` | Enable ArgoCD all the way TLS, will be deactivated if ingress are enabled |
 | argocd.values.logLevel | string | `"debug"` | Application controller logLevel  |
 | argocd.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
-| argocd.values.repositories | list | `[]` | Registered repositories not handled yet, watch section below :warning: Credentials not handled yet :warning: |
+| argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
 ##### Repositories
 
@@ -123,6 +123,42 @@ repositories:
     # Needs to be created first !
       name: my-ssh-key
       key: sshPrivateKey
+```
+
+#### Gitlab runners
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| gitlabRunners.chart.name | string | `"gitlab-runner"` | Chart name |
+| gitlabRunners.chart.repo | string | `"https://charts.gitlab.io"` | Gitlab runners Helm repository |
+| gitlabRunners.chart.version | string | `"0.41.0"` | Chart version |
+| gitlabRunners.values | object | `{}` | Create runner watch section below |
+
+##### Runner lean example
+
+```yaml
+gitlabRunners:
+  values:
+    - runnerName: runner-a
+      runnerToken: "<runner-token>"
+      runnerTags: "ci, test"
+      gitlabUrl: "https://git.domain.tld"
+```
+
+##### Runner full example
+
+```yaml
+gitlabRunners:
+  values:
+    - runnerName: runner-a
+      runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
+      runnerToken: "<runner-token>"
+      runnerTags: "ci, test"
+      dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
+      gitlabUrl: "https://git.domain.tld"
+      imagePullPolicy: Always # Value not mandatory, if not defined default is "IfNotPresent"
+      replicas: 1 # Value not mandatory, if not defined default is "1"
+      isPrivileged: false # Value not mandatory, if not defined default is false
 ```
 
 #### Namespace configuration operator
