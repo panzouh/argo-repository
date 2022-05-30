@@ -11,9 +11,10 @@
 1. [General](#general)
 2. [Integration](#integration)
 3. [Logging](#logging)
-4. [Monitoring](#monitoring)
-5. [Networking](#networking)
-6. [Security](#security)
+4. [Management](#management)
+5. [Monitoring](#monitoring)
+6. [Networking](#networking)
+7. [Security](#security)
 
 ## General
 
@@ -303,6 +304,19 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 {{- range .Values }}
   {{- if hasPrefix "logging.promtail" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Management
+
+#### Rancher
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if (hasPrefix "rancher" .Key) }} 
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+    {{- end }}
   {{- end }}
 {{- end }}
 

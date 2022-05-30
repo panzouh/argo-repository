@@ -644,7 +644,7 @@ NGINX Ingress Controller is a best-in-class traffic management solution for clou
 | ingress.nginx.chart.repo | string | `"https://kubernetes.github.io/ingress-nginx"` | Helm repository |
 | ingress.nginx.chart.version | string | `"4.0.18"` | Chart version |
 | ingress.nginx.enabled | bool | `false` | Enable Nginx chart, you should know that you can't activate Traefik & Nginx |
-| ingress.nginx.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
+| ingress.nginx.values.ingressAnnotations | object | `{"cert-manager.io/acme-challenge-type":"http01","cert-manager.io/cluster-issuer":"letsencrypt-production","ingress.kubernetes.io/ssl-redirect":"true","kubernetes.io/ingress.class":"nginx","kubernetes.io/tls-acme":"true"}` | Allow to add ingress annotations manually |
 | ingress.nginx.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | ingress.nginx.values.service.LoadBalancerIps | list | `[]` | Only for BareMetal support if you want to enforce Traefik's service IP |
 | ingress.nginx.values.service.type | string | `"LoadBalancer"` | Can be either Loadbalancer or NodePort |
