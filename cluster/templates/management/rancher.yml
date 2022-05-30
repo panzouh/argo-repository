@@ -1,0 +1,56 @@
+{{- define "rancher.enabled" -}}
+{{- .Values.rancher.enabled -}}
+{{- end -}}
+{{ if eq (include "rancher.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rancher
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.rancher.namespace }}
+    server: https://kubernetes.default.svc
+  project: management
+  source:
+    chart: {{ .Values.rancher.chart.name }}
+    repoURL: {{ .Values.rancher.chart.repo }}
+    targetRevision: {{ .Values.rancher.chart.version }}
+    helm:
+      version: v3
+      values: |-
+      {{- if and .Values.rancher.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
+        {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
+        hostname: {{ .Values.rancher.values.ingress.name }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+        {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
+        hostname: {{ .Values.ingress.ingressDefinition.dns.domain }}
+        {{- end }}
+        ingress:
+          enabled: true
+          includeDefaultExtraAnnotations: true
+          {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.ingress.traefik.values.ingressAnnotations }}
+          extraAnnotations:
+            {{- with .Values.ingress.traefik.values.ingressAnnotations }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- else if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.ingress.nginx.values.ingressAnnotations }}
+          extraAnnotations:
+            {{- with .Values.ingress.nginx.values.ingressAnnotations }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.certmanager.enabled }}
+          tls:
+            source: secret
+            secretName: rancher-certificate
+          {{- end }}
+      {{- else }}
+        ingress:
+          enabled: false
+      {{- end }}
+        bootstrapPassword: {{ .Values.rancher.values.bootstrapPassword }}
+{{ end }}

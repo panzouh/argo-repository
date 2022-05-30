@@ -31,6 +31,7 @@ TBA
 - Integration :
   - ArgoCD (Argoception)
   - Namespace Configuration Operator
+  - Gitlab runners
 - Logging :
   - ECK Operator
   - Logstash or Fluentd

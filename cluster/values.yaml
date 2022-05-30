@@ -251,6 +251,30 @@ logging:
           mounts: []
           config: {}
 
+# Management
+
+rancher:
+  # -- Enable Prometheus chart
+  enabled: true
+  # -- Destination namespace
+  namespace: cattle-system
+  chart:
+    # -- Helm repository
+    repo: https://releases.rancher.com/server-charts/stable
+    # -- Chart name
+    name: rancher
+    # -- Chart version
+    version: 2.6.5
+  values:
+    # -- Only for bootstrapp, if the application is exposed consider changing it 
+    bootstrapPassword: changeme
+    ingress:
+      # -- Enable Rancher ingress UI
+      enabled: true
+      # -- Rancher ingress name or path (weither it is an ingress wildcard or domain)
+      name: rancher
+
+
 # Monitoring
 
 monitoring:
@@ -468,7 +492,12 @@ ingress:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
       # -- Allow to add ingress annotations manually
-      ingressAnnotations: {}
+      ingressAnnotations:
+        cert-manager.io/acme-challenge-type: "http01"
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+        ingress.kubernetes.io/ssl-redirect: "true"
+        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/tls-acme: "true"
       service:
         # -- Can be either Loadbalancer or NodePort
         type: LoadBalancer

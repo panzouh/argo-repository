@@ -56,13 +56,13 @@
 
 - [x] Add ArgoCD project folder for each theme :
   - [ ] Provide real namespace isolation
-- [ ] Add lefthook support
+- [x] Add lefthook support
 - Documentation :
   - [ ] Add Contribute.md documentation
   - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
 - Themes :
   - Integration :
-    - [ ] Gitlab runners (add first)
+    - [x] Gitlab runners (add first)
   - General :
     - [ ] Enable VPA support
   - Default :
@@ -78,10 +78,8 @@
       - [ ] Add Strict TLS annotations auto
     - Nginx:
       - [ ] Work on nginx Strict TLS
-  - Storage :
-    - [ ] Add in-cluster storage solutions (Rook)
   - Logging :
-    - [ ] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
+    - [x] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
   - Security :
     - [x] Add in-cluster audit tool => Starboard
 
@@ -90,7 +88,7 @@
 - Documentation :
   - [ ] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs)) :
     - [ ] Chaos mesh stress
-- [ ] Add Gitlab CI file
+- [ ] Add CI file
 - Themes :
   - [ ] Backup: Add Velero
   - Chaos engineering :
@@ -108,3 +106,5 @@
   - Security :
     - [ ] Work on Keycloak auth (Both ArgoCD & Kubernetes)
     - [ ] Add cluster campain policies on Starboard
+  - Storage :
+    - [ ] Add in-cluster storage solutions (Rook)

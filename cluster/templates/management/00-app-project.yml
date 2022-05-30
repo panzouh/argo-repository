@@ -1,0 +1,21 @@
+{{- define "management.enabled" -}}
+{{- .Values.rancher.enabled -}}
+{{- end -}}
+{{ if eq (include "management.enabled" .) "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: management
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  {{- if .Values.rancher.enabled }}
+  - namespace: '{{ .Values.rancher.namespace }}'
+    server: '*'
+  {{- end }}
+  sourceRepos:
+  - '*'
+{{ end }}
