@@ -15,9 +15,10 @@ A Must Have Apps Cluster Management Provided by DTK (danstonkube.fr)
 1. [General](#general)
 2. [Integration](#integration)
 3. [Logging](#logging)
-4. [Monitoring](#monitoring)
-5. [Networking](#networking)
-6. [Security](#security)
+4. [Management](#management)
+5. [Monitoring](#monitoring)
+6. [Networking](#networking)
+7. [Security](#security)
 
 ## General
 
@@ -336,6 +337,21 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | logging.promtail.enabled | bool | `false` | Enable Promtail chart |
 | logging.promtail.values.installOnControllPlane | bool | `true` | Enable Promtail on the controll plane |
 | logging.promtail.values.runtimeLogs | string | `"/var/lib/docker/containers"` | Path to runtime containers |
+
+### Management
+
+#### Rancher
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| rancher.chart.name | string | `"rancher"` | Chart name |
+| rancher.chart.repo | string | `"https://releases.rancher.com/server-charts/stable"` | Helm repository |
+| rancher.chart.version | string | `"2.6.5"` | Chart version |
+| rancher.enabled | bool | `true` | Enable Prometheus chart |
+| rancher.namespace | string | `"cattle-system"` | Destination namespace |
+| rancher.values.bootstrapPassword | string | `"changeme"` | Only for bootstrapp, if the application is exposed consider changing it  |
+| rancher.values.ingress.enabled | bool | `true` | Enable Rancher ingress UI |
+| rancher.values.ingress.name | string | `"rancher"` | Rancher ingress name or path (weither it is an ingress wildcard or domain) |
 
 ### Monitoring
 
