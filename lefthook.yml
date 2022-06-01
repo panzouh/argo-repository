@@ -1,9 +1,19 @@
 pre-commit:
+  piped: true
   commands:
+    lint:
+      run: |-
+        for d in ./charts/*; do
+          helm lint ${d}
+        done
+        helm lint ./cluster/
     helm-docs:
       run: |-
         if ! command -v docker &> /dev/null; then
-          echo "Docker not found switching to Podman"
+          echo "[+] Docker not found switching to Podman"
           alias docker=podman
         fi
-        docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest -l trace
+        docker run --rm --volume "$(pwd):/helm-docs" jnorwood/helm-docs:latest -l trace
+    re-stage:
+      run: |-
+        git diff --name-only --cached --diff-filter=ACM | while IFS= read -r n; do git add "$n"; done 
