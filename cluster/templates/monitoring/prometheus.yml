@@ -398,14 +398,6 @@ spec:
                   annotations:
                     summary: Nginx high HTTP 403 error rate (5m)
                     description: "Too many HTTP requests with status 403 (> 10%)\n  VALUE = {{ (include "value" .) }}\n"
-                - alert: DTKNginx_HighHttp404ErrorRate
-                  expr: sum(rate(nginx_ingress_controller_requests{status="404"}[10m])) / sum(rate(nginx_ingress_controller_requests[10m])) * 100 > 10
-                  for: 5m
-                  labels:
-                    severity: warning
-                  annotations:
-                    summary: Nginx high HTTP 404 error rate (5m)
-                    description: "Too many HTTP requests with status 404 (> 30%)\n  VALUE = {{ (include "value" .) }}\n Potential Nginx malfunction"
                 - alert: DTKNginx_HighHttp5xxErrorRate
                   expr: sum(rate(nginx_ingress_controller_requests{status=~"5.."}[10m])) / sum(rate(nginx_ingress_controller_requests[10m])) * 100 > 5
                   for: 5m
