@@ -83,7 +83,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
 | argocd.values.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
 | argocd.values.avp.version | string | `"1.11.0"` | AVP version to install |
-| argocd.values.enableAlternateHelmPlugin | bool | `true` |  |
+| argocd.values.enableAlternateHelmPlugin | bool | `false` |  |
 | argocd.values.ha | bool | `true` | Enable ArgoCD on HA mode |
 | argocd.values.ingress.enabled | bool | `true` | Enable ArgoCD UI ingress |
 | argocd.values.ingress.name | string | `"argocd"` | ArgoCD ingress name or path (weither it is an ingress wildcard or domain |
