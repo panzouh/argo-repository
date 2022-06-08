@@ -434,13 +434,15 @@ monitoring:
     enabled: true
     chart:
       # -- Helm repository
-      repo:
+      repo: https://shanestarcher.com/helm-charts/
       # -- Chart name
-      name:
+      name: helm-exporter
       # -- Chart version
-      version:
+      version: 1.2.2+6766a95
     values:
+      # -- Disable namespaces to watch
       disabledNamespace: null
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
       enableGrafanaDashboard: true
   prometheus:
     # -- Enable Prometheus chart

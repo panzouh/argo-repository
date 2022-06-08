@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
   project: monitoring
   source:
-    chart: {{ .Values.monitoring.blackboxExporter.chart.name }}
-    repoURL: {{ .Values.monitoring.blackboxExporter.chart.repo }}
-    targetRevision: {{ .Values.monitoring.blackboxExporter.chart.version }}
+    chart: {{ .Values.monitoring.helmExporter.chart.name }}
+    repoURL: {{ .Values.monitoring.helmExporter.chart.repo }}
+    targetRevision: {{ .Values.monitoring.helmExporter.chart.version }}
     helm:
       version: v3
       values: |-

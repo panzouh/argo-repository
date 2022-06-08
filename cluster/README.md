@@ -363,12 +363,12 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| monitoring.helmExporter.chart.name | string | `nil` | Chart name |
-| monitoring.helmExporter.chart.repo | string | `nil` | Helm repository |
-| monitoring.helmExporter.chart.version | string | `nil` | Chart version |
+| monitoring.helmExporter.chart.name | string | `"helm-exporter"` | Chart name |
+| monitoring.helmExporter.chart.repo | string | `"https://shanestarcher.com/helm-charts/"` | Helm repository |
+| monitoring.helmExporter.chart.version | string | `"1.2.2+6766a95"` | Chart version |
 | monitoring.helmExporter.enabled | bool | `true` | Enable Helm Exporter chart |
-| monitoring.helmExporter.values.disabledNamespace | string | `nil` |  |
-| monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` |  |
+| monitoring.helmExporter.values.disabledNamespace | string | `nil` | Disable namespaces to watch |
+| monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | monitoring.namespace | string | `"monitoring"` | Monitoring destination namespace |
 
 #### Blackbox exporter
@@ -426,6 +426,19 @@ The purpose of this helm chart is to expose Fio metrics to Prometheus, it is wri
 | monitoring.fio.enabled | bool | `false` | Enable Fio chart you will need to enable Prometheus as well |
 | monitoring.fio.values.enableGrafanaDashboard | bool | `true` | fio Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | monitoring.fio.values.installOnControllPlane | bool | `true` | Enable Fio exporter on the controll plane, by default Prometheus scraping is enabled |
+
+#### Helm exporter
+
+The purpose of this helm chart is to expose Fio metrics to Prometheus, it is writen in Golang, you can find the official repository [here](https://gitlab.com/panzouh/fio-exportaire).
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| monitoring.helmExporter.chart.name | string | `"helm-exporter"` | Chart name |
+| monitoring.helmExporter.chart.repo | string | `"https://shanestarcher.com/helm-charts/"` | Helm repository |
+| monitoring.helmExporter.chart.version | string | `"1.2.2+6766a95"` | Chart version |
+| monitoring.helmExporter.enabled | bool | `true` | Enable Helm Exporter chart |
+| monitoring.helmExporter.values.disabledNamespace | string | `nil` | Disable namespaces to watch |
+| monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 
 #### Goldpinger
 

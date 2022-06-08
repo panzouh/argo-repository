@@ -385,6 +385,18 @@ The purpose of this helm chart is to expose Fio metrics to Prometheus, it is wri
   {{- end }}
 {{- end }}
 
+#### Helm exporter
+
+The purpose of this helm chart is to expose Fio metrics to Prometheus, it is writen in Golang, you can find the official repository [here](https://gitlab.com/panzouh/fio-exportaire).
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "monitoring.helmExporter" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 #### Goldpinger
 
 Goldpinger makes calls between its instances for visibility and alerting.
