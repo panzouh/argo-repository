@@ -68,20 +68,26 @@ argocd:
     logLevel: debug
     # -- Enable Helm alternate plugin `helm upgrade --install` instead of `helm template . | kubectl apply -f -`
     enableAlternateHelmPlugin: false
-    avp:
-      # -- Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first
-      enabled: false
-      # -- Tell to Argo which SA to create
-      saName: avp
-      # -- AVP version to install
-      version: "1.11.0"
-      auth:
-        # -- Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only
-        vaultUrl: "https://your-vault.domain.tld"
-        # -- AVP auth type
-        type: k8s
-        # AVP auth path
-        path: auth/kubernetes
+    plugins:
+      avp:
+        # -- Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first
+        enabled: false
+        # -- Tell to Argo which SA to create
+        saName: avp
+        # -- AVP version to install
+        version: "1.11.0"
+        auth:
+          # -- Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only
+          vaultUrl: "https://your-vault.domain.tld"
+          # -- AVP auth type
+          type: k8s
+          # AVP auth path
+          path: auth/kubernetes
+      alp:
+        # -- Enable Argo Lovely Plugin extension
+        enabled: false
+         # -- Enable Argo Lovely Plugin version to install
+        version: stable
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
     # -- Enable ArgoCD on HA mode
@@ -368,7 +374,7 @@ monitoring:
             username: admin
             # -- Basic auth password (only for `raw` type) 
             password: changeme
-            # -- Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true`
+            # -- Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
             avpPath: avp/data/prometheus
             # -- Configure password key in vault kv-v2 secret, only for `auth.type: vault`
             authKey: htpasswd
@@ -383,7 +389,7 @@ monitoring:
       # -- Chart version
       version: "6.29.2"
     values:
-      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true`
+      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
       passwordType: raw
       # -- Grafana default admin username, only for raw type :warning: insecure :warning
       adminUser: "admin"

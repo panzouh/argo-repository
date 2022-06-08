@@ -16,4 +16,4 @@ pre-commit:
         docker run --rm --volume "$(pwd):/helm-docs" jnorwood/helm-docs:latest -l trace
     re-stage:
       run: |-
-        git diff --name-only --cached --diff-filter=ACM | while IFS= read -r n; do git add "$n"; done 
+        git diff --name-only --cached --diff-filter=ACM | while IFS= read -r n; do git add ${n}; done 

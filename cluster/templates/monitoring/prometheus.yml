@@ -2,7 +2,7 @@
 {{- .Values.monitoring.prometheus.enabled -}}
 {{- end -}}
 {{ if eq (include "prometheus.enabled" .) "true" }}
-{{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw" }}
+{{- if and (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) (eq .Values.monitoring.prometheus.values.server.ingress.auth.type "raw") }}
 ---
 kind: Secret
 apiVersion: v1
@@ -112,17 +112,13 @@ spec:
           enabled: false
         {{- end }}
         {{- if or .Values.monitoring.blackboxExporter.enabled .Values.monitoring.prometheus.values.extraScrapeConfigs }}
-        extraScrapeConfigs: |
-          {{- printf "%v" (include "blackbox-exporter.scrape" .) | nindent 12 }}
-          {{- printf "%v" .Values.monitoring.prometheus.values.extraScrapeConfigs | nindent 12 }}
-        {{- else if or .Values.monitoring.blackboxExporter.enabled .Values.monitoring.prometheus.values.extraScrapeConfigs }}
-        {{- if .Values.monitoring.blackboxExporter.enabled }}
-        extraScrapeConfigs: |
-          {{- print (include "blackbox-exporter.scrape" .) | nindent 12 }}
-        {{- else if .Values.monitoring.prometheus.values.extraScrapeConfigs }}
-        extraScrapeConfigs: |
-          {{- print .Values.monitoring.prometheus.values.extraScrapeConfigs | nindent 12 }}
-        {{- end }}
+        extraScrapeConfigs: |-
+          {{- if .Values.monitoring.blackboxExporter.enabled -}}
+            {{- tpl (include "blackbox-exporter.scrape" .) . | nindent 10 -}}
+          {{- end -}}
+          {{- if .Values.monitoring.prometheus.values.extraScrapeConfigs -}}
+            {{- tpl .Values.monitoring.prometheus.values.extraScrapeConfigs . | nindent 10 -}}
+          {{- end -}}
         {{- end }}
         {{- if eq (include "preconfigureRules.enabled" .) "true" }}
         serverFiles:

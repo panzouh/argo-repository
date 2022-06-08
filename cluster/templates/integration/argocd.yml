@@ -2,11 +2,11 @@
 {{- or .Values.argocd.enabled .Values.default.enabled -}}
 {{- end -}}
 {{ if eq (include "argocd.enabled" .) "true" }}
-{{- if .Values.argocd.values.avp.enabled }}
+{{- if .Values.argocd.values.plugins.avp.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Values.argocd.values.avp.saName }}
+  name: {{ .Values.argocd.values.plugins.avp.saName }}
   namespace: {{ .Values.argocd.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -40,15 +40,15 @@ metadata:
   labels:
     app.kubernetes.io/part-of: argocd
 data:
-  AVP_K8S_ROLE: {{ .Values.argocd.values.avp.saName | b64enc }}
+  AVP_K8S_ROLE: {{ .Values.argocd.values.plugins.avp.saName | b64enc }}
   AVP_TYPE: {{ print "vault" | b64enc }}
   {{- if .Values.vault.enabled }}
   VAULT_ADDR: {{ printf "http://vault.%v:8200" .Values.vault.namespace | b64enc }}
   {{- else }}
-  VAULT_ADDR: {{ .Values.argocd.values.avp.auth.vaultUrl | b64enc }}
+  VAULT_ADDR: {{ .Values.argocd.values.plugins.avp.auth.vaultUrl | b64enc }}
   {{- end }}
-  AVP_AUTH_TYPE: {{ .Values.argocd.values.avp.auth.type | b64enc }}
-  AVP_K8S_MOUNT_PATH: {{ .Values.argocd.values.avp.auth.path | b64enc }}
+  AVP_AUTH_TYPE: {{ .Values.argocd.values.plugins.avp.auth.type | b64enc }}
+  AVP_K8S_MOUNT_PATH: {{ .Values.argocd.values.plugins.avp.auth.path | b64enc }}
 type: Opaque
 {{- end }}
 ---
@@ -138,26 +138,22 @@ spec:
             {{- end }}
           {{- end }}
           config:
-            {{- if .Values.argocd.values.ingress.enabled }}
+            {{- if and .Values.argocd.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
             url: {{ include "url-constructor" (dict "name" .Values.argocd.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
             {{- end }}
             application.instanceLabelKey: argocd.argoproj.io/instance
-            {{- if or .Values.argocd.values.avp.enabled .Values.argocd.values.enableAlternateHelmPlugin }}
+            {{- if or .Values.argocd.values.plugins.avp.enabled .Values.argocd.values.plugins.alp.enabled }}
             configManagementPlugins: |-
-              {{- if .Values.argocd.values.avp.enabled }}
+              {{- if .Values.argocd.values.plugins.avp.enabled }}
               - name: argocd-helm-vault-plugin
                 generate:
                   command: ["bash", "-c"]
                   args: ['helm template "$ARGOCD_APP_NAME" -f <(echo "$HELM_VALUES") . | argocd-vault-plugin -s avp-env generate -']
               {{- end }}
-              {{- if .Values.argocd.values.enableAlternateHelmPlugin }}
-              - name: alternate-helm-plugin
-                init:
-                  command: ["bash", "-c"]
-                  args: ['helm repo add "$ARGOCD_APP_NAME" "$HELM_REPOSITORY"']
+              {{- if .Values.argocd.values.plugins.alp.enabled }}
+              - name: argocd-lovely-plugin
                 generate:
-                  command: ["bash", "-c"]
-                  args: ['helm upgrade --install --create-namespace -n "$RELEASE_NAMESPACE" --version "$RELEASE_VERSION" "$ARGOCD_APP_NAME" "$ARGOCD_APP_NAME"/"$RELEASE_NAME"']
+                  command: ["argocd-lovely-plugin"]
               {{- end }}
             {{- end }}
             repositories: |
@@ -165,7 +161,7 @@ spec:
               {{- if .Values.argocd.values.repositories }}
                 {{- toYaml .Values.argocd.values.repositories | nindent 14 }}
               {{- end }}
-        {{- if or .Values.argocd.values.ha (and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled) .Values.proxies.enabled .Values.argocd.values.avp.enabled }}
+        {{- if or .Values.argocd.values.ha (and .Values.argocd.values.monitor .Values.monitoring.prometheus.enabled) .Values.proxies.enabled .Values.argocd.values.plugins.avp.enabled .Values.argocd.values.plugins.alp.enabled }}
         repoServer:
           {{- if .Values.argocd.values.ha }}
           replicas: 2
@@ -180,42 +176,61 @@ spec:
                 prometheus.io/path: '/metrics'
               servicePort: 8084
           {{- end }}
-          {{- if .Values.argocd.values.avp.enabled }}
+          {{- if .Values.argocd.values.plugins.avp.enabled }}
           serviceAccount:
             create: false
             name: avp
             automountServiceAccountToken: true
+          {{- end }}
+          {{- if or .Values.argocd.values.plugins.avp.enabled .Values.argocd.values.plugins.alp.enabled }}
           volumeMounts:
+            {{- if .Values.argocd.values.plugins.avp.enabled }}
             - mountPath: /usr/local/bin/argocd-vault-plugin
-              name: custom-tools
+              name: avp-download-tool
               subPath: argocd-vault-plugin
-            - mountPath: /etc/avp-config.yaml
-              name: avp-config
-              subPath: avp-config.yaml
+            {{- end }}
+            {{- if .Values.argocd.values.plugins.alp.enabled }}
+            - mountPath: /usr/local/bin/argocd-lovely-plugin
+              name: alp-download-tool
+              subPath: argocd-lovely-plugin
+            {{- end }}
           volumes:
-            - name: custom-tools
+            {{- if .Values.argocd.values.plugins.avp.enabled }}
+            - name: avp-download-tool
               emptyDir: {}
-            - name: avp-config
-              configMap:
-                name: avp-cm
+            {{- end }}
+            {{- if .Values.argocd.values.plugins.alp.enabled }}
+            - name: alp-download-tool
+              emptyDir: {}
+            {{- end }}
           initContainers:
-          - name: download-tools
-            image: cirrusci/wget:latest
-            command: [sh, -c]
-            env:
-              - name: AVP_VERSION
-                value: {{ quote .Values.argocd.values.avp.version }}
-              {{- if .Values.proxies.enabled }}
-              - name: http_proxy
-                value: {{ quote .Values.proxies.value }}
-              - name: https_proxy
-                value: {{ quote .Values.proxies.value }}
-              {{- end }}
-            args:
-              - wget -O /custom-tools/argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 && chmod 0755 /custom-tools/argocd-vault-plugin
-            volumeMounts:
-              - mountPath: /custom-tools
-                name: custom-tools
+            {{- if .Values.argocd.values.plugins.avp.enabled }}
+            - name: avp-download-tool
+              image: cirrusci/wget:latest
+              command: [sh, -c]
+              env:
+                - name: AVP_VERSION
+                  value: {{ quote .Values.argocd.values.plugins.avp.version }}
+                {{- if .Values.proxies.enabled }}
+                - name: http_proxy
+                  value: {{ quote .Values.proxies.value }}
+                - name: https_proxy
+                  value: {{ quote .Values.proxies.value }}
+                {{- end }}
+              args:
+                - wget -O /custom-tools/argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v${AVP_VERSION}/argocd-vault-plugin_${AVP_VERSION}_linux_amd64 && chmod 0755 /custom-tools/argocd-vault-plugin              
+              volumeMounts:
+                - mountPath: /custom-tools
+                  name: avp-download-tool
+            {{- end }}
+            {{- if .Values.argocd.values.plugins.alp.enabled }}
+            - name: alp-download-tool
+              image: ghcr.io/crumbhole/argocd-lovely-plugin:stable
+              imagePullPolicy: Always
+              volumeMounts:
+                - mountPath: /custom-tools
+                  name: alp-download-tool
+            {{- end }}
           env:
             - name: ARGOCD_EXEC_TIMEOUT
               value: "300s"

@@ -12,7 +12,7 @@ spec:
   - group: '*'
     kind: '*'
   destinations:
-  - namespace: '*'
+  - namespace: '{{ .Values.monitoring.namespace }}'
     server: '*'
   sourceRepos:
   - '*'
