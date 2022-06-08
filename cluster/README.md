@@ -83,6 +83,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
 | argocd.values.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
 | argocd.values.avp.version | string | `"1.11.0"` | AVP version to install |
+| argocd.values.enableAlternateHelmPlugin | bool | `true` |  |
 | argocd.values.ha | bool | `true` | Enable ArgoCD on HA mode |
 | argocd.values.ingress.enabled | bool | `true` | Enable ArgoCD UI ingress |
 | argocd.values.ingress.name | string | `"argocd"` | ArgoCD ingress name or path (weither it is an ingress wildcard or domain |
@@ -294,7 +295,7 @@ ECK Tpl is a custom chart, which, as its name suggests, allows you to simply cre
 | logging.eckTpl.enabled | bool | `false` | Enable ECK Tpl chart |
 | logging.eckTpl.values.clusterSpec.elasticsearch.config | object | `{}` | Elasticsearch configuration |
 | logging.eckTpl.values.clusterSpec.elasticsearch.count | int | `3` | Elasticsearch instance count |
-| logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass`` |
+| logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize | string | `"50Gi"` | Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass` |
 | logging.eckTpl.values.clusterSpec.elasticsearch.serviceType | string | `"ClusterIP"` | Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort` |
 | logging.eckTpl.values.clusterSpec.elasticsearch.tls.enabled | bool | `true` | Enable TLS Generation |
 | logging.eckTpl.values.clusterSpec.elasticsearch.tls.subjectAltNames | list | `[]` | To use a custom domain name and / or IP with the self-signed certificate `clusterSpec.elasticsearch.serviceType` must be `LoadBalancer` & must be not empty |
@@ -323,7 +324,7 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 | logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
-| logging.loki.values.pvcSize | string | `"100Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass`` |
+| logging.loki.values.pvcSize | string | `"100Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass` |
 
 ##### Promtail
 
@@ -525,6 +526,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` | Alertmanager configuration file, example below |
 | monitoring.prometheus.values.alertmanager.enabled | bool | `false` | Enable Alertmanager in the chart |
 | monitoring.prometheus.values.alertmanager.pvcSize | string | `"5Gi"` | Alertmanager PVC size, you will need to define a StorageClass in `default.storageClass` |
+| monitoring.prometheus.values.extraScrapeConfigs | string | `nil` | Enable extra configuration scrapes in the, watch section bellow for examples |
 | monitoring.prometheus.values.kubeStateMetrics.enabled | bool | `true` | Enable kubeStateMetrics in the chart |
 | monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
 | monitoring.prometheus.values.rules.customs | object | `{}` | Create Prometheus custom rules (not available yet) |
@@ -548,20 +550,66 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 ##### Alertmanager example configuration file
 
 ```yaml
-route:
-  group_by: ['instance', 'severity']
-  group_wait: 5m
-  group_interval: 10m
-  repeat_interval: 10m
-  receiver: "slack"
-receivers:
-  - name: 'slack'
-    slack_configs:
-      - send_resolved: true
-        text: '{{ .CommonAnnotations.description }}'
-        username: 'alertmanager-bot'
-        channel: 'alertmanager'
-        api_url: 'https://hooks.slack.com/not/working'
+configurationFile:
+  route:
+    group_by: ['instance', 'severity']
+    group_wait: 5m
+    group_interval: 10m
+    repeat_interval: 10m
+    receiver: "slack"
+  receivers:
+    - name: 'slack'
+      slack_configs:
+        - send_resolved: true
+          text: '{{ .CommonAnnotations.description }}'
+          username: 'alertmanager-bot'
+          channel: 'alertmanager'
+          api_url: 'https://hooks.slack.com/not/working'
+```
+
+##### Additionnal scrape configuration
+
+```yaml
+# Full documentation https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+extraScrapeConfigs: |
+  - job_name: node
+    static_configs:
+      - targets:
+        - localhost:9100
+  - job_name: python-app
+    static_configs:
+      - targets:
+          - localhost:8000
+        labels:
+          my_new_target_label: foo
+  - job_name: go-app
+    file_sd_configs:
+      - files:
+        - filesd.yaml
+    relabel_configs:
+      - target_label: instance
+        replacement: foo
+  - job_name: ec2_instances
+    ec2_sd_configs:
+      - region: eu-west-2
+        access_key: <REDACTED>
+        secret_key: <REDACTED>
+    relabel_configs:
+      - source_labels:
+          - __meta_ec2_tag_prometheus
+          - __meta_ec2_tag_app
+        regex: '.+;test|foo'
+        action: keep
+      - action: labelmap
+        regex: __meta_ec2_public_ip
+        replacement: public_ip
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - localhost:8888
+    metric_relabel_configs:
+      - action: labeldrop
+        regex: 'container_label_.*'
 ```
 
 ### Networking
