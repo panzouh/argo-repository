@@ -67,7 +67,7 @@ argocd:
     # -- Application controller logLevel 
     logLevel: debug
     # -- Enable Helm alternate plugin `helm upgrade --install` instead of `helm template . | kubectl apply -f -`
-    enableAlternateHelmPlugin: true
+    enableAlternateHelmPlugin: false
     avp:
       # -- Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first
       enabled: false
