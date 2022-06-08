@@ -22,12 +22,38 @@ spec:
     helm:
       version: v3
       values: |-
-        harborAdminPassword: ""
-        secretKey: ""
+        harborAdminPassword: {{ .Values.harbor.values.bootstrapPassword }}
+        secretKey: {{ .Values.harbor.values.secretKey }}
         expose:
-          type: clusterIP
+          type: ingress
           tls:
+            {{- if .Values.ingress.ingressDefinition.ssl.enabled }}
+            enabled: true
+            certSource: secret
+            secret:
+              {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
+              secretName: harbor-core-certificate
+              notarySecretName: harbor-core-certificate
+              {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
+              secretName: harbor-core-certificate
+              {{- end }}
+            {{- else }}
             enabled: false
+            certSource: none
+            {{- end -}}
+          ingress:
+            hosts:
+              {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
+              core: {{ .Values.harbor.values.ingressNames.core }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+              notary: {{ .Values.harbor.values.ingressNames.notary }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+              {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
+              core: {{ .Values.ingress.ingressDefinition.dns.domain }}
+              notary: {{ .Values.ingress.ingressDefinition.dns.domain }}
+              {{- end }}
+            annotations:
+              {{- if eq (include "ingress.namespace" .) "ingress-nginx" }}
+              {{- else if eq (include "ingress.namespace" .) "traefik-system" }}
+              {{- end }}
         {{- if .Values.default.storageClass }}
         persistence:
           persistentVolumeClaim:
@@ -73,5 +99,5 @@ spec:
             - jobservice
             - trivy
         {{- end }}
-        externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingressName "ingress" .Values.ingress.ingressDefinition) }}
+        externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingressNames.core "ingress" .Values.ingress.ingressDefinition) }}
 {{- end }}

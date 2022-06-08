@@ -96,7 +96,13 @@ spec:
               revision: 3
               datasource: Prometheus
             {{- end }}
-            {{- if eq (include "logging.namespace" .) "monitoring"}}
+            {{- if and .Values.monitoring.helmExporter.enabled .Values.monitoring.helmExporter.values.enableGrafanaDashboard }}
+            helm-exporter:
+              gnetId: 9367
+              revision: 2
+              datasource: Prometheus
+            {{- end }}
+            {{- if eq (include "logging.namespace" .) "monitoring" }}
             loki:
               json: |-
                 {

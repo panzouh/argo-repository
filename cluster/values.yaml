@@ -114,7 +114,7 @@ gitlabRunners:
   values: {}
 
 harbor:
-  # -- Enable Harbor repository chart, you will need to enable 
+  # -- Enable Harbor repository chart, you will need to enable Traefik or Nginx as well
   enabled: false
   # -- Destination namespace
   namespace: harbor-namespace
@@ -128,6 +128,10 @@ harbor:
   values:
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
+    # -- Initial admin user password if the application is exposed consider changing it 
+    bootstrapPassword: changeme
+    # -- The secret key used for encryption. Must be a string of 16 chars.
+    secretKey: not-a-secure-key
     persitence:
       # -- Registry PVC size, you will need to define a StorageClass in `default.storageClass`
       registry: 50Gi
@@ -141,8 +145,11 @@ harbor:
       redis: 2Gi
       # -- Trivy PVC size, you will need to define a StorageClass in `default.storageClass`
       trivy: 5Gi
-    # -- Harbor ingress name or path (weither it is an ingress wildcard or domain)
-    ingressName: harbor
+    ingressNames:
+      # -- Harbor core ingress name or path (weither it is an ingress wildcard or domain)
+      core: core
+      # -- Harbor notary ingress name or path (weither it is an ingress wildcard or domain)
+      notary: notary
 
 namespaceConfiguratorOperator:
   # -- Enable Namespace configuration operator chart
@@ -326,6 +333,115 @@ rancher:
 monitoring:
   # -- Monitoring destination namespace
   namespace: monitoring
+  blackboxExporter:
+    # -- Enable Blackbox exporter chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://prometheus-community.github.io/helm-charts
+      # -- Chart name
+      name: prometheus-blackbox-exporter
+      # -- Chart version
+      version: "4.10.4"
+    values:
+      # -- Enable prometheus default Prometheus rules (Will be announced in a future release)
+      enablePrometheusRules: false
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: false
+      # -- Create Url get configs accepted code are `200` & `403` (If you are using authentication)
+      scrapeUrls: []
+  discord:
+    # -- Enable Discord alerting hooks, you will need to enable Prometheus & Alertmanager as well
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://masgustavos.github.io/helm
+      # -- Chart name
+      name: alertmanager-discord
+      # -- Chart version
+      version: "0.0.5"
+    values:
+      # -- Roles to mention in discord you can obtain the id by typing `\@Role_Name` in discord's chat
+      rolesToMention: []
+      # -- Channels list, watch section below for more informations
+      channels: {}
+  fio:
+    # -- Enable Fio chart you will need to enable Prometheus as well
+    enabled: false
+    chart:
+      # -- Helm repository (This own repository)
+      repo: https://github.com/panzouh/argo-repository.git
+      # -- Chart path
+      path: charts/fio
+      # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+      targetRevision: HEAD
+    values:
+      # -- Enable Fio exporter on the controll plane, by default Prometheus scraping is enabled
+      installOnControllPlane: true
+      # --fio Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
+  goldpinger:
+    # -- Enable Goldpinger chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://okgolove.github.io/helm-charts
+      # -- Chart name
+      name: goldpinger
+      # -- Chart version
+      version: "5.1.0"
+    values:
+      # -- Enable prometheus default Prometheus rules (not ready yet)
+      enablePrometheusRules: true
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
+  grafana:
+    # -- Enable Grafana chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://grafana.github.io/helm-charts
+      # -- Chart name
+      name: grafana
+      # -- Chart version
+      version: "6.29.2"
+    values:
+      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
+      passwordType: raw
+      # -- Grafana default admin username, only for raw type :warning: insecure :warning
+      adminUser: "admin"
+      # -- Grafana default admin password, only for raw type :warning: insecure :warning:
+      adminPassword: "changeme"
+      # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
+      avpPath: "avp/data/grafana"
+      # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
+      userKey: username
+      # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
+      passwordKey: password
+      # -- Grafana PVC size, you will need to define a StorageClass in `default.storageClass`
+      pvcSize: 10Gi
+      ingress:
+        # -- Enable Grafana UI ingress
+        enabled: true
+        # -- Grafana ingress name or path (weither it is an ingress wildcard or domain)
+        name: grafana
+      # -- Create Grafana custom dashoards (Json Formated), not available at the moment
+      customDashboards: {}
+      # -- Create Grafana Dashboard available on Grafana Net, not available at the moment
+      customDashboardsGNET: {}
+  helmExporter:
+    # -- Enable Helm Exporter chart
+    enabled: true
+    chart:
+      # -- Helm repository
+      repo:
+      # -- Chart name
+      name:
+      # -- Chart version
+      version:
+    values:
+      disabledNamespace: null
+      enableGrafanaDashboard: true
   prometheus:
     # -- Enable Prometheus chart
     enabled: false
@@ -378,55 +494,6 @@ monitoring:
             avpPath: avp/data/prometheus
             # -- Configure password key in vault kv-v2 secret, only for `auth.type: vault`
             authKey: htpasswd
-  grafana:
-    # -- Enable Grafana chart
-    enabled: false
-    chart:
-      # -- Helm repository
-      repo: https://grafana.github.io/helm-charts
-      # -- Chart name
-      name: grafana
-      # -- Chart version
-      version: "6.29.2"
-    values:
-      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
-      passwordType: raw
-      # -- Grafana default admin username, only for raw type :warning: insecure :warning
-      adminUser: "admin"
-      # -- Grafana default admin password, only for raw type :warning: insecure :warning:
-      adminPassword: "changeme"
-      # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
-      avpPath: "avp/data/grafana"
-      # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
-      userKey: username
-      # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
-      passwordKey: password
-      # -- Grafana PVC size, you will need to define a StorageClass in `default.storageClass`
-      pvcSize: 10Gi
-      ingress:
-        # -- Enable Grafana UI ingress
-        enabled: true
-        # -- Grafana ingress name or path (weither it is an ingress wildcard or domain)
-        name: grafana
-      # -- Create Grafana custom dashoards (Json Formated), not available at the moment
-      customDashboards: {}
-      # -- Create Grafana Dashboard available on Grafana Net, not available at the moment
-      customDashboardsGNET: {}
-  fio:
-    # -- Enable Fio chart you will need to enable Prometheus as well
-    enabled: false
-    chart:
-      # -- Helm repository (This own repository)
-      repo: https://github.com/panzouh/argo-repository.git
-      # -- Chart path
-      path: charts/fio
-      # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
-      targetRevision: HEAD
-    values:
-      # -- Enable Fio exporter on the controll plane, by default Prometheus scraping is enabled
-      installOnControllPlane: true
-      # --fio Enable a Grafana specific dashboard, you will need to have Grafana enabled
-      enableGrafanaDashboard: true
   prometheusMsTeams:
     # -- Enable Prometheus Ms Teams Alert chart, you will need to enable Prometheus & Alertmanager as well
     enabled: false
@@ -442,53 +509,6 @@ monitoring:
       monitor: false
       # -- Hooks list, watch section below for more informations
       hooks: []
-  discord:
-    # -- Enable Discord alerting hooks, you will need to enable Prometheus & Alertmanager as well
-    enabled: false
-    chart:
-      # -- Helm repository
-      repo: https://masgustavos.github.io/helm
-      # -- Chart name
-      name: alertmanager-discord
-      # -- Chart version
-      version: "0.0.5"
-    values:
-      # -- Roles to mention in discord you can obtain the id by typing `\@Role_Name` in discord's chat
-      rolesToMention: []
-      # -- Channels list, watch section below for more informations
-      channels: {}
-  blackboxExporter:
-    # -- Enable Blackbox exporter chart
-    enabled: false
-    chart:
-      # -- Helm repository
-      repo: https://prometheus-community.github.io/helm-charts
-      # -- Chart name
-      name: prometheus-blackbox-exporter
-      # -- Chart version
-      version: "4.10.4"
-    values:
-      # -- Enable prometheus default Prometheus rules (Will be announced in a future release)
-      enablePrometheusRules: false
-      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
-      enableGrafanaDashboard: false
-      # -- Create Url get configs accepted code are `200` & `403` (If you are using authentication)
-      scrapeUrls: []
-  goldpinger:
-    # -- Enable Goldpinger chart
-    enabled: false
-    chart:
-      # -- Helm repository
-      repo: https://okgolove.github.io/helm-charts
-      # -- Chart name
-      name: goldpinger
-      # -- Chart version
-      version: "5.1.0"
-    values:
-      # -- Enable prometheus default Prometheus rules (not ready yet)
-      enablePrometheusRules: true
-      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
-      enableGrafanaDashboard: true
 
 # Networking
 

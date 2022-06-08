@@ -77,12 +77,6 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.chart.version | string | `"4.5.0"` | Chart version |
 | argocd.enabled | bool | `false` | Enable ArgoCD chart |
 | argocd.namespace | string | `"argocd"` | Destination namespace & Applications source namespace |
-| argocd.values.avp.auth.path | string | `"auth/kubernetes"` |  |
-| argocd.values.avp.auth.type | string | `"k8s"` | AVP auth type |
-| argocd.values.avp.auth.vaultUrl | string | `"https://your-vault.domain.tld"` | Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only |
-| argocd.values.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
-| argocd.values.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
-| argocd.values.avp.version | string | `"1.11.0"` | AVP version to install |
 | argocd.values.enableAlternateHelmPlugin | bool | `false` |  |
 | argocd.values.ha | bool | `true` | Enable ArgoCD on HA mode |
 | argocd.values.ingress.enabled | bool | `true` | Enable ArgoCD UI ingress |
@@ -90,6 +84,14 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.insecure | bool | `false` | Enable ArgoCD all the way TLS, will be deactivated if ingress are enabled |
 | argocd.values.logLevel | string | `"debug"` | Application controller logLevel  |
 | argocd.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| argocd.values.plugins.alp.enabled | bool | `false` | Enable Argo Lovely Plugin extension |
+| argocd.values.plugins.alp.version | string | `"stable"` | Enable Argo Lovely Plugin version to install |
+| argocd.values.plugins.avp.auth.path | string | `"auth/kubernetes"` |  |
+| argocd.values.plugins.avp.auth.type | string | `"k8s"` | AVP auth type |
+| argocd.values.plugins.avp.auth.vaultUrl | string | `"https://your-vault.domain.tld"` | Only if `argocd.values.avp.enabled=true` & `vault.enabled=false` for external Vault support only |
+| argocd.values.plugins.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
+| argocd.values.plugins.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
+| argocd.values.plugins.avp.version | string | `"1.11.0"` | AVP version to install |
 | argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
 ##### Repositories
@@ -361,6 +363,12 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| monitoring.helmExporter.chart.name | string | `nil` | Chart name |
+| monitoring.helmExporter.chart.repo | string | `nil` | Helm repository |
+| monitoring.helmExporter.chart.version | string | `nil` | Chart version |
+| monitoring.helmExporter.enabled | bool | `true` | Enable Helm Exporter chart |
+| monitoring.helmExporter.values.disabledNamespace | string | `nil` |  |
+| monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` |  |
 | monitoring.namespace | string | `"monitoring"` | Monitoring destination namespace |
 
 #### Blackbox exporter
@@ -457,7 +465,7 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 | monitoring.grafana.values.ingress.enabled | bool | `true` | Enable Grafana UI ingress |
 | monitoring.grafana.values.ingress.name | string | `"grafana"` | Grafana ingress name or path (weither it is an ingress wildcard or domain) |
 | monitoring.grafana.values.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
-| monitoring.grafana.values.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true` |
+| monitoring.grafana.values.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.grafana.values.pvcSize | string | `"10Gi"` | Grafana PVC size, you will need to define a StorageClass in `default.storageClass` |
 | monitoring.grafana.values.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
 
@@ -533,7 +541,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.rules.preconfiguredEnabled | bool | `true` | Enable Prometheus rules watch preconfigured rules below |
 | monitoring.prometheus.values.server.dataRetention | string | `"720h"` | Prometheus data retention |
 | monitoring.prometheus.values.server.ingress.auth.authKey | string | `"htpasswd"` | Configure password key in vault kv-v2 secret, only for `auth.type: vault` |
-| monitoring.prometheus.values.server.ingress.auth.avpPath | string | `"avp/data/prometheus"` | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.avp.enabled=true` |
+| monitoring.prometheus.values.server.ingress.auth.avpPath | string | `"avp/data/prometheus"` | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.prometheus.values.server.ingress.auth.password | string | `"changeme"` | Basic auth password (only for `raw` type)  |
 | monitoring.prometheus.values.server.ingress.auth.type | string | `"raw"` | Can be `none`, `raw` (:warning: both insecure :warning:) `vault` |
 | monitoring.prometheus.values.server.ingress.auth.username | string | `"admin"` | Basic auth username (only for `raw` type) |
