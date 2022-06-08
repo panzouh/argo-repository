@@ -142,12 +142,23 @@ spec:
             url: {{ include "url-constructor" (dict "name" .Values.argocd.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
             {{- end }}
             application.instanceLabelKey: argocd.argoproj.io/instance
-            {{- if .Values.argocd.values.avp.enabled }}
+            {{- if or .Values.argocd.values.avp.enabled .Values.argocd.values.enableAlternateHelmPlugin }}
             configManagementPlugins: |-
+              {{- if .Values.argocd.values.avp.enabled }}
               - name: argocd-helm-vault-plugin
                 generate:
                   command: ["bash", "-c"]
                   args: ['helm template "$ARGOCD_APP_NAME" -f <(echo "$HELM_VALUES") . | argocd-vault-plugin -s avp-env generate -']
+              {{- end }}
+              {{- if .Values.argocd.values.enableAlternateHelmPlugin }}
+              - name: alternate-helm-plugin
+                init:
+                  command: ["bash", "-c"]
+                  args: ['helm repo add "$ARGOCD_APP_NAME" "$HELM_REPOSITORY"']
+                generate:
+                  command: ["bash", "-c"]
+                  args: ['helm upgrade --install --create-namespace -n "$RELEASE_NAMESPACE" --version "$RELEASE_VERSION" "$ARGOCD_APP_NAME" "$ARGOCD_APP_NAME"/"$RELEASE_NAME"']
+              {{- end }}
             {{- end }}
             repositories: |
               - url: https://github.com/panzouh/argo-repository.git

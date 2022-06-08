@@ -57,6 +57,7 @@
 - [x] Add ArgoCD project folder for each theme :
   - [ ] Provide real namespace isolation
 - [x] Add lefthook support
+- [ ] Create deployment script
 - Documentation :
   - [ ] Add Contribute.md documentation
   - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
@@ -104,7 +105,7 @@
       - [ ] Add the possibility to add custom rules
       - [ ] Take a look at Prometheus Operator
   - Security :
-    - [ ] Work on Keycloak auth (Both ArgoCD & Kubernetes)
     - [ ] Add cluster campain policies on Starboard
+    - [ ] Add Kyverno
   - Storage :
-    - [ ] Add in-cluster storage solutions (Rook)
+    - [ ] Add in-cluster storage solutions (Rook, NFS, MinIO)

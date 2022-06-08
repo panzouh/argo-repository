@@ -227,6 +227,10 @@ Monitoring
   {{- print "{{ instance }}" -}}
 {{- end -}}
 
+{{- define "blackbox-exporter.scrape" -}}
+
+{{- end -}}
+
 {{/*
 Logging
 */}}

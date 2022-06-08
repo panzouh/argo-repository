@@ -111,28 +111,18 @@ spec:
         alertmanager:
           enabled: false
         {{- end }}
+        {{- if or .Values.monitoring.blackboxExporter.enabled .Values.monitoring.prometheus.values.extraScrapeConfigs }}
+        extraScrapeConfigs: |
+          {{- printf "%v" (include "blackbox-exporter.scrape" .) | nindent 12 }}
+          {{- printf "%v" .Values.monitoring.prometheus.values.extraScrapeConfigs | nindent 12 }}
+        {{- else if or .Values.monitoring.blackboxExporter.enabled .Values.monitoring.prometheus.values.extraScrapeConfigs }}
         {{- if .Values.monitoring.blackboxExporter.enabled }}
-        extraScrapeConfigs:
-          - job_name: blackbox-urls
-            metrics_path: /probe
-            params:
-              module: [http_2xx]
-            static_configs:
-              {{- if .Values.monitoring.blackboxExporter.values.scrapeUrls }}
-              - targets:
-                  {{- range .Values.monitoring.blackboxExporter.values.scrapeUrls }}
-                  - {{ . }}
-                  {{- end }}
-              {{- else }}
-              - targets: []
-              {{- end }}
-            relabel_configs:
-              - source_labels: [__address__]
-                target_label: __param_target
-              - source_labels: [__param_target]
-                target_label: instance
-              - target_label: __address__
-                replacement: prometheus-blackbox-exporter:9115
+        extraScrapeConfigs: |
+          {{- print (include "blackbox-exporter.scrape" .) | nindent 12 }}
+        {{- else if .Values.monitoring.prometheus.values.extraScrapeConfigs }}
+        extraScrapeConfigs: |
+          {{- print .Values.monitoring.prometheus.values.extraScrapeConfigs | nindent 12 }}
+        {{- end }}
         {{- end }}
         {{- if eq (include "preconfigureRules.enabled" .) "true" }}
         serverFiles:

@@ -36,12 +36,17 @@ backup:
 # Chaos engineering
 
 chaosMesh:
+  # -- Enable Chaos Mesh chart
   enabled: false
+  # -- Destination namespace
   namespace: chaos-mesh
   chart:
+    # -- Helm repository
     repo: https://charts.chaos-mesh.org
+    # -- Chart name
     name: chaos-mesh
-    version: "2.1.3"
+    # -- Chart version
+    version: "2.2.0"
   values: {}
 
 # Integration
@@ -61,6 +66,8 @@ argocd:
   values:
     # -- Application controller logLevel 
     logLevel: debug
+    # -- Enable Helm alternate plugin `helm upgrade --install` instead of `helm template . | kubectl apply -f -`
+    enableAlternateHelmPlugin: true
     avp:
       # -- Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first
       enabled: false
@@ -99,6 +106,37 @@ gitlabRunners:
     version: 0.41.0
   # -- Create runner watch section below
   values: {}
+
+harbor:
+  # -- Enable Harbor repository chart, you will need to enable 
+  enabled: false
+  # -- Destination namespace
+  namespace: harbor-namespace
+  chart:
+    # -- Helm repository
+    repo: https://helm.goharbor.io
+    # -- Chart name
+    name: harbor
+    # -- Chart version
+    version: 1.9.1
+  values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
+    monitor: false
+    persitence:
+      # -- Registry PVC size, you will need to define a StorageClass in `default.storageClass`
+      registry: 50Gi
+      # -- Chartmuseum PVC size, you will need to define a StorageClass in `default.storageClass`
+      chartmuseum: 10Gi
+      # -- Jobservice PVC size, you will need to define a StorageClass in `default.storageClass`
+      jobservice: 2Gi
+      # -- Database PVC size, you will need to define a StorageClass in `default.storageClass`
+      database: 8Gi
+      # -- Redis PVC size, you will need to define a StorageClass in `default.storageClass`
+      redis: 2Gi
+      # -- Trivy PVC size, you will need to define a StorageClass in `default.storageClass`
+      trivy: 5Gi
+    # -- Harbor ingress name or path (weither it is an ingress wildcard or domain)
+    ingressName: harbor
 
 namespaceConfiguratorOperator:
   # -- Enable Namespace configuration operator chart
@@ -155,7 +193,7 @@ logging:
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
-      # -- Loki PVC size, you will need to define a StorageClass in `default.storageClass``
+      # -- Loki PVC size, you will need to define a StorageClass in `default.storageClass`
       pvcSize: 100Gi
       # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
       enableGrafanaDashboard: true
@@ -227,7 +265,7 @@ logging:
           config: {}
           # -- Elasticsearch service type can be either `Loadbalancer`, `ClusterIP` or `NodePort`
           serviceType: ClusterIP
-          # -- Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass``
+          # -- Elasticsearch PVC size, you will need to define a StorageClass in `default.storageClass`
           pvcSize: 50Gi
           tls:
             # -- Enable TLS Generation
@@ -308,6 +346,8 @@ monitoring:
       kubeStateMetrics:
         # -- Enable kubeStateMetrics in the chart
         enabled: true
+      # -- Enable extra configuration scrapes in the, watch section bellow for examples
+      extraScrapeConfigs: null
       nodeExporter:
         # -- Enable nodeExporter in the chart
         enabled: true

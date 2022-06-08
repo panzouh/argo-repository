@@ -1,0 +1,77 @@
+{{- define "harbor.enabled" -}}
+{{ and .Values.harbor.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
+{{- end -}}
+{{- if eq "harbor.enabled" "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.harbor.namespace }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    chart: {{ .Values.harbor.chart.name }}
+    repoURL: {{ .Values.harbor.chart.repo }}
+    targetRevision: {{ .Values.harbor.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        harborAdminPassword: ""
+        secretKey: ""
+        expose:
+          type: clusterIP
+          tls:
+            enabled: false
+        {{- if .Values.default.storageClass }}
+        persistence:
+          persistentVolumeClaim:
+            registry:
+              size: {{ .Values.harbor.values.persitence.registry }}
+            chartmuseum:
+              size: {{ .Values.harbor.values.persitence.chartmuseum }}
+            jobservice:
+              size: {{ .Values.harbor.values.persitence.jobservice }}
+            database:
+              size: {{ .Values.harbor.values.persitence.database }}
+            redis:
+              size: {{ .Values.harbor.values.persitence.redis }}
+            trivy:
+              size: {{ .Values.harbor.values.persitence.trivy }}
+        {{- else }}
+        persistence:
+          enabled: false
+        {{- end }}
+        {{- if and .Values.harbor.values.monitor .Values.monitoring.prometheus.enabled }}
+        metrics:
+          enabled: true
+          core:
+            path: /metrics
+            port: 8001
+          registry:
+            path: /metrics
+            port: 8001
+          jobservice:
+            path: /metrics
+            port: 8001
+          exporter:
+            path: /metrics
+            port: 8001
+        {{- end }}
+        {{- if .Values.proxies.enabled }}
+        proxy:
+          httpProxy: {{ .Values.proxies.value }}
+          httpsProxy: {{ .Values.proxies.value }}
+          noProxy: 127.0.0.1,localhost,.local,.internal,{{ .Values.proxies.noProxy }}
+          components:
+            - core
+            - jobservice
+            - trivy
+        {{- end }}
+        externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingressName "ingress" .Values.ingress.ingressDefinition) }}
+{{- end }}

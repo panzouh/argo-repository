@@ -1,5 +1,5 @@
 {{- define "integration.enabled" -}}
-{{- or .Values.argocd.enabled .Values.default.enabled -}}
+{{- or .Values.argocd.enabled .Values.default.enabled .Values.harbor.enabled -}}
 {{- end -}}
 {{ if eq (include "integration.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
