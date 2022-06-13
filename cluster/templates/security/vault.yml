@@ -51,14 +51,24 @@ spec:
         {{- end }}
         server:
           image:
-            repository: "vault"
-            tag: "1.7.3"
+            repository: "hashicorp/vault"
+            tag: "1.10.3"
             pullPolicy: IfNotPresent
+          {{- if or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx") }}
+          service:
+            type: ClusterIP
+          {{- else }}
+          service:
+            type: LoadBalancer
+          {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.vault.values.ingress.enabled }}
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.vault.values.ingress.enabled }}
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.vault.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
+          {{- end }}
+          {{- if or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx") }}
+          externalVaultAddr: {{ include "url-constructor" (dict "name" .Values.vault.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
           {{- end }}
           {{- if and .Values.monitoring.prometheus.enabled .Values.vault.values.monitor }}
           annotations:
