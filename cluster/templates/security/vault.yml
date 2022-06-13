@@ -25,6 +25,7 @@ spec:
       values: |-
         global:
           enabled: true
+        {{- if .Values.vault.values.injector }}
         injector:
           enabled: true
           replicas: 1
@@ -44,6 +45,10 @@ spec:
           authPath: "auth/kubernetes"
           failurePolicy: Ignore
           resources: {}
+        {{- else }}
+        injector:
+          enabled: false
+        {{- end }}
         server:
           image:
             repository: "vault"

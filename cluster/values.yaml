@@ -620,8 +620,10 @@ vault:
       name: vault
     # -- Vault persistence size, you will need to define a StorageClass in `default.storageClass`
     pvcSize: "10Gi"
-    # -- Enable vault HA 
+    # -- Enable Vault HA 
     ha: false
+    # -- Enable Vault agent injector
+    injector: false
 
 vaultSecrets:
   # -- Destination namespace

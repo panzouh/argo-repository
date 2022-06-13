@@ -849,9 +849,10 @@ Vault is an identity-based secret and encryption management system. A secret is 
 | vault.chart.version | string | `"0.20.1"` |  |
 | vault.enabled | bool | `false` | Enable Vault chart |
 | vault.namespace | string | `"argocd"` | Vault destination namespace |
-| vault.values.ha | bool | `false` | Enable vault HA  |
+| vault.values.ha | bool | `false` | Enable Vault HA  |
 | vault.values.ingress.enabled | bool | `true` | Enable Vault UI Ingress |
 | vault.values.ingress.name | string | `"vault"` | Vault ingress name or path (weither it is an ingress wildcard or domain) |
+| vault.values.injector | bool | `false` | Enable Vault agent injector |
 | vault.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | vault.values.pvcSize | string | `"10Gi"` | Vault persistence size, you will need to define a StorageClass in `default.storageClass` |
 
