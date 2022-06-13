@@ -846,7 +846,7 @@ Vault is an identity-based secret and encryption management system. A secret is 
 |-----|------|---------|-------------|
 | vault.chart.name | string | `"vault"` |  |
 | vault.chart.repo | string | `"https://helm.releases.hashicorp.com"` | Helm repository |
-| vault.chart.version | string | `"0.19.0"` |  |
+| vault.chart.version | string | `"0.20.1"` |  |
 | vault.enabled | bool | `false` | Enable Vault chart |
 | vault.namespace | string | `"argocd"` | Vault destination namespace |
 | vault.values.ha | bool | `false` | Enable vault HA  |
