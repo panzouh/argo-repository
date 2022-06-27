@@ -1,0 +1,7 @@
+apiVersion: v2
+name: wireguard-operator
+description: |
+  Painless deployment of wireguard on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

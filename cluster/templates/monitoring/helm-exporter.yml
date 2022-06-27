@@ -23,8 +23,8 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
-        namespacesIgnore: {{ quote .Values.monitoring.helmExporter.chart.values.disabledNamespaces }}
+        {{- if .Values.monitoring.helmExporter.values.disabledNamespace }}
+        namespacesIgnore: {{ quote .Values.monitoring.helmExporter.values.disabledNamespace }}
         {{- end }}
         config:
           helmRegistries:

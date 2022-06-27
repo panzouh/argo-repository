@@ -1,0 +1,44 @@
+# Default values for wireguard-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Override chart default name
+nameOverride: ""
+
+# -- Deployment security context
+securityContext:
+  runAsNonRoot: true
+
+resources:
+  limits:
+    # -- Cpu limits
+    cpu: 500m
+    # -- Memory limits
+    memory: 128Mi
+  requests:
+    # -- Cpu limits
+    cpu: 10m
+    # -- Memory requests
+    memory: 64Mi
+
+livenessProbe:
+  httpGet:
+    # -- Liveness health path
+    path: /healthz
+    # -- Liveness probe port
+    port: 8081
+  # -- Tells the kubelet that it should wait `x` seconds before performing the first probe
+  initialDelaySeconds: 15
+  # -- Tell the kubelet that it should perform a liveness probe every `x` seconds
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    # -- Readiness health path
+    path: /readyz
+    # -- Readiness probe port
+    port: 8081
+  # -- Tells the kubelet that it should wait `x` seconds before performing the first probe
+  initialDelaySeconds: 15
+  # -- Tell the kubelet that it should perform a liveness probe every `x` seconds
+  periodSeconds: 20
