@@ -56,27 +56,37 @@ Networking
   {{- end }}
 {{- end }}
 
-{{- define "helm-ingress.specificSpec" -}}
+{{- define "helm-ingress.alternateSpec" -}}
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
+{{- $authSecret := .authSecret | default dict -}}
+{{- if $authSecret -}}
+{{- end -}}
 ingress:
   enabled: true
   {{- if $annotations }}
   annotations:
-    {{- with $annotations }}
-      {{- toYaml . | nindent 4 }}
+    {{- if $authSecret }}
+      {{- with merge $authSecret $annotations }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    {{- else }}
+    {{- with merge $annotations }}
+        {{- toYaml . | nindent 4 }}
+    {{- end }}
     {{- end }}
   {{- else }}
   annotations: {}
   {{- end }}
   hosts:
   {{- if eq $ingressDefinition.dns.mode "wildcard" }}
-    - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+    - host: {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+      paths: []
   {{- else if eq $ingressDefinition.dns.mode "domain" }}
-    - {{ $ingressDefinition.dns.domain }}
-  paths:
-    - /{{ $name }}
+    - host: {{ $ingressDefinition.dns.domain }}
+      paths:
+        - {{ $name }}
   {{- end }}
   {{- if $ingressDefinition.ssl.enabled }}
   tls:
