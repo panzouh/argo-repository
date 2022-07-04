@@ -708,6 +708,11 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 | certmanager.values.clusterIssuerLetsEncrypt.enabled | bool | `false` | Enable Let's encrypt cluster issuers |
 | certmanager.values.clusterIssuerLetsEncrypt.production.enabled | bool | `false` | Enable Let's Encrypt production issuer |
 | certmanager.values.clusterIssuerLetsEncrypt.stagging.enabled | bool | `false` | Enable LetsEncrypt stagging issuer |
+| certmanager.values.clusterIssuerVault.caBundle | string | `nil` | base64 encoded caBundle PEM file |
+| certmanager.values.clusterIssuerVault.enabled | bool | `false` | Enable Vault cluster issuer |
+| certmanager.values.clusterIssuerVault.pkiPath | string | `"pki_int/sign/example-domain-tld"` | Configure PKI Path to use |
+| certmanager.values.clusterIssuerVault.token | string | `"s.iyNUhq8Ov4hIAx6snw5mB2nL"` | Vault access Token |
+| certmanager.values.clusterIssuerVault.vaultUrl | string | `"https://your-vault.domain.tld"` | Only if `vault.enabled=false` for external Vault support only |
 | certmanager.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 
 #### Ingress definition

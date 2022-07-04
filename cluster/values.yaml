@@ -595,6 +595,18 @@ certmanager:
       production:
         # -- Enable Let's Encrypt production issuer
         enabled: false
+    clusterIssuerVault:
+      # -- Enable Vault cluster issuer
+      enabled: false
+      # -- Only if `vault.enabled=false` for external Vault support only
+      vaultUrl: "https://your-vault.domain.tld"
+      # -- Configure PKI Path to use
+      pkiPath: pki_int/sign/example-domain-tld
+      # -- base64 encoded caBundle PEM file
+      caBundle: null
+      # -- Vault access Token
+      token: s.iyNUhq8Ov4hIAx6snw5mB2nL
+
 
 # Security
 
