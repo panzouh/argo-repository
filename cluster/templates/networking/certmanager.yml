@@ -101,7 +101,7 @@ metadata:
   name: vault-token
   namespace: {{ .Values.certmanager.namespace }}
 data:
-  token: {{ .Values.certmanager.values.clusterIssuerVault.token }}
+  token: {{ .Values.certmanager.values.clusterIssuerVault.token | b64enc }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
