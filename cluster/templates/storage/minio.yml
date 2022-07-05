@@ -57,6 +57,9 @@ spec:
         persistence:
           enabled: false
         {{- end }}
+        resources:
+          requests:
+            memory: {{ .Values.minio.values.rMemory }}
         {{- if .Values.minio.values.buckets }}
         buckets:
           {{- range $i, $v := .Values.minio.values.buckets }}
