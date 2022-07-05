@@ -27,7 +27,7 @@ spec:
   destination:
     namespace: {{ .Values.minio.namespace }}
     server: https://kubernetes.default.svc
-  project: monitoring
+  project: storage
   source:
     chart: {{ .Values.minio.chart.name }}
     repoURL: {{ .Values.minio.chart.repo }}
