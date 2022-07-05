@@ -2,7 +2,7 @@
 {{- .Values.monitoring.grafana.enabled -}}
 {{- end -}}
 {{ if eq (include "grafana.enabled" .) "true" }}
-{{- if eq .Values.monitoring.grafana.values.passwordType "raw" }}
+{{- if eq .Values.monitoring.grafana.values.auth.passwordType "raw" }}
 ---
 kind: Secret
 apiVersion: v1
@@ -11,8 +11,8 @@ metadata:
   namespace: {{ .Values.monitoring.namespace }}
 type: Opaque
 data:
-  username: {{ .Values.monitoring.grafana.values.adminUser | b64enc }}
-  password: {{ .Values.monitoring.grafana.values.adminPassword | b64enc }}
+  username: {{ .Values.monitoring.grafana.values.auth.adminUser | b64enc }}
+  password: {{ .Values.monitoring.grafana.values.auth.adminPassword | b64enc }}
 {{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -379,7 +379,7 @@ spec:
                 }
             {{- end }}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.grafana.values.ingress.enabled}}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.grafana.values.ingress.enabled }}
           {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}

@@ -1,5 +1,5 @@
 {{- define "storage.enabled" -}}
-{{- .Values.storage.enabled -}}
+{{- .Values.minio.enabled -}}
 {{- end -}}
 {{ if eq (include "storage.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

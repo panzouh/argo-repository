@@ -406,18 +406,19 @@ monitoring:
       # -- Chart version
       version: "6.29.2"
     values:
-      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
-      passwordType: raw
-      # -- Grafana default admin username, only for raw type :warning: insecure :warning
-      adminUser: "admin"
-      # -- Grafana default admin password, only for raw type :warning: insecure :warning:
-      adminPassword: "changeme"
-      # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
-      avpPath: "avp/data/grafana"
-      # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
-      userKey: username
-      # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
-      passwordKey: password
+      auth:
+        # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
+        passwordType: raw
+        # -- Grafana default admin username, only for raw type :warning: insecure :warning
+        adminUser: "admin"
+        # -- Grafana default admin password, only for raw type :warning: insecure :warning:
+        adminPassword: "changeme"
+        # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
+        avpPath: "avp/data/grafana"
+        # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
+        userKey: username
+        # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
+        passwordKey: password
       # -- Grafana PVC size, you will need to define a StorageClass in `default.storageClass`
       pvcSize: 10Gi
       ingress:
@@ -607,7 +608,6 @@ certmanager:
       # -- Vault access Token
       token: s.iyNUhq8Ov4hIAx6snw5mB2nL
 
-
 # Security
 
 vault:
@@ -666,32 +666,54 @@ userManagement:
     # -- Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles
     clusterRoles: []
 
-starboard:
-  # -- Enable Starboard chart
-  enabled: false
-  # -- Destination namespace
-  namespace: starboard-system
-  chart:
-    # -- Helm repository
-    repo: https://aquasecurity.github.io/helm-charts/
-    # -- Chart name
-    name: starboard-operator
-    # -- Chart version
-    version: "0.10.4"
-  values:
-    # -- Namespaces to target, default to all
-    targetNamespaces: ""
-    # -- Namespaces to exclude, default to none
-    excludeNamespaces: ""
-    trivy:
-      # -- Trivy imageRef
-      imageRef: docker.io/aquasec/trivy:0.25.2
-      # -- Trivy report severity filters
-      severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
-      # -- Add non SSL registries, watch section below
-      nonSslRegistries: {}
-
 # Storage
 
-storage:
+minio:
+  # -- Enable MinIO chart
   enabled: false
+  # -- Destination namespace
+  namespace: minio-system
+  chart:
+    # -- Helm repository
+    repo: https://charts.min.io/
+    # -- Chart name
+    name: minio
+    # -- Chart version
+    version: "4.0.2"
+  values:
+    # -- Number of MinIO replicas
+    replicas: 5
+    auth:
+      # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
+      passwordType: raw
+      # -- Grafana default admin username, only for raw type :warning: insecure :warning
+      adminUser: "admin"
+      # -- Grafana default admin password, only for raw type :warning: insecure :warning:
+      adminPassword: "changeme"
+      # -- Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault`
+      avpPath: "avp/data/minio"
+      # -- Configure username key in vault kv-v2 secret, only for `passwordType: vault`
+      userKey: username
+      # -- Configure password key in vault kv-v2 secret, only for `passwordType: vault`
+      passwordKey: password
+    # -- Add Buckets, watch section bellow
+    buckets: []
+    # -- Add policies, watch section bellow
+    policies: []
+    # -- Add users, watch section bellow
+    users: []
+    # -- MinIO persistence size, you will need to define a StorageClass in `default.storageClass`
+    pvcSize: 5OGi
+    ingress:
+      api:
+        # -- Enable MinIO API Ingress
+        enabled: true
+        # --  MinIO API ingress name or path (weither it is an ingress wildcard or domain)
+        name: minio-api
+      console:
+        # -- Enable MinIO UI Ingress
+        enabled: true
+        # --  MinIO UI ingress name or path (weither it is an ingress wildcard or domain)
+        name: minio-console
+    monitor: false
+

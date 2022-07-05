@@ -56,6 +56,49 @@ Networking
   {{- end }}
 {{- end }}
 
+{{- define "helm-ingress.defaultSpec" -}}
+{{- $name := .name -}}
+{{- $ingressDefinition := .ingressDefinition | default dict -}}
+{{- $annotations := .annotations | default dict -}}
+{{- $authSecret := .authSecret | default dict -}}
+{{- if $authSecret -}}
+{{- end -}}
+ingress:
+  enabled: true
+  {{- if $annotations }}
+  annotations:
+    {{- if $authSecret }}
+      {{- with merge $authSecret $annotations }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    {{- else }}
+    {{- with merge $annotations }}
+        {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- end }}
+  {{- else }}
+  annotations: {}
+  {{- end }}
+  hosts:
+  {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+    - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+  {{- else if eq $ingressDefinition.dns.mode "domain" }}
+    - {{ $ingressDefinition.dns.domain }}
+  paths:
+    - /{{ $name }}
+  {{- end }}
+  {{- if $ingressDefinition.ssl.enabled }}
+  tls:
+    - secretName: {{ $name }}-certificate
+      hosts:
+      {{- if eq $ingressDefinition.dns.mode "wildcard" }}
+        - {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
+      {{- else if eq $ingressDefinition.dns.mode "domain" }}
+        - {{ $ingressDefinition.dns.domain }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+
 {{- define "helm-ingress.alternateSpec" -}}
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
@@ -100,14 +143,15 @@ ingress:
   {{- end }}
 {{- end }}
 
-{{- define "helm-ingress.defaultSpec" -}}
+{{- define "helm-ingress.namedSpec" -}}
+{{- $ingressDict := .ingressDict -}}
 {{- $name := .name -}}
 {{- $ingressDefinition := .ingressDefinition | default dict -}}
 {{- $annotations := .annotations | default dict -}}
 {{- $authSecret := .authSecret | default dict -}}
 {{- if $authSecret -}}
 {{- end -}}
-ingress:
+{{ $ingressDict }}:
   enabled: true
   {{- if $annotations }}
   annotations:
@@ -284,6 +328,7 @@ Logging
 
 {{- define "secrets.isVault" -}}
   {{- $prometheusSecretType := .Values.monitoring.prometheus.values.server.ingress.auth.type -}}
-  {{- $grafanaSecretType := .Values.monitoring.grafana.values.passwordType -}}
-  {{- and .Values.argocd.values.plugins.avp.enabled (or (eq $prometheusSecretType "vault") (eq $grafanaSecretType "vault")) }}
+  {{- $grafanaSecretType := .Values.monitoring.grafana.values.auth.passwordType -}}
+  {{- $minioSecretType := .Values.minio.values.auth.passwordType -}}
+  {{- and .Values.argocd.values.plugins.avp.enabled (or (eq $prometheusSecretType "vault") (eq $grafanaSecretType "vault") (eq $minioSecretType "vault")) }}
 {{- end -}}

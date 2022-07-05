@@ -19,6 +19,7 @@ A Must Have Apps Cluster Management Provided by DTK (danstonkube.fr)
 5. [Monitoring](#monitoring)
 6. [Networking](#networking)
 7. [Security](#security)
+8. [Storage](#storage)
 
 ## General
 
@@ -470,17 +471,17 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 | monitoring.grafana.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | monitoring.grafana.chart.version | string | `"6.29.2"` | Chart version |
 | monitoring.grafana.enabled | bool | `false` | Enable Grafana chart |
-| monitoring.grafana.values.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
-| monitoring.grafana.values.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
-| monitoring.grafana.values.avpPath | string | `"avp/data/grafana"` | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault` |
+| monitoring.grafana.values.auth.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
+| monitoring.grafana.values.auth.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
+| monitoring.grafana.values.auth.avpPath | string | `"avp/data/grafana"` | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault` |
+| monitoring.grafana.values.auth.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
+| monitoring.grafana.values.auth.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
+| monitoring.grafana.values.auth.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
 | monitoring.grafana.values.customDashboards | object | `{}` | Create Grafana custom dashoards (Json Formated), not available at the moment |
 | monitoring.grafana.values.customDashboardsGNET | object | `{}` | Create Grafana Dashboard available on Grafana Net, not available at the moment |
 | monitoring.grafana.values.ingress.enabled | bool | `true` | Enable Grafana UI ingress |
 | monitoring.grafana.values.ingress.name | string | `"grafana"` | Grafana ingress name or path (weither it is an ingress wildcard or domain) |
-| monitoring.grafana.values.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
-| monitoring.grafana.values.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.grafana.values.pvcSize | string | `"10Gi"` | Grafana PVC size, you will need to define a StorageClass in `default.storageClass` |
-| monitoring.grafana.values.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
 
 #### Prometheus MsTeams alerting
 
@@ -759,40 +760,6 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 ### Security
 
-#### Starboard
-
-There are lots of security tools in the cloud native world, created by Aqua and by others, for identifying and informing
-users about security issues in Kubernetes workloads and infrastructure components. However powerful and useful they
-might be, they tend to sit alongside Kubernetes, with each new product requiring users to learn a separate set of
-commands and installation steps in order to operate them and find critical security information.
-
-Starboard attempts to integrate heterogeneous security tools by incorporating their outputs into Kubernetes CRDs
-(Custom Resource Definitions) and from there, making security reports accessible through the Kubernetes API. This way
-users can find and view the risks that relate to different resources in what we call a Kubernetes-native way.
-
-Starboard provides:
-
-- Automated vulnerability scanning for Kubernetes workloads.
-- Automated configuration audits for Kubernetes resources with predefined rules or custom Open Policy Agent (OPA) policies.
-- Automated infrastructures scanning and compliance checks with CIS Benchmarks published by the Center for Internet Security (CIS).
-- Automated compliance report - NSA, CISA Kubernetes Hardening Kubernetes Guidance v1.0
-- Penetration test results for a Kubernetes cluster.
-- [Custom Resource Definitions] and a [Go module] to work with and integrate a range of security scanners.
-- The [Octant Plugin] and the [Lens Extension] that make security reports available through familiar Kubernetes interfaces
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| starboard.chart.name | string | `"starboard-operator"` | Chart name |
-| starboard.chart.repo | string | `"https://aquasecurity.github.io/helm-charts/"` | Helm repository |
-| starboard.chart.version | string | `"0.10.4"` | Chart version |
-| starboard.enabled | bool | `false` | Enable Starboard chart |
-| starboard.namespace | string | `"starboard-system"` | Destination namespace |
-| starboard.values.excludeNamespaces | string | `""` | Namespaces to exclude, default to none |
-| starboard.values.targetNamespaces | string | `""` | Namespaces to target, default to all |
-| starboard.values.trivy.imageRef | string | `"docker.io/aquasec/trivy:0.25.2"` | Trivy imageRef |
-| starboard.values.trivy.nonSslRegistries | object | `{}` | Add non SSL registries, watch section below |
-| starboard.values.trivy.severity | string | `"UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"` | Trivy report severity filters |
-
 #### User management
 
 User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).
@@ -874,3 +841,31 @@ Vault secrets is a chart hosted on this repository, you can retrieve templates [
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.10.0](https://github.com/norwoodj/helm-docs/releases/v1.10.0) `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.
+
+### Storage
+
+#### MinIO
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| minio.chart.name | string | `"minio"` | Chart name |
+| minio.chart.repo | string | `"https://charts.min.io/"` | Helm repository |
+| minio.chart.version | string | `"4.0.2"` | Chart version |
+| minio.enabled | bool | `false` | Enable MinIO chart |
+| minio.namespace | string | `"minio-system"` | Destination namespace |
+| minio.values.auth.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
+| minio.values.auth.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
+| minio.values.auth.avpPath | string | `"avp/data/minio"` | Grafana username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/grafana` in order to put secrets here you should pass `vault kv put avp/grafana username=admin password=changeme`, only for `passwordType: vault` |
+| minio.values.auth.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
+| minio.values.auth.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
+| minio.values.auth.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
+| minio.values.buckets | list | `[]` | Add Buckets, watch section bellow |
+| minio.values.ingress.api.enabled | bool | `true` | Enable MinIO API Ingress |
+| minio.values.ingress.api.name | string | `"minio-api"` | MinIO API ingress name or path (weither it is an ingress wildcard or domain) |
+| minio.values.ingress.console.enabled | bool | `true` | Enable MinIO UI Ingress |
+| minio.values.ingress.console.name | string | `"minio-console"` | MinIO UI ingress name or path (weither it is an ingress wildcard or domain) |
+| minio.values.monitor | bool | `false` |  |
+| minio.values.policies | list | `[]` | Add policies, watch section bellow |
+| minio.values.pvcSize | string | `"5OGi"` | MinIO persistence size, you will need to define a StorageClass in `default.storageClass` |
+| minio.values.replicas | int | `5` | Number of MinIO replicas |
+| minio.values.users | list | `[]` | Add users, watch section bellow |

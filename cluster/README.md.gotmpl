@@ -15,6 +15,7 @@
 5. [Monitoring](#monitoring)
 6. [Networking](#networking)
 7. [Security](#security)
+8. [Storage](#storage)
 
 ## General
 
@@ -666,35 +667,6 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 ### Security
 
-#### Starboard
-
-There are lots of security tools in the cloud native world, created by Aqua and by others, for identifying and informing
-users about security issues in Kubernetes workloads and infrastructure components. However powerful and useful they
-might be, they tend to sit alongside Kubernetes, with each new product requiring users to learn a separate set of
-commands and installation steps in order to operate them and find critical security information.
-
-Starboard attempts to integrate heterogeneous security tools by incorporating their outputs into Kubernetes CRDs
-(Custom Resource Definitions) and from there, making security reports accessible through the Kubernetes API. This way
-users can find and view the risks that relate to different resources in what we call a Kubernetes-native way.
-
-Starboard provides:
-
-- Automated vulnerability scanning for Kubernetes workloads.
-- Automated configuration audits for Kubernetes resources with predefined rules or custom Open Policy Agent (OPA) policies.
-- Automated infrastructures scanning and compliance checks with CIS Benchmarks published by the Center for Internet Security (CIS).
-- Automated compliance report - NSA, CISA Kubernetes Hardening Kubernetes Guidance v1.0 
-- Penetration test results for a Kubernetes cluster.
-- [Custom Resource Definitions] and a [Go module] to work with and integrate a range of security scanners.
-- The [Octant Plugin] and the [Lens Extension] that make security reports available through familiar Kubernetes interfaces
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-{{- range .Values }}
-  {{- if hasPrefix "starboard" .Key }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
-
 #### User management
 
 User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).
@@ -770,3 +742,15 @@ Vault secrets is a chart hosted on this repository, you can retrieve templates [
 {{- end }}
 
 {{ template "helm-docs.versionFooter" . }} `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.
+
+### Storage
+
+#### MinIO
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "minio" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}

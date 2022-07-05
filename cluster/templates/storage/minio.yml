@@ -1,0 +1,87 @@
+{{- define "minio.enabled" -}}
+{{- .Values.minio.enabled -}}
+{{- end -}}
+{{ if eq (include "minio.enabled" .) "true" }}
+{{- if eq .Values.minio.values.auth.passwordType "raw" }}
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: minio-credentials
+  namespace: {{ .Values.minio.namespace }}
+type: Opaque
+data:
+  rootUser: {{ .Values.minio.values.auth.adminUser | b64enc }}
+  rootPassword: {{ .Values.minio.values.auth.adminPassword | b64enc }}
+{{- end }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.minio.namespace }}
+    server: https://kubernetes.default.svc
+  project: monitoring
+  source:
+    chart: {{ .Values.minio.chart.name }}
+    repoURL: {{ .Values.minio.chart.repo }}
+    targetRevision: {{ .Values.minio.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        replicas: {{ .Values.minio.values.replicas }}
+        existingSecret: minio-credentials
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.minio.values.ingress.api.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.minio.values.ingress.api.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.minio.values.ingress.console.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.minio.values.ingress.api.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.minio.values.ingress.api.enabled }}
+          {{- include "helm-ingress.namedSpec" (dict "ingressDict" "consoleIngress" "name" .Values.minio.values.ingress.console.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.minio.values.ingress.console.enabled }}
+          {{- include "helm-ingress.namedSpec" (dict "ingressDict" "consoleIngress" "name" .Values.minio.values.ingress.console.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if .Values.default.storageClass }}
+        persistence:
+          enabled: true
+          size: {{ .Values.minio.values.pvcSize }}
+        {{- else }}
+        persistence:
+          enabled: false
+        {{- end }}
+        {{- if .Values.minio.values.buckets }}
+        buckets:
+          {{- range $i, $v := .Values.minio.values.buckets }}
+            {{- printf "-" | nindent 8 }}
+            {{- toYaml $v | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        buckets: []
+        {{- end }}
+        {{- if .Values.minio.values.policies }}
+        policies:
+          {{- range $i,$v := .Values.minio.values.policies }}
+            {{- printf "-" | nindent 8 }}
+            {{- toYaml $v | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        policies: []
+        {{- end }}
+        {{- if .Values.minio.values.users }}
+        users:
+          {{- range $i,$v := .Values.minio.values.users }}
+            {{- printf "-" | nindent 8 }}
+            {{- toYaml $v | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        users: []
+        {{- end }}
+{{ end }}

@@ -57,7 +57,7 @@
 - [x] Add ArgoCD project folder for each theme :
   - [ ] Provide real namespace isolation
 - [x] Add lefthook support
-- [ ] Create deployment script
+- [ ] Create deployment script
 - Documentation :
   - [ ] Add Contribute.md documentation
   - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
@@ -83,6 +83,8 @@
     - [x] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
   - Security :
     - [x] Add in-cluster audit tool => Starboard
+  - Storage :
+    - [x] Add MinIO
 
 ## V1
 
@@ -108,4 +110,4 @@
     - [ ] Add cluster campain policies on Starboard
     - [ ] Add Kyverno
   - Storage :
-    - [ ] Add in-cluster storage solutions (Rook, NFS, MinIO)
+    - [ ] Add in-cluster storage solutions (Rook)
