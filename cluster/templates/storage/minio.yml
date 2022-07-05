@@ -96,4 +96,10 @@ spec:
         {{- else }}
         users: []
         {{- end }}
+        {{- if and .Values.monitoring.prometheus.enabled .Values.minio.values.monitor }}
+        metrics:
+          serviceMonitor:
+            enabled: true
+            public: false
+        {{- end }}
 {{ end }}
