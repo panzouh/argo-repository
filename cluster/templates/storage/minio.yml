@@ -35,7 +35,16 @@ spec:
     helm:
       version: v3
       values: |-
-        replicas: {{ .Values.minio.values.replicas }}
+        {{- if eq .Values.minio.values.mode "standalone" }}
+        replicas: 1
+        mode: {{ .Values.minio.values.mode }}
+        {{- else if eq .Values.minio.values.mode "gateway" }}
+        replicas: 1
+        mode: {{ .Values.minio.values.mode }}
+        {{- else if eq .Values.minio.values.mode "distributed" }}
+        replicas: 4
+        mode: {{ .Values.minio.values.mode }}
+        {{- end }}
         existingSecret: minio-credentials
         {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.minio.values.ingress.api.enabled }}
           {{- include "helm-ingress.defaultSpec" (dict "name" .Values.minio.values.ingress.api.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}

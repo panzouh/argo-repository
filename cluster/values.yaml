@@ -681,8 +681,8 @@ minio:
     # -- Chart version
     version: "4.0.2"
   values:
-    # -- Number of MinIO replicas
-    replicas: 3
+    # -- MinIO deployment mode supported values are `standalone`, `distributed` `gateway`
+    mode: standalone
     # -- Memory requests
     rMemory: 2Gi
     auth:
