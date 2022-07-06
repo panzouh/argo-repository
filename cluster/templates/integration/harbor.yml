@@ -41,7 +41,7 @@ spec:
             {{- else }}
             enabled: false
             certSource: none
-            {{- end -}}
+            {{- end }}
           ingress:
             hosts:
               {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
