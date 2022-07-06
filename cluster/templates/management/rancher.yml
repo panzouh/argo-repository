@@ -10,7 +10,7 @@ metadata:
   name: tls-ca-additional
   namespace: {{ .Values.rancher.namespace }}
 data:
-  cacert.pem: {{ .Values.rancher.values.caBundle | b64enc }}
+  cacert.pem: {{ .Values.rancher.values.caBundle }}
 type: Opaque
 {{- end }}
 ---
@@ -34,9 +34,6 @@ spec:
     helm:
       version: v3
       values: |-
-      {{- if .Values.rancher.values.caBundle }}
-      additionalTrustedCAs: true
-      {{- end }}
       {{- if and .Values.rancher.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
         hostname: {{ .Values.rancher.values.ingress.name }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
@@ -68,4 +65,7 @@ spec:
       {{- end }}
         replicas: {{ .Values.rancher.values.replicas }}
         bootstrapPassword: {{ .Values.rancher.values.bootstrapPassword }}
+        {{- if .Values.rancher.values.caBundle }}
+        additionalTrustedCAs: true
+        {{- end }}
 {{ end }}
