@@ -62,6 +62,7 @@ spec:
         persistence:
           enabled: true
           size: {{ .Values.minio.values.pvcSize }}
+          storageClass: {{ .Values.default.storageClass }}
         {{- else }}
         persistence:
           enabled: false
