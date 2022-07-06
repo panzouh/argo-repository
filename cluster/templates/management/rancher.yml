@@ -2,6 +2,17 @@
 {{- .Values.rancher.enabled -}}
 {{- end -}}
 {{ if eq (include "rancher.enabled" .) "true" }}
+{{- if .Values.rancher.values.caBundle }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tls-ca-additional
+  namespace: {{ .Values.rancher.namespace }}
+data:
+  cacert.pem: {{ .Values.rancher.values.caBundle | b64enc }}
+type: Opaque
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application

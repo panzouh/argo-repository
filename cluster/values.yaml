@@ -321,6 +321,8 @@ rancher:
     replicas: 1
     # -- Only for bootstrapp, if the application is exposed consider changing it 
     bootstrapPassword: changeme
+    # -- Additionnal CA Bundle b64encoded
+    caBundle: null
     ingress:
       # -- Enable Rancher ingress UI
       enabled: false
