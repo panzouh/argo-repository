@@ -10,7 +10,7 @@ metadata:
   name: tls-ca-additional
   namespace: {{ .Values.rancher.namespace }}
 data:
-  cacerts.pem: {{ .Values.rancher.values.caBundle }}
+  ca-additional.pem: {{ .Values.rancher.values.caBundle }}
 type: Opaque
 {{- end }}
 ---
