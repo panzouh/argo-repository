@@ -34,6 +34,9 @@ spec:
     helm:
       version: v3
       values: |-
+      {{- if .Values.rancher.values.caBundle }}
+      additionalTrustedCAs: true
+      {{- end }}
       {{- if and .Values.rancher.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
         hostname: {{ .Values.rancher.values.ingress.name }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
