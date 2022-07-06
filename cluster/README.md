@@ -354,6 +354,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | rancher.enabled | bool | `false` | Enable Prometheus chart |
 | rancher.namespace | string | `"cattle-system"` | Destination namespace |
 | rancher.values.bootstrapPassword | string | `"changeme"` | Only for bootstrapp, if the application is exposed consider changing it  |
+| rancher.values.caBundle | string | `nil` | Additionnal CA Bundle b64encoded |
 | rancher.values.ingress.enabled | bool | `false` | Enable Rancher ingress UI |
 | rancher.values.ingress.name | string | `"rancher"` | Rancher ingress name or path (weither it is an ingress wildcard or domain) |
 | rancher.values.replicas | int | `1` | Rancher replicas |
