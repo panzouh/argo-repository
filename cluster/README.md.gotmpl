@@ -153,6 +153,18 @@ gitlabRunners:
       isPrivileged: false # Value not mandatory, if not defined default is false
 ```
 
+#### Harbor
+
+Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "harbor" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 #### Namespace configuration operator
 
 The namespace-configuration-operator is a project hosted by RedHat. It helps keeping configurations related to Users, Groups and Namespaces aligned with one of more policies specified as a CRs. The purpose is to provide the foundational building block to create an end-to-end onboarding process. By onboarding process we mean all the provisioning steps needed to a developer team working on one or more applications to OpenShift. This usually involves configuring resources such as: Groups, RoleBindings, Namespaces, ResourceQuotas, NetworkPolicies, EgressNetworkPolicies, etc... Depending on the specific environment the list could continue. Naturally such a process should be as automatic and scalable as possible.
@@ -747,6 +759,8 @@ Vault secrets is a chart hosted on this repository, you can retrieve templates [
 
 #### MinIO
 
+MinIO is a High Performance Object Storage released under GNU Affero General Public License v3.0. It is API compatible with Amazon S3 cloud storage service. Use MinIO to build high performance infrastructure for machine learning, analytics and application data workloads.
+
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
@@ -754,3 +768,40 @@ Vault secrets is a chart hosted on this repository, you can retrieve templates [
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
+
+##### Add buckets
+
+```yaml
+buckets:
+  - name: bucket1
+  # bucket [none|download|upload|public]
+  policy: none
+  purge: false
+```
+
+##### Add polices
+
+```yaml
+policies:
+- name: readonlyexamplepolicy
+  statements:
+    - resources: 
+        - 'arn:aws:s3:::example*/*'
+      actions:
+        - "s3:GetObject"
+    - resources: 
+        - 'arn:aws:s3:::example*'
+      actions:
+        - "s3:GetBucketLocation"
+        - "s3:ListBucket"
+        - "s3:ListBucketMultipartUploads"
+```
+
+##### Add users
+
+```yaml
+users:
+  - accessKey: console
+    secretKey: console123
+    policy: consoleAdmin
+```

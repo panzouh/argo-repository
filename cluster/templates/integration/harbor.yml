@@ -1,7 +1,7 @@
 {{- define "harbor.enabled" -}}
-{{ and .Values.harbor.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
+{{ .Values.harbor.enabled }}
 {{- end -}}
-{{- if eq "harbor.enabled" "true" }}
+{{ if eq (include "harbor.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -24,6 +24,7 @@ spec:
       values: |-
         harborAdminPassword: {{ .Values.harbor.values.bootstrapPassword }}
         secretKey: {{ .Values.harbor.values.secretKey }}
+        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx" (eq (include "ingress.namespace" .) "traefik-system"))) }}
         expose:
           type: ingress
           tls:
@@ -44,16 +45,26 @@ spec:
           ingress:
             hosts:
               {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
-              core: {{ .Values.harbor.values.ingressNames.core }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
-              notary: {{ .Values.harbor.values.ingressNames.notary }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+              core: {{ .Values.harbor.values.ingress.coreName }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+              notary: {{ .Values.harbor.values.ingress.notaryName }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
               {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
               core: {{ .Values.ingress.ingressDefinition.dns.domain }}
               notary: {{ .Values.ingress.ingressDefinition.dns.domain }}
               {{- end }}
             annotations:
               {{- if eq (include "ingress.namespace" .) "ingress-nginx" }}
-              {{- else if eq (include "ingress.namespace" .) "traefik-system" }}
+              {{- with .Values.ingress.nginx.values.ingressAnnotations }}
+                {{- toYaml . | nindent 14 }}
               {{- end }}
+              {{- else if eq (include "ingress.namespace" .) "traefik-system" }}
+              {{- with .Values.ingress.traefik.values.ingressAnnotations }}
+                {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- end }}
+        {{- else }}
+        expose:
+          type: loadBalancer
+        {{- end }}
         {{- if .Values.default.storageClass }}
         persistence:
           persistentVolumeClaim:
@@ -99,5 +110,7 @@ spec:
             - jobservice
             - trivy
         {{- end }}
-        externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingressNames.core "ingress" .Values.ingress.ingressDefinition) }}
-{{- end }}
+        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx" (eq (include "ingress.namespace" .) "traefik-system"))) }}
+        externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingress.coreName "ingress" .Values.ingress.ingressDefinition) }}
+        {{- end }}
+{{ end }}

@@ -75,7 +75,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 |-----|------|---------|-------------|
 | argocd.chart.name | string | `"argo-cd"` | Chart name |
 | argocd.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
-| argocd.chart.version | string | `"4.5.0"` | Chart version |
+| argocd.chart.version | string | `"4.7.0"` | Chart version |
 | argocd.enabled | bool | `false` | Enable ArgoCD chart |
 | argocd.namespace | string | `"argocd"` | Destination namespace & Applications source namespace |
 | argocd.values.enableAlternateHelmPlugin | bool | `false` |  |
@@ -136,7 +136,7 @@ repositories:
 |-----|------|---------|-------------|
 | gitlabRunners.chart.name | string | `"gitlab-runner"` | Chart name |
 | gitlabRunners.chart.repo | string | `"https://charts.gitlab.io"` | Gitlab runners Helm repository |
-| gitlabRunners.chart.version | string | `"0.41.0"` | Chart version |
+| gitlabRunners.chart.version | string | `"0.42.0"` | Chart version |
 | gitlabRunners.values | object | `{}` | Create runner watch section below |
 
 ##### Runner lean example
@@ -165,6 +165,30 @@ gitlabRunners:
       replicas: 1 # Value not mandatory, if not defined default is "1"
       isPrivileged: false # Value not mandatory, if not defined default is false
 ```
+
+#### Harbor
+
+Harbor is an open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted. Harbor, a CNCF Graduated project, delivers compliance, performance, and interoperability to help you consistently and securely manage artifacts across cloud native compute platforms like Kubernetes and Docker.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| harbor.chart.name | string | `"harbor"` | Chart name |
+| harbor.chart.repo | string | `"https://helm.goharbor.io"` | Helm repository |
+| harbor.chart.version | string | `"1.9.2"` | Chart version |
+| harbor.enabled | bool | `false` | Enable Harbor repository chart, you will need to enable Traefik or Nginx as well |
+| harbor.namespace | string | `"harbor-system"` | Destination namespace |
+| harbor.values.bootstrapPassword | string | `"changeme"` | Initial admin user password if the application is exposed consider changing it  |
+| harbor.values.ingress.coreName | string | `"core"` | Harbor core ingress name or path (weither it is an ingress wildcard or domain) |
+| harbor.values.ingress.enabled | bool | `true` | Enable Harbor ingresses |
+| harbor.values.ingress.notaryName | string | `"notary"` | Harbor notary ingress name or path (weither it is an ingress wildcard or domain) |
+| harbor.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| harbor.values.persitence.chartmuseum | string | `"10Gi"` | Chartmuseum PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.persitence.database | string | `"8Gi"` | Database PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.persitence.jobservice | string | `"2Gi"` | Jobservice PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.persitence.redis | string | `"2Gi"` | Redis PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.persitence.registry | string | `"50Gi"` | Registry PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.persitence.trivy | string | `"5Gi"` | Trivy PVC size, you will need to define a StorageClass in `default.storageClass` |
+| harbor.values.secretKey | string | `"not-a-secure-key"` | The secret key used for encryption. Must be a string of 16 chars. |
 
 #### Namespace configuration operator
 
@@ -264,7 +288,7 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 |-----|------|---------|-------------|
 | logging.eck.chart.name | string | `"eck-operator"` | Chart name |
 | logging.eck.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
-| logging.eck.chart.version | string | `"2.2.0"` | Chart version |
+| logging.eck.chart.version | string | `"2.3.0"` | Chart version |
 | logging.eck.enabled | bool | `false` | Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory |
 | logging.eck.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | logging.eck.values.telemetryEnabled | bool | `true` | Enable telemetry |
@@ -272,7 +296,7 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 | logging.eck.values.watchNamespaces | list | `["elastic-system"]` | Filter namespaces to watch you can leave it empty to watch all namespaces |
 | logging.eckCrds.chart.name | string | `"eck-operator-crds"` | Chart name |
 | logging.eckCrds.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
-| logging.eckCrds.chart.version | string | `"2.2.0"` | Chart version |
+| logging.eckCrds.chart.version | string | `"2.3.0"` | Chart version |
 | logging.eckCrds.values | object | `{}` | No specific values needs to be specified |
 
 ##### ECK Crds
@@ -283,7 +307,7 @@ Elastic Cloud on Kubernetes makes it easy to run Elasticsearch and Kibana on Kub
 |-----|------|---------|-------------|
 | logging.eckCrds.chart.name | string | `"eck-operator-crds"` | Chart name |
 | logging.eckCrds.chart.repo | string | `"https://helm.elastic.co"` | Helm repository |
-| logging.eckCrds.chart.version | string | `"2.2.0"` | Chart version |
+| logging.eckCrds.chart.version | string | `"2.3.0"` | Chart version |
 | logging.eckCrds.values | object | `{}` | No specific values needs to be specified |
 
 ##### ECK Tpl
@@ -323,7 +347,7 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 |-----|------|---------|-------------|
 | logging.loki.chart.name | string | `"loki"` | Chart name |
 | logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| logging.loki.chart.version | string | `"2.10.3"` | Chart version |
+| logging.loki.chart.version | string | `"2.12.2"` | Chart version |
 | logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
@@ -337,7 +361,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 |-----|------|---------|-------------|
 | logging.promtail.chart.name | string | `"promtail"` | Chart name |
 | logging.promtail.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| logging.promtail.chart.version | string | `"3.11.0"` | Chart version |
+| logging.promtail.chart.version | string | `"6.0.2"` | Chart version |
 | logging.promtail.enabled | bool | `false` | Enable Promtail chart |
 | logging.promtail.values.installOnControllPlane | bool | `true` | Enable Promtail on the controll plane |
 | logging.promtail.values.runtimeLogs | string | `"/var/lib/docker/containers"` | Path to runtime containers |
@@ -381,7 +405,7 @@ The Blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS
 |-----|------|---------|-------------|
 | monitoring.blackboxExporter.chart.name | string | `"prometheus-blackbox-exporter"` | Chart name |
 | monitoring.blackboxExporter.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
-| monitoring.blackboxExporter.chart.version | string | `"4.10.4"` | Chart version |
+| monitoring.blackboxExporter.chart.version | string | `"5.8.2"` | Chart version |
 | monitoring.blackboxExporter.enabled | bool | `false` | Enable Blackbox exporter chart |
 | monitoring.blackboxExporter.values.enableGrafanaDashboard | bool | `false` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | monitoring.blackboxExporter.values.enablePrometheusRules | bool | `false` | Enable prometheus default Prometheus rules (Will be announced in a future release) |
@@ -470,7 +494,7 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 |-----|------|---------|-------------|
 | monitoring.grafana.chart.name | string | `"grafana"` | Chart name |
 | monitoring.grafana.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| monitoring.grafana.chart.version | string | `"6.29.2"` | Chart version |
+| monitoring.grafana.chart.version | string | `"6.32.1"` | Chart version |
 | monitoring.grafana.enabled | bool | `false` | Enable Grafana chart |
 | monitoring.grafana.values.auth.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
 | monitoring.grafana.values.auth.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
@@ -544,7 +568,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 |-----|------|---------|-------------|
 | monitoring.prometheus.chart.name | string | `"prometheus"` | Chart name |
 | monitoring.prometheus.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
-| monitoring.prometheus.chart.version | string | `"15.8.7"` | Chart version |
+| monitoring.prometheus.chart.version | string | `"15.10.3"` | Chart version |
 | monitoring.prometheus.enabled | bool | `false` | Enable Prometheus chart |
 | monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` | Alertmanager configuration file, example below |
 | monitoring.prometheus.values.alertmanager.enabled | bool | `false` | Enable Alertmanager in the chart |
@@ -703,7 +727,7 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 |-----|------|---------|-------------|
 | certmanager.chart.name | string | `"cert-manager"` | Chart name |
 | certmanager.chart.repo | string | `"https://charts.jetstack.io"` | Helm repository |
-| certmanager.chart.version | string | `"1.8.0"` | Chart version |
+| certmanager.chart.version | string | `"1.8.2"` | Chart version |
 | certmanager.enabled | bool | `false` | Enable Cert-manager chart |
 | certmanager.namespace | string | `"cert-manager"` | Destination namespace |
 | certmanager.values.clusterIssuerLetsEncrypt.email | string | `"jdoe@domain.tld"` | Configure certificate expiracy notice notifications |
@@ -735,7 +759,7 @@ NGINX Ingress Controller is a best-in-class traffic management solution for clou
 |-----|------|---------|-------------|
 | ingress.nginx.chart.name | string | `"ingress-nginx"` | Chart name |
 | ingress.nginx.chart.repo | string | `"https://kubernetes.github.io/ingress-nginx"` | Helm repository |
-| ingress.nginx.chart.version | string | `"4.0.18"` | Chart version |
+| ingress.nginx.chart.version | string | `"4.1.4"` | Chart version |
 | ingress.nginx.enabled | bool | `false` | Enable Nginx chart, you should know that you can't activate Traefik & Nginx |
 | ingress.nginx.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.nginx.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
@@ -750,7 +774,7 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 |-----|------|---------|-------------|
 | ingress.traefik.chart.name | string | `"traefik"` | Chart name |
 | ingress.traefik.chart.repo | string | `"https://helm.traefik.io/traefik"` | Helm repository |
-| ingress.traefik.chart.version | string | `"10.15.0"` | Chart version |
+| ingress.traefik.chart.version | string | `"10.24.0"` | Chart version |
 | ingress.traefik.enabled | bool | `false` | Enable Traefik chart, you should know that you can't activate Traefik & Nginx |
 | ingress.traefik.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.traefik.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
@@ -847,6 +871,8 @@ Autogenerated from chart metadata using [helm-docs v1.10.0](https://github.com/n
 
 #### MinIO
 
+MinIO is a High Performance Object Storage released under GNU Affero General Public License v3.0. It is API compatible with Amazon S3 cloud storage service. Use MinIO to build high performance infrastructure for machine learning, analytics and application data workloads.
+
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | minio.chart.name | string | `"minio"` | Chart name |
@@ -871,3 +897,40 @@ Autogenerated from chart metadata using [helm-docs v1.10.0](https://github.com/n
 | minio.values.pvcSize | string | `"5OGi"` | MinIO persistence size, you will need to define a StorageClass in `default.storageClass` |
 | minio.values.rMemory | string | `"2Gi"` | Memory requests |
 | minio.values.users | list | `[]` | Add users, watch section bellow |
+
+##### Add buckets
+
+```yaml
+buckets:
+  - name: bucket1
+  # bucket [none|download|upload|public]
+  policy: none
+  purge: false
+```
+
+##### Add polices
+
+```yaml
+policies:
+- name: readonlyexamplepolicy
+  statements:
+    - resources:
+        - 'arn:aws:s3:::example*/*'
+      actions:
+        - "s3:GetObject"
+    - resources:
+        - 'arn:aws:s3:::example*'
+      actions:
+        - "s3:GetBucketLocation"
+        - "s3:ListBucket"
+        - "s3:ListBucketMultipartUploads"
+```
+
+##### Add users
+
+```yaml
+users:
+  - accessKey: console
+    secretKey: console123
+    policy: consoleAdmin
+```
