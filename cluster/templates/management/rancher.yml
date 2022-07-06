@@ -12,6 +12,14 @@ metadata:
 data:
   ca-additional.pem: {{ .Values.rancher.values.caBundle }}
 type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tls-ca
+  namespace: {{ .Values.rancher.namespace }}
+data:
+  cacerts.pem: {{ .Values.rancher.values.caBundle }}
 {{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -67,5 +75,6 @@ spec:
         bootstrapPassword: {{ .Values.rancher.values.bootstrapPassword }}
         {{- if .Values.rancher.values.caBundle }}
         additionalTrustedCAs: true
+        privateCA: true
         {{- end }}
 {{ end }}
