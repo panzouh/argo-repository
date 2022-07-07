@@ -34,7 +34,7 @@ spec:
             secret:
               {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
               secretName: harbor-core-certificate
-              notarySecretName: harbor-core-certificate
+              notarySecretName: harbor-notary-certificate
               {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
               secretName: harbor-core-certificate
               {{- end }}
