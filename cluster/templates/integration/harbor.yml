@@ -46,7 +46,7 @@ spec:
             hosts:
               {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
               core: {{ .Values.harbor.values.ingress.coreName }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
-              notary: {{ .Values.harbor.values.ingress.notaryName }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+              notary: {{ .Values.harbor.values.ingress.notaryName }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
               {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
               core: {{ .Values.ingress.ingressDefinition.dns.domain }}
               notary: {{ .Values.ingress.ingressDefinition.dns.domain }}
