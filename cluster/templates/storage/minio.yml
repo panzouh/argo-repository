@@ -72,27 +72,24 @@ spec:
             memory: {{ .Values.minio.values.rMemory }}
         {{- if .Values.minio.values.buckets }}
         buckets:
-          {{- range $i, $v := .Values.minio.values.buckets }}
-            {{- printf "-" | nindent 8 }}
-            {{- toYaml $v | nindent 10 }}
+          {{- with .Values.minio.values.buckets }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
         {{- else }}
         buckets: []
         {{- end }}
         {{- if .Values.minio.values.policies }}
         policies:
-          {{- range $i,$v := .Values.minio.values.policies }}
-            {{- printf "-" | nindent 8 }}
-            {{- toYaml $v | nindent 10 }}
+          {{- with .Values.minio.values.policies }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
         {{- else }}
         policies: []
         {{- end }}
         {{- if .Values.minio.values.users }}
         users:
-          {{- range $i,$v := .Values.minio.values.users }}
-            {{- printf "-" | nindent 8 }}
-            {{- toYaml $v | nindent 10 }}
+          {{- with .Values.minio.values.users }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
         {{- else }}
         users: []

@@ -81,6 +81,12 @@ spec:
               - CurveP521
               - CurveP384
         {{- end }}
+        {{- if .Values.ingress.ingressDefinition.tolerations }}
+        tolerations:
+          {{- with .Values.ingress.ingressDefinition.tolerations }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
 {{- if .Values.ingress.ingressDefinition.strictTLS }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
