@@ -535,6 +535,8 @@ ingress:
       domain: domain.tld
     # -- Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
     tolerations: []
+    # -- Node labels for controller pod assignment
+    nodeSelector: {}
   traefik:
     # -- Enable Traefik chart, you should know that you can't activate Traefik & Nginx
     enabled: false

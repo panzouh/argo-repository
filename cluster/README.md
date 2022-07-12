@@ -748,6 +748,7 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 | ingress.ingressDefinition.dns.domain | string | `"domain.tld"` | Cluster DNS entry, it generate this kind of urls : `https://domain.tld/prometheus` |
 | ingress.ingressDefinition.dns.mode | string | `"wildcard"` | DNS declaration of your cluster can be `domain` or `wildcard` |
 | ingress.ingressDefinition.dns.wildcard | string | `"your-cluster.domain.tld"` | Cluster DNS wildcard entry, it generate this kind of urls : `https://prometheus.your-cluster.domain.tld` |
+| ingress.ingressDefinition.nodeSelector | object | `{}` | Node labels for controller pod assignment |
 | ingress.ingressDefinition.ssl.enabled | bool | `true` | Force TLS certificate section |
 | ingress.ingressDefinition.ssl.strictTLS | bool | `false` | Enforce strictTls :warning: not working yet :warning: |
 | ingress.ingressDefinition.tolerations | list | `[]` | Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |

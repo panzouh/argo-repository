@@ -43,6 +43,12 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- end }}
+          {{- if .Values.ingress.ingressDefinition.nodeSelector }}
+          nodeSelector:
+            {{- with .Values.ingress.ingressDefinition.nodeSelector }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
           {{- if .Values.proxies.enabled }}
           extraEnvs:
             - name: HTTP_PROXY

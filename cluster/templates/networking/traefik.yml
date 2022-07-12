@@ -87,6 +87,12 @@ spec:
             {{- toYaml . | nindent 10 }}
           {{- end }}
         {{- end }}
+        {{- if .Values.ingress.ingressDefinition.nodeSelector }}
+        nodeSelector:
+          {{- with .Values.ingress.ingressDefinition.nodeSelector }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
 {{- if .Values.ingress.ingressDefinition.strictTLS }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
