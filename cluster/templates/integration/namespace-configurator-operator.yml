@@ -1,5 +1,5 @@
 {{- define "namespace-configuration-operator.enabled" -}}
-{{- or .Values.namespaceConfiguratorOperator.enabled .Values.default.enabled  -}}
+{{- and .Values.namespaceConfiguratorOperator.enabled .Values.certmanager.enabled  -}}
 {{- end -}}
 {{ if eq (include "namespace-configuration-operator.enabled" .) "true" }}
 ---
@@ -23,9 +23,10 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if and .Values.namespaceConfiguratorOperator.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.namespaceConfiguratorOperator.values.monitor .Values.monitoring.prometheus.enabled }}
         enableMonitoring: true
         {{- else }}
         enableMonitoring: false
         {{- end }}
+        enableCertManager: true
 {{ end }}

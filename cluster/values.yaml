@@ -2,7 +2,7 @@
 # General
 
 default:
-  # -- Enable default charts (ArgoCD, Namespace configurator operator & Namespace configuration)
+  # -- Enable default charts (ArgoCD)
   enabled: false
   # -- Define storageClass in order to persistence to work
   storageClass: ""
@@ -154,7 +154,7 @@ harbor:
       notaryName: notary
 
 namespaceConfiguratorOperator:
-  # -- Enable Namespace configuration operator chart
+  # -- Enable Namespace configuration operator chart, you will need to enable Certmanager as well
   enabled: false
   # -- Destination namespace
   namespace: namespace-configuration

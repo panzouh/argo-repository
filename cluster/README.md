@@ -39,7 +39,7 @@ Because some vars are generic to other charts, some are defined by default.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| default.enabled | bool | `false` | Enable default charts (ArgoCD, Namespace configurator operator & Namespace configuration) |
+| default.enabled | bool | `false` | Enable default charts (ArgoCD) |
 | default.smtpServer | string | `"0.0.0.0:25"` | Smtp server to configure notifications :warning: not working yet :warning: |
 | default.storageClass | string | `""` | Define storageClass in order to persistence to work |
 
@@ -199,7 +199,7 @@ The namespace-configuration-operator is a project hosted by RedHat. It helps kee
 | namespaceConfiguratorOperator.chart.name | string | `"namespace-configuration-operator"` | Chart name |
 | namespaceConfiguratorOperator.chart.repo | string | `"https://redhat-cop.github.io/namespace-configuration-operator"` | Helm repository |
 | namespaceConfiguratorOperator.chart.version | string | `"v1.2.4"` | Chart version |
-| namespaceConfiguratorOperator.enabled | bool | `false` | Enable Namespace configuration operator chart |
+| namespaceConfiguratorOperator.enabled | bool | `false` | Enable Namespace configuration operator chart, you will need to enable Certmanager as well |
 | namespaceConfiguratorOperator.namespace | string | `"namespace-configuration"` | Destination namespace |
 | namespaceConfiguratorOperator.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 
@@ -265,13 +265,6 @@ networkPolicies:
           - ipBlock:
               cidr: 192.168.0.0/24
 ```
-
-#### Olm
-
-Operator Lifecycle Manager (OLM) helps users install, update, and manage the lifecycle of Kubernetes native applications (Operators) and their associated services running across their Kubernetes clusters.
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
 
 ### Logging
 

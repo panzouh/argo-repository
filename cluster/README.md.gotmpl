@@ -236,18 +236,6 @@ networkPolicies:
               cidr: 192.168.0.0/24
 ```
 
-#### Olm
-
-Operator Lifecycle Manager (OLM) helps users install, update, and manage the lifecycle of Kubernetes native applications (Operators) and their associated services running across their Kubernetes clusters.
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-{{- range .Values }}
-  {{- if hasPrefix "olm" .Key }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
-
 ### Logging
 
 You should note that you can either activate Loki & Promtail stack or ECK and Kibana / Elasticsearch. 

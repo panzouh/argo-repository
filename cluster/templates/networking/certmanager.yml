@@ -26,7 +26,7 @@ spec:
       version: v3
       values: |-
         installCRDs: true
-        {{- if and .Values.certmanager.values.monitor .Values.monitoring.enabled .Values.monitoring.prometheus.enabled }}
+        {{- if and .Values.certmanager.values.monitor .Values.monitoring.prometheus.enabled }}
         prometheus:
           enabled: true
           servicemonitor:
