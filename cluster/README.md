@@ -198,7 +198,7 @@ The namespace-configuration-operator is a project hosted by RedHat. It helps kee
 |-----|------|---------|-------------|
 | namespaceConfiguratorOperator.chart.name | string | `"namespace-configuration-operator"` | Chart name |
 | namespaceConfiguratorOperator.chart.repo | string | `"https://redhat-cop.github.io/namespace-configuration-operator"` | Helm repository |
-| namespaceConfiguratorOperator.chart.version | string | `"v1.2.2"` | Chart version |
+| namespaceConfiguratorOperator.chart.version | string | `"v1.2.4"` | Chart version |
 | namespaceConfiguratorOperator.enabled | bool | `false` | Enable Namespace configuration operator chart |
 | namespaceConfiguratorOperator.namespace | string | `"namespace-configuration"` | Destination namespace |
 | namespaceConfiguratorOperator.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |

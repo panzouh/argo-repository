@@ -164,7 +164,7 @@ namespaceConfiguratorOperator:
     # -- Chart name
     name: namespace-configuration-operator
     # -- Chart version
-    version: v1.2.2
+    version: v1.2.4
   values:
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
