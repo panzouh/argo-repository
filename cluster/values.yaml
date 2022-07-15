@@ -110,8 +110,9 @@ gitlabRunners:
     name: gitlab-runner
     # -- Chart version
     version: 0.42.0
-  # -- Create runner watch section below
-  values: {}
+  values:
+    # -- Create runners watch section below
+    runners: []
 
 harbor:
   # -- Enable Harbor repository chart, you will need to enable Traefik or Nginx as well

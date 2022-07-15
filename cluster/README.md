@@ -137,17 +137,18 @@ repositories:
 | gitlabRunners.chart.name | string | `"gitlab-runner"` | Chart name |
 | gitlabRunners.chart.repo | string | `"https://charts.gitlab.io"` | Gitlab runners Helm repository |
 | gitlabRunners.chart.version | string | `"0.42.0"` | Chart version |
-| gitlabRunners.values | object | `{}` | Create runner watch section below |
+| gitlabRunners.values.runners | list | `[]` | Create runners watch section below |
 
 ##### Runner lean example
 
 ```yaml
 gitlabRunners:
   values:
-    - runnerName: runner-a
-      runnerToken: "<runner-token>"
-      runnerTags: "ci, test"
-      gitlabUrl: "https://git.domain.tld"
+    runners:
+      - runnerName: runner-a
+        runnerToken: "<runner-token>"
+        runnerTags: "ci, test"
+        gitlabUrl: "https://git.domain.tld"
 ```
 
 ##### Runner full example
@@ -155,15 +156,16 @@ gitlabRunners:
 ```yaml
 gitlabRunners:
   values:
-    - runnerName: runner-a
-      runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
-      runnerToken: "<runner-token>"
-      runnerTags: "ci, test"
-      dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
-      gitlabUrl: "https://git.domain.tld"
-      imagePullPolicy: Always # Value not mandatory, if not defined default is "IfNotPresent"
-      replicas: 1 # Value not mandatory, if not defined default is "1"
-      isPrivileged: false # Value not mandatory, if not defined default is false
+    runners
+      - runnerName: runner-a
+        runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
+        runnerToken: "<runner-token>"
+        runnerTags: "ci, test"
+        dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
+        gitlabUrl: "https://git.domain.tld"
+        imagePullPolicy: Always # Value not mandatory, if not defined default is "IfNotPresent"
+        replicas: 1 # Value not mandatory, if not defined default is "1"
+        isPrivileged: false # Value not mandatory, if not defined default is false
 ```
 
 #### Harbor
