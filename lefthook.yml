@@ -13,7 +13,7 @@ pre-commit:
           echo "[+] Docker not found switching to Podman"
           alias docker=podman
         fi
-        docker run --rm --volume "$(pwd):/helm-docs" jnorwood/helm-docs:latest -l trace
+        docker run --rm --volume "$(pwd)/cluster:/helm-docs" jnorwood/helm-docs:latest -l trace
     re-stage:
       run: |-
         git diff --name-only --cached --diff-filter=ACM | while IFS= read -r n; do git add ${n}; done 
