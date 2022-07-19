@@ -1,0 +1,31 @@
+{{- define "olm.enabled" -}}
+{{- and .Values.olm.enabled  -}}
+{{- end -}}
+{{ if eq (include "olm.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: olm
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.namespaceConfiguratorOperator.namespace }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    path: {{ .Values.olm.chart.path }}
+    repoURL: {{ .Values.olm.chart.repo }}
+    targetRevision: {{ .Values.olm.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        {{- if and .Values.olm.values.monitor .Values.monitoring.prometheus.enabled }}
+        monitoring:
+          enabled: true
+          namespace: {{ .Values.monitoring.namespace }}
+        {{- end }}
+{{ end }}

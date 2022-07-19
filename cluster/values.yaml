@@ -193,6 +193,22 @@ namespaceConfiguration:
       # -- You will need to specify podCIDR & serviceCIDR you can get it by running `kubectl cluster-info dump | grep -m 1 service-cluster-ip-range` & `kubectl cluster-info dump | grep -m 1 cluster-cidr`
       clusterCIDRs: []
 
+olm:
+  # -- Enable OLM chart
+  enabled: false
+  # -- Destination namespace
+  namespace: olm
+  chart:
+    # -- Helm repository (This own repository)
+    repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path on repository
+    path: charts/namespace-configuration
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    targetRevision: HEAD
+  values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
+    monitor: false
+
 # Logging
 
 logging:

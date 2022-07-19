@@ -1,0 +1,3 @@
+[submodule "deps/olm"]
+	path = deps/olm
+	url = https://github.com/operator-framework/operator-lifecycle-manager.git

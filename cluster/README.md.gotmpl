@@ -238,6 +238,18 @@ networkPolicies:
               cidr: 192.168.0.0/24
 ```
 
+#### OLM
+
+This project is a component of the Operator Framework, an open source toolkit to manage Kubernetes native applications, called Operators, in an effective, automated, and scalable way. Read more in the introduction blog post and learn about practical use cases at the OLM website.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "olm" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ### Logging
 
 You should note that you can either activate Loki & Promtail stack or ECK and Kibana / Elasticsearch. 

@@ -268,6 +268,19 @@ networkPolicies:
               cidr: 192.168.0.0/24
 ```
 
+#### OLM
+
+This project is a component of the Operator Framework, an open source toolkit to manage Kubernetes native applications, called Operators, in an effective, automated, and scalable way. Read more in the introduction blog post and learn about practical use cases at the OLM website.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| olm.chart.path | string | `"charts/namespace-configuration"` | Chart path on repository |
+| olm.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
+| olm.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
+| olm.enabled | bool | `false` | Enable OLM chart |
+| olm.namespace | string | `"olm"` | Destination namespace |
+| olm.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+
 ### Logging
 
 You should note that you can either activate Loki & Promtail stack or ECK and Kibana / Elasticsearch.
