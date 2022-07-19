@@ -274,7 +274,7 @@ This project is a component of the Operator Framework, an open source toolkit to
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| olm.chart.path | string | `"charts/namespace-configuration"` | Chart path on repository |
+| olm.chart.path | string | `"charts/olm"` | Chart path on repository |
 | olm.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | olm.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | olm.enabled | bool | `false` | Enable OLM chart |

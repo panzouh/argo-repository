@@ -13,7 +13,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.namespaceConfiguratorOperator.namespace }}
+    namespace: {{ .Values.olm.namespace }}
     server: https://kubernetes.default.svc
   project: integration
   source:
