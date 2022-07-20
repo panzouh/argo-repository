@@ -102,7 +102,7 @@ spec:
           helpers:
             cpuRequests: 100m
             memoryRequests: 128Mi
-        securityContext:
+        podsecurityContext:
           fsGroup: 65533
           runAsUser: 100
         resources:
