@@ -279,7 +279,7 @@ This project is a component of the Operator Framework, an open source toolkit to
 | olm.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | olm.enabled | bool | `false` | Enable OLM chart |
 | olm.namespace | string | `"olm"` | Destination namespace |
-| olm.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| olm.values | object | `{}` |  |
 
 ### Logging
 

@@ -205,9 +205,7 @@ olm:
     path: charts/olm-manifests
     # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
     targetRevision: HEAD
-  values:
-    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
-    monitor: false
+  values: {}
 
 # Logging
 
