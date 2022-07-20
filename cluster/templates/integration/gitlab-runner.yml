@@ -1,20 +1,21 @@
 {{- define "gitlab-runners.enabled" -}}
-{{- has 0 .Values.gitlabRunners.values.runners -}}
+{{- gt (len .Values.gitlabRunners.values.runners) 0 -}}
 {{- end -}}
-{{ if eq (include "gitlab-runners.enabled" .) "trueeee" }}
-{{ $argoFinalizers := (include "argocd.applications.finalizers" .) }}
-{{ $argoSyncPolicy := (include "cluster.syncPolicy.default" .) }}
-{{ $argocdNamespace := .Values.argocd.namespace }}
-{{ $gitlabChart := .Values.gitlabRunners.chart }}
-{{- range .Values.gitlabRunners.values }}
-{{- if has 0 .pullSecrets }}
+{{- $argoFinalizers := (include "argocd.applications.finalizers" .) -}}
+{{- $argoSyncPolicy := (include "cluster.syncPolicy.default" .) -}}
+{{- $argocdNamespace := .Values.argocd.namespace -}}
+{{- $gitlabChart := .Values.gitlabRunners.chart -}}
+{{ if eq (include "gitlab-runners.enabled" .) "true" }}
+{{- range .Values.gitlabRunners.values.runners }}
+{{- if gt (len (default 0 .pullSecrets)) 0 }}
+{{- $runnerName := .runnerName -}}
+{{- $runnerNamespace := default "gitlab" .runnerNamespace -}}
 {{- range $k,$v := .pullSecrets }}
----
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .runnerName }}-{{ $k }}-regcred
-  namespace: { default "gitlab" .runnerNamespace }}
+  name: {{ $runnerName }}-{{ $k }}-regcred
+  namespace: {{ $runnerNamespace }}
 data:
   .dockerconfigjson: {{ $v }}
 type: kubernetes.io/dockerconfigjson
@@ -67,10 +68,11 @@ spec:
         runners:
           disable_cache: false
           tags: {{ .runnerTags }}
-          {{- if has 0 .pullSecret }}
+          {{- if gt (len ( default 0 .pullSecrets)) 0 }}
+          {{- $runnerName := .runnerName -}}
           imagePullSecrets:
             {{- range $k, $v := .pullSecrets }}
-            - {{ .runnerName }}-{{ $k }}-regcred
+            - {{ $runnerName }}-{{ $k }}-regcred
             {{- end }}
           {{- end }}
           cache_dir: "/cache"
