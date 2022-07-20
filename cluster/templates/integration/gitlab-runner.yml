@@ -69,7 +69,7 @@ spec:
           disable_cache: false
           tags: {{ .runnerTags }}
           {{- if gt (len ( default 0 .pullSecrets)) 0 }}
-          {{- $runnerName := .runnerName -}}
+          {{- $runnerName := .runnerName }}
           imagePullSecrets:
             {{- range $k, $v := .pullSecrets }}
             - {{ $runnerName }}-{{ $k }}-regcred
