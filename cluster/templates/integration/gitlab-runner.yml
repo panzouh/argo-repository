@@ -7,6 +7,19 @@
 {{ $argocdNamespace := .Values.argocd.namespace }}
 {{ $gitlabChart := .Values.gitlabRunners.chart }}
 {{- range .Values.gitlabRunners.values }}
+{{- if has 0 .pullSecrets }}
+{{- range $k,$v := .pullSecrets }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .runnerName }}-{{ $k }}-regcred
+  namespace: { default "gitlab" .runnerNamespace }}
+data:
+  .dockerconfigjson: {{ $v }}
+type: kubernetes.io/dockerconfigjson
+{{- end }}
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -42,12 +55,24 @@ spec:
         checkInterval: 30
         rbac:
           create: true
+          {{- if .isPrivileged }}
+          clusterWideAccess: true
+          {{- else }}
           clusterWideAccess: false
+          {{- end }}
           podSecurityPolicy:
             enabled: false
+            resourceNames:
+              - gitlab-runner
         runners:
           disable_cache: false
           tags: {{ .runnerTags }}
+          {{- if has 0 .pullSecret }}
+          imagePullSecrets:
+            {{- range $k, $v := .pullSecrets }}
+            - {{ .runnerName }}-{{ $k }}-regcred
+            {{- end }}
+          {{- end }}
           cache_dir: "/cache"
           config: |-
             [[runners]]

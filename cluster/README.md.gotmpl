@@ -143,7 +143,7 @@ gitlabRunners:
 ```yaml
 gitlabRunners:
   values:
-    runners
+    runners:
       - runnerName: runner-a
         runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
         runnerToken: "<runner-token>"
@@ -151,6 +151,9 @@ gitlabRunners:
         dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
         gitlabUrl: "https://git.domain.tld"
         imagePullPolicy: Always # Value not mandatory, if not defined default is "IfNotPresent"
+        pullSecrets: [] # Define a list .dockerconfigjson b64 encoded
+        # Ex: 
+        # - UmVhbGx5IHJlYWxseSByZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGx5eXl5eXl5eXl5eXl5eXl5eXl5eSBsbGxsbGxsbGxsbGxsbG9vb29vb29vb29vb29vb29vb29vb29vb29vb25ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubmdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2cgYXV0aCBrZXlzCg==
         replicas: 1 # Value not mandatory, if not defined default is "1"
         isPrivileged: false # Value not mandatory, if not defined default is false
 ```
