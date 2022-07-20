@@ -1,6 +1,0 @@
-{{- if (include "garden-enabled" .) "true" }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Values.garden.namespace }}
-{{- end }}
