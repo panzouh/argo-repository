@@ -79,6 +79,15 @@ spec:
           config: |-
             [[runners]]
               executor = "docker"
+              [runners.kubernetes]
+                image = "ubuntu:20.04"
+                {{- if .isPrivileged }}
+                privileged = true
+                {{- end }}
+              [[runners.kubernetes.volumes.empty_dir]]
+                name = "docker-certs"
+                mount_path = "/certs/client"
+                medium = "Memory"
               [runners.docker]
                 tls_verify = false
                 image = "docker:{{ default "19.03.12" .dockerVersion }}"
@@ -86,7 +95,7 @@ spec:
                 privileged = true
                 {{- end }}
                 disable_cache = false
-                volumes = ["/cache"]
+                volumes = ["/certs/client", "/cache"]
           runUntagged: false
           protected: false
           {{- if .isPrivileged }}
