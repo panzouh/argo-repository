@@ -905,7 +905,7 @@ MinIO is a High Performance Object Storage released under GNU Affero General Pub
 | minio.values.ingress.console.enabled | bool | `true` | Enable MinIO UI Ingress |
 | minio.values.ingress.console.name | string | `"minio-console"` | MinIO UI ingress name or path (weither it is an ingress wildcard or domain) |
 | minio.values.mode | string | `"standalone"` | MinIO deployment mode supported values are `standalone`, `distributed` `gateway` |
-| minio.values.monitor | bool | `false` |  |
+| minio.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | minio.values.policies | list | `[]` | Add policies, watch section bellow |
 | minio.values.pvcSize | string | `"5OGi"` | MinIO persistence size, you will need to define a StorageClass in `default.storageClass` |
 | minio.values.rMemory | string | `"2Gi"` | Memory requests |

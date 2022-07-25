@@ -740,5 +740,6 @@ minio:
         enabled: true
         # --  MinIO UI ingress name or path (weither it is an ingress wildcard or domain)
         name: minio-console
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
 
