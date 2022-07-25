@@ -130,7 +130,37 @@ repositories:
       key: sshPrivateKey
 ```
 
+#### Custom Catalogs
+
+A CatalogSource represents a store of metadata that OLM can query to discover and install operators and their dependencies.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| customCatalogs.chart.path | string | `"charts/custom-catalogs"` | Chart path on repository |
+| customCatalogs.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
+| customCatalogs.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
+| customCatalogs.enabled | bool | `false` | Enable custom catalog sources, you will need to enable OLM |
+| customCatalogs.namespace | string | `"olm"` | Destination namespace |
+| customCatalogs.values.catalogs | list | `[]` | Custom catalogs definition, watch section bellow |
+| customCatalogs.values.olmNamespace | string | `"olm"` | OLM namespace |
+
+##### Custom catalog full example
+
+```yaml
+customCatalogs:
+  values:
+    catalogs:
+      - name: my-custom-index
+        displayName: My Custom Index
+        publisher: DevOps Team
+        image: repo.domain.tld/library/index:latest
+      # Only if you need a pull secret
+      #  pullSecret: <pull-secret-b64-encoded>
+```
+
 #### Gitlab runners
+
+GitLab Runner is an application that works with GitLab CI/CD to run jobs in a pipeline. GitLab Runner is open-source and written in Go. It can be run as a single binary; no language-specific requirements are needed.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

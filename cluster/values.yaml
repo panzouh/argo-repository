@@ -102,6 +102,24 @@ argocd:
     # -- Registered repositories, watch section below :warning: Credentials creation not handled yet :warning:
     repositories: []
 
+customCatalogs:
+  # -- Enable custom catalog sources, you will need to enable OLM
+  enabled: false
+  # -- Destination namespace
+  namespace: olm
+  chart:
+    # -- Helm repository (This own repository)
+    repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path on repository
+    path: charts/custom-catalogs
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    targetRevision: HEAD
+  values:
+    # -- OLM namespace
+    olmNamespace: olm
+    # -- Custom catalogs definition, watch section bellow
+    catalogs: []
+
 gitlabRunners:
   chart:
     # -- Gitlab runners Helm repository

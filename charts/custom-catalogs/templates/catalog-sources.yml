@@ -1,0 +1,26 @@
+{{- $olmNamespace := .Values.olmNamespace -}}
+{{- range .Values.catalogs }}
+{{- if .pullSecret }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .name }}-pull-secret
+  namespace: {{ $olmNamespace }}
+data:
+  .dockerconfigjson: {{ .pullSecret }}
+type: kubernetes.io/dockerconfigjson
+{{- end }}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: {{ .name }}
+  namespace: {{ $olmNamespace }}
+spec:
+  displayName: B4ttleHack
+  image: {{ .image }}
+  publisher: {{ .publisher }}
+  sourceType: grpc
+  secrets:
+    - {{ .name }}-pull-secret
+{{- end }}

@@ -1,0 +1,35 @@
+{{- define "custom-catalogs.enabled" -}}
+{{- and .Values.olm.enabled .Values.customCatalogs.enabled  -}}
+{{- end -}}
+{{ if eq (include "custom-catalogs.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: custom-catalogs
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.namespaceConfiguration.namespace }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    path: {{ .Values.customCatalogs.chart.path }}
+    repoURL: {{ .Values.customCatalogs.chart.repo }}
+    targetRevision: {{ .Values.customCatalogs.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        olmNamespace: {{ .Values.customCatalogs.values.olmNamespace }}
+        {{- if .Values.customCatalogs.values.catalogs }}
+        catalogs:
+          {{- with .Values.customCatalogs.values.catalogs }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        catalogs: []
+        {{- end }}
+{{ end }}

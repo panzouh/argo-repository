@@ -1,5 +1,5 @@
 {{- define "namespace-configuration.enabled" -}}
-{{- and .Values.namespaceConfiguration.enabled .Values.namespaceConfiguratorOperator.enabled .Values.certmanager.enabled  -}}
+{{- and .Values.namespaceConfiguration.enabled .Values.namespaceConfiguratorOperator.enabled .Values.certmanager.enabled -}}
 {{- end -}}
 {{ if eq (include "namespace-configuration.enabled" .) "true" }}
 {{- $namespaceConfigurationValues := .Values.namespaceConfiguration.values }}

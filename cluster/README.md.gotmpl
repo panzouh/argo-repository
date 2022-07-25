@@ -116,7 +116,35 @@ repositories:
       key: sshPrivateKey
 ```
 
+#### Custom Catalogs
+
+A CatalogSource represents a store of metadata that OLM can query to discover and install operators and their dependencies.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "customCatalogs" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+##### Custom catalog full example
+
+```yaml
+customCatalogs:
+  values:
+    catalogs:
+      - name: my-custom-index
+        displayName: My Custom Index
+        publisher: DevOps Team
+        image: repo.domain.tld/library/index:latest
+      # Only if you need a pull secret
+      #  pullSecret: <pull-secret-b64-encoded>
+```
+
 #### Gitlab runners
+
+GitLab Runner is an application that works with GitLab CI/CD to run jobs in a pipeline. GitLab Runner is open-source and written in Go. It can be run as a single binary; no language-specific requirements are needed.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|

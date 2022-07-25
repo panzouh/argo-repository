@@ -1,0 +1,15 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+# -- OLM Namespace
+olmNamespace: olm
+
+# -- Custom catalogs specs
+catalogs: #[]
+# - name: my-custom-index
+#   displayName: My Custom Index
+#   publisher: DevOps Team
+#   image: repo.domain.tld/library/index:latest
+## Only if you need a pull secret
+#   pullSecret: <pull-secret-b64-encoded>
