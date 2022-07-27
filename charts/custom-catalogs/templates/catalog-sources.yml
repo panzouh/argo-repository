@@ -21,6 +21,8 @@ spec:
   image: {{ .image }}
   publisher: {{ .publisher }}
   sourceType: grpc
+  {{- if .pullSecret }}
   secrets:
     - {{ .name }}-pull-secret
+  {{- end }}
 {{- end }}

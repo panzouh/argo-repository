@@ -1,5 +1,5 @@
 apiVersion: v2
 description: |
-  Custom catalogs chart for OLM
+  A chart to manage catalog sources and subscriptions
 name: custom-catalogs
 version: 0.0.0-dev

@@ -27,23 +27,23 @@ spec:
         {{- if $namespaceConfigurationValues.quotas }}
         quotas:
           {{- range $namespaceConfigurationValues.quotas }}
-        - quotaName: {{ .quotaName }}
-          matchLabels:
-            {{- with .matchLabels }}
-              {{- toYaml . | nindent 12 }}
+          - quotaName: {{ .quotaName }}
+            matchLabels:
+              {{- with .matchLabels }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+            requestMem: {{ quote .requestMem }}
+            requestCPU: {{ .requestCPU }}
+              {{- if .requestsPVC }}
+            requestsPVC: {{ quote .requestsPVC }}
+              {{- end }}
+              {{- if .totalPVC }}
+              totalPVC: {{ .totalPVC }}
+              {{- end }}
+              {{- if .requestsEmptyDirs }}
+            requestsEmptyDirs: {{ quote .requestsEmptyDirs }}
+              {{- end }}
             {{- end }}
-          requestMem: {{ quote .requestMem }}
-          requestCPU: {{ .requestCPU }}
-            {{- if .requestsPVC }}
-          requestsPVC: {{ quote .requestsPVC }}
-            {{- end }}
-            {{- if .totalPVC }}
-            totalPVC: {{ .totalPVC }}
-            {{- end }}
-            {{- if .requestsEmptyDirs }}
-          requestsEmptyDirs: {{ quote .requestsEmptyDirs }}
-            {{- end }}
-          {{- end }}
         {{- end }}
         {{- if $namespaceConfigurationValues.networkPolicies }}
         networkPolicies:
