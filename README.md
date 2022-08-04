@@ -112,8 +112,6 @@ Any issues that does not respect the templates will be closed systematically.
 
 ## Contribute
 
-:warning: NA yet ! :warning:
-
 Refer to [Contribute documentation](./CONTRIBUTE.md)
 
 ## [License](./LICENSE.md)
