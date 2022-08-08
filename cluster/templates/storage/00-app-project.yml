@@ -12,8 +12,10 @@ spec:
   - group: '*'
     kind: '*'
   destinations:
-  - namespace: '*'
+  {{- if .Values.minio.enabled }}
+  - namespace: '{{ .Values.minio.namespace }}'
     server: '*'
+  {{- end }}
   sourceRepos:
   - '*'
 {{ end }}

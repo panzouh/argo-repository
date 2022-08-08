@@ -65,6 +65,20 @@ If you want to generate your own charts in this repository, you should know how 
 
 ## Tools
 
+### Backup
+
+#### Velero
+
+Velero is an open source tool to safely backup and restore, perform disaster recovery, and migrate Kubernetes cluster resources and persistent volumes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "velero" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ### Integration
 
 By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
@@ -373,7 +387,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 |-----|------|---------|-------------|
 {{- range .Values }}
   {{- if (hasPrefix "monitoring" .Key) }}
-    {{- if not (or (hasPrefix "monitoring.blackboxExporter" .Key) (hasPrefix "monitoring.discord" .Key) (hasPrefix "monitoring.fio" .Key) (hasPrefix "monitoring.goldpinger" .Key) (hasPrefix "monitoring.grafana" .Key) (hasPrefix "monitoring.prometheusMsTeams" .Key) (hasPrefix "monitoring.prometheus" .Key)) }}
+    {{- if not (or (hasPrefix "monitoring.blackboxExporter" .Key) (hasPrefix "monitoring.helmExporter" .Key) (hasPrefix "monitoring.discord" .Key) (hasPrefix "monitoring.fio" .Key) (hasPrefix "monitoring.goldpinger" .Key) (hasPrefix "monitoring.grafana" .Key) (hasPrefix "monitoring.prometheusMsTeams" .Key) (hasPrefix "monitoring.prometheus" .Key)) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
     {{- end }}
   {{- end }}
@@ -473,6 +487,44 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
+
+##### Add custom dashboards from [GNET](https://grafana.com/grafana/dashboards/)
+
+> :warning: You will also need to enable Prometheus first :warning:
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      customDashboardsGNET:
+        a-dashboard:
+          gnetId: 9614
+          revision: 1
+          datasource: Prometheus
+        another-dashboard:
+          gnetId: 13646
+          revision: 1
+          datasource: Prometheus
+```
+
+##### Add custom dashboards from JSON
+
+> :warning: You will also need to enable Prometheus first :warning:
+> :warning: Using this technique in order to import dashboards is not advised, export your dashboard from Grafana and import it to Grafana net : [documentation](https://grafana.com/docs/grafana/latest/dashboards/export-import/) :warning:
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      customDashboards:
+        a-dashboard:
+          json: |-
+            {
+            # your dashboard json formatted
+            }
+```
 
 #### Prometheus MsTeams alerting
 

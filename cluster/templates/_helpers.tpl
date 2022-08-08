@@ -1,4 +1,16 @@
 {{/*
+Default
+*/}}
+
+{{- define "accessModes.template" -}}
+  {{- if eq .Values.default.accessModes "RWO" -}}
+    {{- print "ReadWriteOnce" }}
+  {{- else if eq .Values.default.accessModes "RWX" -}}
+    {{- print "ReadWriteMany" }}
+  {{- end }}
+{{- end -}}
+
+{{/*
 General
 */}}
 

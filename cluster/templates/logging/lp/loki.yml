@@ -50,6 +50,8 @@ spec:
       persistence:
         enabled: true
         size: {{ .Values.logging.loki.values.pvcSize }}
+        accessModes:
+          - {{ (include "accessModes.template" .) }}
       {{- else }}
       persistence:
         enabled: false

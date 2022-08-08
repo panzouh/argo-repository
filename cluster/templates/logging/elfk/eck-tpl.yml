@@ -42,6 +42,7 @@ spec:
               enabled: true
               storageClass: {{ .Values.default.storageClass }}
               size: {{ quote .Values.logging.eckTpl.values.clusterSpec.elasticsearch.pvcSize }}
+              accessModes: {{ (include "accessModes.template" .) }}
               {{- else }}
             persistence:
               enabled: false

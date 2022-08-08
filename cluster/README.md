@@ -39,6 +39,7 @@ Because some vars are generic to other charts, some are defined by default.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| default.accessModes | string | `"RWO"` | Claims type can be either `RWO` or `RWX`, storageClass needs to be enabled |
 | default.enabled | bool | `false` | Enable default charts (ArgoCD) |
 | default.smtpServer | string | `"0.0.0.0:25"` | Smtp server to configure notifications :warning: not working yet :warning: |
 | default.storageClass | string | `""` | Define storageClass in order to persistence to work |
@@ -62,6 +63,22 @@ If you want to generate your own charts in this repository, you should know how 
 | sync.selfHeal | bool | `true` | y default changes that are made to the live cluster will not trigger automated sync. This variable allow to enable automatic sync when the live cluster's state deviates from the state defined in Git |
 
 ## Tools
+
+### Backup
+
+#### Velero
+
+Velero is an open source tool to safely backup and restore, perform disaster recovery, and migrate Kubernetes cluster resources and persistent volumes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| velero.chart.name | string | `"velero"` | Chart name |
+| velero.chart.repo | string | `"https://vmware-tanzu.github.io/helm-charts"` | Helm repository |
+| velero.chart.version | string | `"2.30.2"` | Chart version |
+| velero.enabled | bool | `false` | Enable Velero chart |
+| velero.namespace | string | `"velero-system"` | Destination namespace |
+| velero.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| velero.values.provider | string | `"vsphere"` | Provider type can be csi, vsphere, aws, gcp |
 
 ### Integration
 
@@ -430,12 +447,6 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| monitoring.helmExporter.chart.name | string | `"helm-exporter"` | Chart name |
-| monitoring.helmExporter.chart.repo | string | `"https://shanestarcher.com/helm-charts/"` | Helm repository |
-| monitoring.helmExporter.chart.version | string | `"1.2.2+6766a95"` | Chart version |
-| monitoring.helmExporter.enabled | bool | `true` | Enable Helm Exporter chart |
-| monitoring.helmExporter.values.disabledNamespace | string | `nil` | Disable namespaces to watch |
-| monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | monitoring.namespace | string | `"monitoring"` | Monitoring destination namespace |
 
 #### Blackbox exporter
@@ -448,8 +459,8 @@ The Blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS
 | monitoring.blackboxExporter.chart.repo | string | `"https://prometheus-community.github.io/helm-charts"` | Helm repository |
 | monitoring.blackboxExporter.chart.version | string | `"5.8.2"` | Chart version |
 | monitoring.blackboxExporter.enabled | bool | `false` | Enable Blackbox exporter chart |
-| monitoring.blackboxExporter.values.enableGrafanaDashboard | bool | `false` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
-| monitoring.blackboxExporter.values.enablePrometheusRules | bool | `false` | Enable prometheus default Prometheus rules (Will be announced in a future release) |
+| monitoring.blackboxExporter.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
+| monitoring.blackboxExporter.values.enablePrometheusRules | bool | `true` | Enable prometheus default Prometheus rules |
 | monitoring.blackboxExporter.values.scrapeUrls | list | `[]` | Create Url get configs accepted code are `200` & `403` (If you are using authentication) |
 
 ##### Scrape Url example
@@ -503,7 +514,7 @@ The purpose of this helm chart is to expose Fio metrics to Prometheus, it is wri
 | monitoring.helmExporter.chart.name | string | `"helm-exporter"` | Chart name |
 | monitoring.helmExporter.chart.repo | string | `"https://shanestarcher.com/helm-charts/"` | Helm repository |
 | monitoring.helmExporter.chart.version | string | `"1.2.2+6766a95"` | Chart version |
-| monitoring.helmExporter.enabled | bool | `true` | Enable Helm Exporter chart |
+| monitoring.helmExporter.enabled | bool | `false` | Enable Helm Exporter chart |
 | monitoring.helmExporter.values.disabledNamespace | string | `nil` | Disable namespaces to watch |
 | monitoring.helmExporter.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 
@@ -543,11 +554,49 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 | monitoring.grafana.values.auth.passwordKey | string | `"password"` | Configure password key in vault kv-v2 secret, only for `passwordType: vault` |
 | monitoring.grafana.values.auth.passwordType | string | `"raw"` | Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.grafana.values.auth.userKey | string | `"username"` | Configure username key in vault kv-v2 secret, only for `passwordType: vault` |
-| monitoring.grafana.values.customDashboards | object | `{}` | Create Grafana custom dashoards (Json Formated), not available at the moment |
-| monitoring.grafana.values.customDashboardsGNET | object | `{}` | Create Grafana Dashboard available on Grafana Net, not available at the moment |
+| monitoring.grafana.values.customDashboards | object | `{}` | Create Grafana custom dashoards (Json Formated), watch section bellow, you will also need to enable Prometheus as well :warning: Using this technique is not advised :warning: |
+| monitoring.grafana.values.customDashboardsGNET | object | `{}` | Create Grafana Dashboard available on Grafana Net, watch section bellow, you will also need to enable Prometheus as well |
 | monitoring.grafana.values.ingress.enabled | bool | `true` | Enable Grafana UI ingress |
 | monitoring.grafana.values.ingress.name | string | `"grafana"` | Grafana ingress name or path (weither it is an ingress wildcard or domain) |
 | monitoring.grafana.values.pvcSize | string | `"10Gi"` | Grafana PVC size, you will need to define a StorageClass in `default.storageClass` |
+
+##### Add custom dashboards from [GNET](https://grafana.com/grafana/dashboards/)
+
+> :warning: You will also need to enable Prometheus first :warning:
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      customDashboardsGNET:
+        a-dashboard:
+          gnetId: 9614
+          revision: 1
+          datasource: Prometheus
+        another-dashboard:
+          gnetId: 13646
+          revision: 1
+          datasource: Prometheus
+```
+
+##### Add custom dashboards from JSON
+
+> :warning: You will also need to enable Prometheus first :warning:
+> :warning: Using this technique in order to import dashboards is not advised, export your dashboard from Grafana and import it to Grafana net : [documentation](https://grafana.com/docs/grafana/latest/dashboards/export-import/) :warning:
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      customDashboards:
+        a-dashboard:
+          json: |-
+            {
+            # your dashboard json formatted
+            }
+```
 
 #### Prometheus MsTeams alerting
 
@@ -804,6 +853,7 @@ NGINX Ingress Controller is a best-in-class traffic management solution for clou
 | ingress.nginx.chart.repo | string | `"https://kubernetes.github.io/ingress-nginx"` | Helm repository |
 | ingress.nginx.chart.version | string | `"4.1.4"` | Chart version |
 | ingress.nginx.enabled | bool | `false` | Enable Nginx chart, you should know that you can't activate Traefik & Nginx |
+| ingress.nginx.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | ingress.nginx.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.nginx.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | ingress.nginx.values.service.LoadBalancerIps | list | `[]` | Only for BareMetal support if you want to enforce Traefik's service IP |
@@ -819,6 +869,7 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 | ingress.traefik.chart.repo | string | `"https://helm.traefik.io/traefik"` | Helm repository |
 | ingress.traefik.chart.version | string | `"10.24.0"` | Chart version |
 | ingress.traefik.enabled | bool | `false` | Enable Traefik chart, you should know that you can't activate Traefik & Nginx |
+| ingress.traefik.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | ingress.traefik.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.traefik.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | ingress.traefik.values.service.LoadBalancerIps | list | `[]` | Only for BareMetal support if you want to enforce Traefik's service IP |
@@ -838,7 +889,6 @@ User management is a chart hosted on this repository, you can retrieve templates
 | userManagement.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | userManagement.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | userManagement.enabled | bool | `false` | Enable User Management chart |
-| userManagement.namespace | string | `"argocd"` | Destination namespace |
 | userManagement.values.clusterRoles | list | `[]` | Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles |
 | userManagement.values.namespaceRoles | list | `[]` | Create a Service account and a role if specified, if no role is specified default is namespace admin |
 
@@ -888,7 +938,6 @@ Vault is an identity-based secret and encryption management system. A secret is 
 | vault.chart.repo | string | `"https://helm.releases.hashicorp.com"` | Helm repository |
 | vault.chart.version | string | `"0.20.1"` |  |
 | vault.enabled | bool | `false` | Enable Vault chart |
-| vault.namespace | string | `"argocd"` | Vault destination namespace |
 | vault.values.ha | bool | `false` | Enable Vault HA  |
 | vault.values.ingress.enabled | bool | `true` | Enable Vault UI Ingress |
 | vault.values.ingress.name | string | `"vault"` | Vault ingress name or path (weither it is an ingress wildcard or domain) |
@@ -905,7 +954,6 @@ Vault secrets is a chart hosted on this repository, you can retrieve templates [
 | vaultSecrets.chart.path | string | `"charts/vault-secrets"` | Chart path |
 | vaultSecrets.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | vaultSecrets.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
-| vaultSecrets.namespace | string | `"argocd"` | Destination namespace |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.11.0](https://github.com/norwoodj/helm-docs/releases/v1.11.0) `docker run --rm --volume "$(pwd):/helm-docs"  jnorwood/helm-docs:latest`.

@@ -63,6 +63,7 @@ spec:
           enabled: true
           size: {{ .Values.minio.values.pvcSize }}
           storageClass: {{ .Values.default.storageClass }}
+          accessMode: {{ (include "accessModes.template" .) }}
         {{- else }}
         persistence:
           enabled: false

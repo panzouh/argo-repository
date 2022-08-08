@@ -48,6 +48,12 @@ spec:
                 type: prometheus
                 url: http://prometheus-server.monitoring
                 access: proxy
+              {{- if eq (include "logging.namespace" .) "monitoring" }}
+              - name: Loki
+                type: loki
+                url: http://loki.monitoring:3100
+                access: proxy
+              {{- end }}
         dashboardProviders:
           dashboardproviders.yaml:
             apiVersion: 1
@@ -84,9 +90,15 @@ spec:
               revision: 1
               datasource: Prometheus
             {{- end }}
-            {{- if eq (include "ingress.namespace" .) "ingress-nginx"}}
+            {{- if and .Values.ingress.nginx.values.monitor .Values.ingress.nginx.values.enableGrafanaDashboard (eq (include "ingress.namespace" .) "ingress-nginx") }}
             nginx:
               gnetId: 9614
+              revision: 1
+              datasource: Prometheus
+            {{- end }}
+            {{- if and .Values.ingress.traefik.values.monitor .Values.ingress.traefik.values.enableGrafanaDashboard (eq (include "ingress.namespace" .) "traefik-system") }}
+            traefik:
+              gnetId: 11462
               revision: 1
               datasource: Prometheus
             {{- end }}
@@ -101,6 +113,22 @@ spec:
               gnetId: 9367
               revision: 2
               datasource: Prometheus
+            {{- end }}
+            {{- if and .Values.monitoring.blackboxExporter.enabled .Values.monitoring.blackboxExporter.values.enableGrafanaDashboard }}
+            blackbox-exporter:
+              gnetId: 13659
+              revision: 1
+              datasource: Prometheus
+            {{- end }}
+            {{- if .Values.monitoring.grafana.values.customDashboardsGNET }}
+              {{- with .Values.monitoring.grafana.values.customDashboardsGNET }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.monitoring.grafana.values.customDashboards }}
+              {{- with .Values.monitoring.grafana.values.customDashboards }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
             {{- end }}
             {{- if eq (include "logging.namespace" .) "monitoring" }}
             loki:
@@ -390,6 +418,8 @@ spec:
           enabled: true
           storageClass: {{ .Values.default.storageClass }}
           size: {{ quote .Values.monitoring.grafana.values.pvcSize }}
+          accessModes:
+            - {{ (include "accessModes.template" .) }}
           {{- else }}
         persistence:
           enabled: false

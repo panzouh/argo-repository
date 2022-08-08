@@ -1,5 +1,5 @@
 {{- define "backup.enabled" -}}
-{{- .Values.backup.enabled -}}
+{{- .Values.velero.enabled -}}
 {{- end -}}
 {{ if eq (include "backup.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
@@ -12,7 +12,7 @@ spec:
   - group: '*'
     kind: '*'
   destinations:
-  - namespace: '*'
+  - namespace: '{{ .Values.velero.enabled }}'
     server: '*'
   sourceRepos:
   - '*'

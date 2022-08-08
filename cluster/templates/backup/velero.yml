@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.velero.namespace }}
+    server: https://kubernetes.default.svc
+  project: management
+  source:
+    chart: {{ .Values.velero.chart.name }}
+    repoURL: {{ .Values.velero.chart.repo }}
+    targetRevision: {{ .Values.velero.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        {{- if .Values.velero.values.monitor }}
+        metrics:
+          enabled: true
+          podAnnotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "8085"
+            prometheus.io/path: "/metrics"
+        {{- else }}
+        metrics:
+          enabled: false
+        {{- end }}

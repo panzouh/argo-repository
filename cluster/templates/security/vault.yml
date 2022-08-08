@@ -80,6 +80,7 @@ spec:
             enabled: true
             storageClass: {{ .Values.default.storageClass }}
             size: {{ .Values.vault.values.pvcSize }}
+            accessMode: {{ (include "accessModes.template" .) }}
           {{- else }}
           dataStorage:  
             enabled: false

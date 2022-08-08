@@ -24,7 +24,7 @@ spec:
       values: |-
         harborAdminPassword: {{ .Values.harbor.values.bootstrapPassword }}
         secretKey: {{ .Values.harbor.values.secretKey }}
-        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx" (eq (include "ingress.namespace" .) "traefik-system"))) }}
+        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx") (eq (include "ingress.namespace" .) "traefik-system")) }}
         expose:
           type: ingress
           tls:
@@ -70,16 +70,22 @@ spec:
           persistentVolumeClaim:
             registry:
               size: {{ .Values.harbor.values.persitence.registry }}
+              accessMode: {{ (include "accessModes.template" .) }}
             chartmuseum:
               size: {{ .Values.harbor.values.persitence.chartmuseum }}
+              accessMode: {{ (include "accessModes.template" .) }}
             jobservice:
               size: {{ .Values.harbor.values.persitence.jobservice }}
+              accessMode: {{ (include "accessModes.template" .) }}
             database:
               size: {{ .Values.harbor.values.persitence.database }}
+              accessMode: {{ (include "accessModes.template" .) }}
             redis:
               size: {{ .Values.harbor.values.persitence.redis }}
+              accessMode: {{ (include "accessModes.template" .) }}
             trivy:
               size: {{ .Values.harbor.values.persitence.trivy }}
+              accessMode: {{ (include "accessModes.template" .) }}
         {{- else }}
         persistence:
           enabled: false
@@ -110,7 +116,7 @@ spec:
             - jobservice
             - trivy
         {{- end }}
-        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx" (eq (include "ingress.namespace" .) "traefik-system"))) }}
+        {{- if and .Values.harbor.values.ingress.enabled (or (eq (include "ingress.namespace" .) "ingress-nginx") (eq (include "ingress.namespace" .) "traefik-system")) }}
         externalURL: {{ include "url-constructor" (dict "name" .Values.harbor.values.ingress.coreName "ingress" .Values.ingress.ingressDefinition) }}
         {{- end }}
 {{ end }}

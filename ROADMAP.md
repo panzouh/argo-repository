@@ -54,51 +54,47 @@
 
 ## Beta
 
+- [ ] Add CI file
+- [x] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs))
 - [x] Add ArgoCD project folder for each theme :
-  - [ ] Provide real namespace isolation
+  - [x] Provide real namespace isolation
+  - [ ] Set sync waves to avoid sync errors
 - [x] Add lefthook support
 - [ ] Create deployment script
 - Documentation :
-  - [ ] Add Contribute.md documentation
-  - [ ] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
+  - [x] Add Contribute.md documentation
+  - [x] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
 - Themes :
   - Integration :
     - [x] Gitlab runners (add first)
-  - General :
-    - [ ] Enable VPA support
   - Default :
-    - [ ] Work on PVC access modes (RWO/RWX)
+    - [x] Work on PVC access modes (RWO/RWX)
+    - [ ] Work on priority classes
+    - [ ] Work on QoS
   - Backup :
     - [ ] Add backup solutions (Velero)
   - Monitoring :
     - Prometheus & Others :
       - [ ] Configure enablePrometheusRules
-      - [ ] Enable Grafana customDashboards & customDashboardsGNET functionatility
+      - [x] Configure enableGrafanaDashboard
+      - [x] Enable Grafana customDashboards & customDashboardsGNET functionatility
   - Networking :
     - Traefik:
-      - [ ] Add Strict TLS annotations auto
+      - [ ] Add strict TLS annotations auto
     - Nginx:
-      - [ ] Work on nginx Strict TLS
+      - [ ] Work on Nginx strict TLS
   - Logging :
     - [x] Add ECK Operator, need to detect Kube version in order to perform All-in-one install (<https://github.com/hashicorp/vault-helm/blob/main/templates/server-clusterrolebinding.yaml#L4>)
-  - Security :
-    - [x] Add in-cluster audit tool => Starboard
   - Storage :
     - [x] Add MinIO
 
 ## V1
 
-- Documentation :
-  - [ ] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs)) :
-    - [ ] Chaos mesh stress
-- [ ] Add CI file
 - Themes :
-  - [ ] Backup: Add Velero
-  - Chaos engineering :
-    - [ ] Enable chaos mesh support
-    - [ ] Write chaos mesh garden
   - Default:
     - [ ] Work on proxies
+  - General :
+    - [ ] Enable VPA support
   - Integration :
     - Argocd:
       - [ ] Take a look on [Argocd notifications](https://argocd-notifications.readthedocs.io/en/stable/) & [Argo Config](https://github.com/argoproj/argo-helm/blob/master/charts/argo-cd/values.yaml#L2257)
@@ -107,7 +103,9 @@
       - [ ] Add the possibility to add custom rules
       - [ ] Take a look at Prometheus Operator
   - Security :
-    - [ ] Add cluster campain policies on Starboard
+    - Security :
+    - [x] Add in-cluster audit tool => Starboard :
+      - [ ] Add cluster campain policies on Starboard
     - [ ] Add Kyverno
   - Storage :
     - [ ] Add in-cluster storage solutions (Rook)

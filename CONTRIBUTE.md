@@ -8,9 +8,10 @@ Please note we have a code of conduct, please follow it in all your interactions
 ## Pull Request Process
 
 1. Ensure any install or build dependencies are removed before the end of the layer when doing a build.
-2. Update the README.md.gotmpl with details of changes in any value file, this includes new charts, or modifying an existing one.
-3. Increase the version numbers in any examples files and the README.md to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge Pull Request in once you have the sign-off of one other developer, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
+2. This repository has lefthook support in order to generate documentationn, you can find it [here](https://github.com/evilmartians/lefthook).
+3. Update the README.md.gotmpl with details of changes in any value file, this includes new charts, or modifying an existing one.
+4. Increase the version numbers in any examples files and the README.md to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
+5. You may merge Pull Request in once you have the sign-off of one other developer, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
 
 ## Code of Conduct
 

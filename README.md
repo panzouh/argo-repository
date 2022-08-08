@@ -25,36 +25,40 @@ TBA
 ## Supported apps
 
 - Backup :
-  - TBA
-- Chaos engineering :
-  - Chaos mesh
+  - Velero
 - Integration :
   - ArgoCD (Argoception)
-  - Namespace Configuration Operator
   - Gitlab runners
+  - Harbor
+  - Namespace Configuration Operator & Isolated network policy
+  - OLM & Custom catalogs
 - Logging :
   - ECK Operator
   - Logstash or Fluentd
   - Loki
   - Promtail
+- Management :
+  - Rancher
 - Monitoring :
-  - Prometheus
-  - Grafana
-  - Fio exporter
   - Blackbox-exporter
-  - Helm exporter
-  - Prometheus Ms Teams alerting
+  - Discord alerting hook
+  - Fio exporter
   - Goldpinger
+  - Grafana
+  - Prometheus
+  - Helm exporter
+  - Pormetheus
+  - Prometheus Ms Teams alerting hook
 - Networking :
+  - CertManager
   - Traefik
   - Nginx
-  - CertManager
 - Security :
   - Vault (w/ AVP Plugin)
   - Simplified user management
   - Starboard
 - Storage:
-  - TBA
+  - MinIO
 
 ## Purpose and what it can do
 

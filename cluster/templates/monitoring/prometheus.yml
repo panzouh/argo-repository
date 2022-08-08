@@ -55,6 +55,8 @@ spec:
             enabled: true
             storageClass: {{ .Values.default.storageClass }}
             size: {{ quote .Values.monitoring.prometheus.values.server.pvcSize }}
+            accessModes:
+              - {{ (include "accessModes.template" .) }}
           {{- else }}
           persitentVolume:
             enabled: false
@@ -96,6 +98,9 @@ spec:
           persitentVolume:
             enabled: true
             size: {{ quote .Values.monitoring.prometheus.values.alertmanager.pvcSize }}
+            storageClass: {{ .Values.default.storageClass }}
+            accessModes:
+              - {{ (include "accessModes.template" .) }}
           {{- else }}
           persitentVolume:
             enabled: false

@@ -12,8 +12,17 @@ spec:
   - group: '*'
     kind: '*'
   destinations:
-  - namespace: '*'
+  {{- if eq (include "ingress.namespace" .) "traefik-system" }}
+  - namespace: 'traefik-system'
     server: '*'
+  {{- else if eq (include "ingress.namespace" .) "ingress-nginx" }}
+  - namespace: 'ingress-nginx'
+    server: '*'
+  {{- end }}
+  {{- if .Values.certmanager.enabled }}
+  - namespace: '{{ .Values.certmanager.namespace }}'
+    server: '*'
+  {{- end }}
   sourceRepos:
   - '*'
 {{ end }}

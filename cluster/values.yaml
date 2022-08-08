@@ -6,6 +6,8 @@ default:
   enabled: false
   # -- Define storageClass in order to persistence to work
   storageClass: ""
+  # -- Claims type can be either `RWO` or `RWX`, storageClass needs to be enabled
+  accessModes: RWO
   # -- Smtp server to configure notifications :warning: not working yet :warning:
   smtpServer: "0.0.0.0:25"
 
@@ -30,24 +32,23 @@ proxies:
 
 # Backup 
 
-backup:
-  enabled: false
-
-# Chaos engineering
-
-chaosMesh:
-  # -- Enable Chaos Mesh chart
+velero:
+  # -- Enable Velero chart
   enabled: false
   # -- Destination namespace
-  namespace: chaos-mesh
+  namespace: velero-system
   chart:
     # -- Helm repository
-    repo: https://charts.chaos-mesh.org
+    repo: https://vmware-tanzu.github.io/helm-charts
     # -- Chart name
-    name: chaos-mesh
+    name: velero
     # -- Chart version
-    version: "2.2.0"
-  values: {}
+    version: "2.30.2"
+  values:
+    # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
+    monitor: false
+    # -- Provider type can be csi, vsphere, aws, gcp
+    provider: vsphere
 
 # Integration
 
@@ -381,10 +382,10 @@ monitoring:
       # -- Chart version
       version: "5.8.2"
     values:
-      # -- Enable prometheus default Prometheus rules (Will be announced in a future release)
-      enablePrometheusRules: false
+      # -- Enable prometheus default Prometheus rules
+      enablePrometheusRules: true
       # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
-      enableGrafanaDashboard: false
+      enableGrafanaDashboard: true
       # -- Create Url get configs accepted code are `200` & `403` (If you are using authentication)
       scrapeUrls: []
   discord:
@@ -463,13 +464,13 @@ monitoring:
         enabled: true
         # -- Grafana ingress name or path (weither it is an ingress wildcard or domain)
         name: grafana
-      # -- Create Grafana custom dashoards (Json Formated), not available at the moment
+      # -- Create Grafana custom dashoards (Json Formated), watch section bellow, you will also need to enable Prometheus as well :warning: Using this technique is not advised :warning:
       customDashboards: {}
-      # -- Create Grafana Dashboard available on Grafana Net, not available at the moment
+      # -- Create Grafana Dashboard available on Grafana Net, watch section bellow, you will also need to enable Prometheus as well
       customDashboardsGNET: {}
   helmExporter:
     # -- Enable Helm Exporter chart
-    enabled: true
+    enabled: false
     chart:
       # -- Helm repository
       repo: https://shanestarcher.com/helm-charts/
@@ -583,6 +584,8 @@ ingress:
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
       # -- Allow to add ingress annotations manually
       ingressAnnotations: {}
       service:
@@ -603,6 +606,8 @@ ingress:
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
+      # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
+      enableGrafanaDashboard: true
       # -- Allow to add ingress annotations manually
       ingressAnnotations: {}
       service:
@@ -654,8 +659,6 @@ certmanager:
 vault:
   # -- Enable Vault chart
   enabled: false
-  # -- Vault destination namespace
-  namespace: argocd
   chart:
     # -- Helm repository
     repo: https://helm.releases.hashicorp.com
@@ -679,8 +682,6 @@ vault:
     injector: false
 
 vaultSecrets:
-  # -- Destination namespace
-  namespace: argocd
   chart:
     # -- Helm repository (This own repository)
     repo: https://github.com/panzouh/argo-repository.git
@@ -692,8 +693,6 @@ vaultSecrets:
 userManagement:
   # -- Enable User Management chart
   enabled: false
-  # -- Destination namespace
-  namespace: argocd
   chart:
     # -- Helm repository (This own repository)
     repo: https://github.com/panzouh/argo-repository.git
