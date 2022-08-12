@@ -1,5 +1,10 @@
 {{- range .Values.subscriptions }}
 {{- if ne .installNamespace "olm" }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .installNamespace }}
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
