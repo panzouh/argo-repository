@@ -32,4 +32,12 @@ spec:
         {{- else }}
         catalogs: []
         {{- end }}
+        {{- if .Values.customCatalogs.values.subscriptions }}
+        subscriptions:
+          {{- with .Values.customCatalogs.values.subscriptions }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- else }}
+        subscriptions: []
+        {{- end }}
 {{ end }}
