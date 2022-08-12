@@ -1,5 +1,6 @@
 {{- range .Values.subscriptions }}
 {{- if ne .installNamespace "olm" }}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
