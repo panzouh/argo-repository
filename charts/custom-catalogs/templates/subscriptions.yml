@@ -20,7 +20,7 @@ metadata:
   name: {{ .name }}
   namespace: {{ default "olm" .installNamespace }}
 spec:
-  channel: stable
+  channel: {{ default "stable" .operatorChannel }}
   name: {{ .name }}
   source: {{ .source }}
   sourceNamespace: {{ .sourceNamespace }}

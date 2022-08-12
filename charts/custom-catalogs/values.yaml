@@ -19,6 +19,7 @@ subscriptions: []
   # - name: custom-operator
   #   channel: stable
   #   source: my-custom-index
+  #   operatorChannel: dev
   #   sourceNamespace: olm
   #   installNamespace: custom-namespace
   ## Only if operator should watch his own namespace
