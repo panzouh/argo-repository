@@ -22,6 +22,8 @@ spec:
   {{- if .Values.certmanager.enabled }}
   - namespace: '{{ .Values.certmanager.namespace }}'
     server: '*'
+  - namespace: kube-system
+    server: '*'
   {{- end }}
   sourceRepos:
   - '*'
