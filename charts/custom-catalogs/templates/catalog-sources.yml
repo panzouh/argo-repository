@@ -25,4 +25,9 @@ spec:
   secrets:
     - {{ .name }}-pull-secret
   {{- end }}
+  {{- if .registryPollInterval -}}
+  updateStrategy:
+    registryPoll:
+      interval: {{ .registryPollInterval }}
+  {{- end -}}
 {{- end }}

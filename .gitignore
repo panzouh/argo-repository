@@ -23,3 +23,6 @@
 ./cluster/template/debug-tpl.yml
 # Ignore local lefthook
 lefthook-local.yml
+# Ignore build directory
+build/**/*
+.bin/

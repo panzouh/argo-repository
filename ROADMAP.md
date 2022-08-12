@@ -54,13 +54,13 @@
 
 ## Beta
 
-- [ ] Add CI file
 - [x] Improve [custom charts](./charts/) Readme docs (w/ [helm docs](https://github.com/norwoodj/helm-docs))
 - [x] Add ArgoCD project folder for each theme :
   - [x] Provide real namespace isolation
   - [ ] Set sync waves to avoid sync errors
 - [x] Add lefthook support
 - [ ] Create deployment script
+  - [ ] Update deploy documentation
 - Documentation :
   - [x] Add Contribute.md documentation
   - [x] Migrate `docs/` to [cluster readme](./cluster/README.md) w/ helm-docs
@@ -72,7 +72,7 @@
     - [ ] Work on priority classes
     - [ ] Work on QoS
   - Backup :
-    - [ ] Add backup solutions (Velero)
+    - [x] Add backup solutions (Velero)
   - Monitoring :
     - Prometheus & Others :
       - [ ] Configure enablePrometheusRules
@@ -90,6 +90,7 @@
 
 ## V1
 
+- [ ] Add CI file
 - Themes :
   - Default:
     - [ ] Work on proxies

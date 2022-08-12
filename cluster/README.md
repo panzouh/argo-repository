@@ -77,8 +77,15 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
 | velero.chart.version | string | `"2.30.2"` | Chart version |
 | velero.enabled | bool | `false` | Enable Velero chart |
 | velero.namespace | string | `"velero-system"` | Destination namespace |
+| velero.values.backupStorageLocation.bucket | string | `"backups"` | bucket is the name of the bucket to store backups in. Required. |
+| velero.values.backupStorageLocation.name | string | `"default"` | name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional |
+| velero.values.backupStorageLocation.region | string | `"eu-west-3"` | region is the region of the bucket. Required |
+| velero.values.cloudSecretContent | string | `""` | cloudSecretContent, watch value file for examples |
 | velero.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
-| velero.values.provider | string | `"vsphere"` | Provider type can be csi, vsphere, aws, gcp |
+| velero.values.provider | string | `"aws"` | Provider type can be aws, gcp or azure |
+| velero.values.tag | string | `"v1.5.0"` | Provider image tag [AWS] https://hub.docker.com/r/velero/velero-plugin-for-aws/tags [GCP] https://hub.docker.com/r/velero/velero-plugin-for-gcp/tags [Azure] https://hub.docker.com/r/velero/velero-plugin-for-microsoft-azure/tags |
+| velero.values.volumeSnapshotLocation.name | string | `"default"` | name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional |
+| velero.values.volumeSnapshotLocation.region | string | `"eu-west-3"` | region is the region of the bucket. Required |
 
 ### Integration
 
@@ -160,6 +167,7 @@ A CatalogSource represents a store of metadata that OLM can query to discover an
 | customCatalogs.namespace | string | `"olm"` | Destination namespace |
 | customCatalogs.values.catalogs | list | `[]` | Custom catalogs definition, watch section bellow |
 | customCatalogs.values.olmNamespace | string | `"olm"` | OLM namespace |
+| customCatalogs.values.subscriptions | list | `[]` | Subscriptions definition, watch section bellow |
 
 ##### Custom catalog full example
 
@@ -173,6 +181,23 @@ customCatalogs:
         image: repo.domain.tld/library/index:latest
       # Only if you need a pull secret
       #  pullSecret: <pull-secret-b64-encoded>
+      # Only if want specific registry poll strategy
+      #  registryPollInterval: 30m
+```
+
+##### Subscription full example
+
+```yaml
+customCatalogs:
+  values:
+    subscriptions:
+      - name: my-operator
+        # If installNamespace is equal to `olm` no operator group is created
+        installNamespace: my-namespace
+        # Value not mandatory it forces the operator to watch only his namespace
+        sameNamespace: true
+        source: catalog-name
+        sourceNamespace: olm
 ```
 
 #### Gitlab runners

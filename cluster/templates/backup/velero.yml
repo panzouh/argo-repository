@@ -29,3 +29,24 @@ spec:
         metrics:
           enabled: false
         {{- end }}
+        credentials:
+          secretContents:
+            cloud: |-
+              {{- tpl .Values.velero.values.cloudSecretContent . | nindent 14 }}
+        configuration:
+          provider: {{ .Values.velero.values.provider }}
+          backupStorageLocation:
+            name: {{ .Values.velero.values.backupStorageLocation.name }}
+            bucket: {{ .Values.velero.values.backupStorageLocation.bucket }}
+            config:
+              region: {{ .Values.velero.values.backupStorageLocation.region }}
+          volumeSnapshotLocation:
+            name: {{ .Values.velero.values.volumeSnapshotLocation.name }}
+            config:
+              region: {{ .Values.velero.values.volumeSnapshotLocation.region }}
+          initContainers:
+            - name: velero-plugin-{{ .Values.velero.values.provider }}
+              image:velero/velero-plugin-for-{{ .Values.velero.values.provider }}:
+              mountPath: /target
+              volumeMounts:
+                - name: plugins

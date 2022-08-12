@@ -154,6 +154,23 @@ customCatalogs:
         image: repo.domain.tld/library/index:latest
       # Only if you need a pull secret
       #  pullSecret: <pull-secret-b64-encoded>
+      # Only if want specific registry poll strategy
+      #  registryPollInterval: 30m
+```
+
+##### Subscription full example
+
+```yaml
+customCatalogs:
+  values:
+    subscriptions:
+      - name: my-operator
+        # If installNamespace is equal to `olm` no operator group is created
+        installNamespace: my-namespace
+        # Value not mandatory it forces the operator to watch only his namespace
+        sameNamespace: true
+        source: catalog-name
+        sourceNamespace: olm
 ```
 
 #### Gitlab runners

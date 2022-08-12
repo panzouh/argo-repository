@@ -47,8 +47,30 @@ velero:
   values:
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
-    # -- Provider type can be csi, vsphere, aws, gcp
-    provider: vsphere
+    # -- Provider type can be aws, gcp or azure
+    provider: aws
+    # -- Provider image tag
+    # [AWS] https://hub.docker.com/r/velero/velero-plugin-for-aws/tags
+    # [GCP] https://hub.docker.com/r/velero/velero-plugin-for-gcp/tags
+    # [Azure] https://hub.docker.com/r/velero/velero-plugin-for-microsoft-azure/tags
+    tag: v1.5.0
+    # -- cloudSecretContent, watch value file for examples
+    cloudSecretContent: ""
+    # [AWS] https://github.com/vmware-tanzu/velero-plugin-for-aws/blob/main/README.md
+    # [GCP] https://github.com/vmware-tanzu/velero-plugin-for-gcp/blob/main/README.md
+    # [Azure] https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/blob/main/README.md
+    backupStorageLocation:
+      # -- name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional
+      name: default
+      # -- bucket is the name of the bucket to store backups in. Required.
+      bucket: backups
+      # -- region is the region of the bucket. Required
+      region: eu-west-3
+    volumeSnapshotLocation:
+      # -- name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional
+      name:  default
+      # -- region is the region of the bucket. Required
+      region: eu-west-3
 
 # Integration
 
@@ -120,6 +142,8 @@ customCatalogs:
     olmNamespace: olm
     # -- Custom catalogs definition, watch section bellow
     catalogs: []
+    # -- Subscriptions definition, watch section bellow
+    subscriptions: []
 
 gitlabRunners:
   chart:
