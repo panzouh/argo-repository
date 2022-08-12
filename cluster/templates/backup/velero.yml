@@ -1,3 +1,7 @@
+{{- define "velero.enabled" -}}
+{{- .Values.velero.enabled -}}
+{{- end -}}
+{{- if eq (include "velero.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -10,7 +14,7 @@ spec:
   destination:
     namespace: {{ .Values.velero.namespace }}
     server: https://kubernetes.default.svc
-  project: management
+  project: backup
   source:
     chart: {{ .Values.velero.chart.name }}
     repoURL: {{ .Values.velero.chart.repo }}
@@ -50,3 +54,4 @@ spec:
               mountPath: /target
               volumeMounts:
                 - name: plugins
+{{ end }}
