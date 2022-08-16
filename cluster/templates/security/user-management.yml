@@ -31,7 +31,7 @@ spec:
             refNamespace: {{ .refNamespace }}
             {{- if .rules }}
             rules:
-              {{- toYaml .rules | nindent 12 }}
+              {{- toYaml .rules | nindent 14 }}
             {{- else }}
             rules:
               - apiGroups: ["", "extensions", "apps"]
