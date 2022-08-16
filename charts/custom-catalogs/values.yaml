@@ -24,3 +24,6 @@ subscriptions: []
   #   installNamespace: custom-namespace
   ## Only if operator should watch his own namespace
   #   sameNamespace: true
+  ## Only if you need to use a pull secret
+  #   pullSecret: <pull-secret-b64-encoded>
+  #   svcAccount: <operator-svc-account>

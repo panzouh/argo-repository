@@ -21,6 +21,25 @@ spec:
 spec: {}
   {{- end }}
 {{- end }}
+{{- if and .pullSecret .svcAccount }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .name }}-pull-secret
+  namespace: {{ default "olm" .installNamespace }}
+data:
+  .dockerconfigjson: {{ .pullSecret }}
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+imagePullSecrets:
+- name: mySecret
+kind: ServiceAccount
+metadata:
+  name: {{ .svcAccount }}
+  namespace: {{ default "olm" .installNamespace }}
+{{- end }}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription

@@ -198,6 +198,9 @@ customCatalogs:
         sameNamespace: true
         source: catalog-name
         sourceNamespace: olm
+        # Only if you need to use a pull secret
+        pullSecret: <pull-secret-b64-encoded>
+        svcAccount: <operator-svc-account>
 ```
 
 #### Gitlab runners
