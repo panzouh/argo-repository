@@ -14,6 +14,10 @@ spec:
   destinations:
   - namespace: '{{ .Values.argocd.namespace }}'
     server: '*'
+  {{- range .Values.userManagement.values.allowedNamespace }}
+  - namespace: {{ . }}
+    server: '*'
+  {{- end }}
   sourceRepos:
   - '*'
 {{ end }}

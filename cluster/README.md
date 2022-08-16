@@ -917,6 +917,7 @@ User management is a chart hosted on this repository, you can retrieve templates
 | userManagement.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | userManagement.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | userManagement.enabled | bool | `false` | Enable User Management chart |
+| userManagement.values.allowedNamespace | list | `[]` | Add allowed namespace to Argocd AppProject |
 | userManagement.values.clusterRoles | list | `[]` | Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles |
 | userManagement.values.namespaceRoles | list | `[]` | Create a Service account and a role if specified, if no role is specified default is namespace admin |
 

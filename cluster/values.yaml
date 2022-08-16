@@ -729,6 +729,8 @@ userManagement:
     namespaceRoles: []
     # -- Create a Service account and associate it to a clusterrole, it does not support yet the creation of a cluster role so you have to use defaults cluster roles
     clusterRoles: []
+    # -- Add allowed namespace to Argocd AppProject
+    allowedNamespace: []
 
 # Storage
 
