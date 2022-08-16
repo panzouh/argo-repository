@@ -41,6 +41,7 @@ spec:
                 resources:
                 - jobs
                 - cronjobs
+                verbs: ["*"]
             {{- end }}
           {{- end }}
         {{- end }}
