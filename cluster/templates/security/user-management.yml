@@ -24,31 +24,31 @@ spec:
     helm:
       version: v3
       values: |
-      {{- if $userManagementValues.namespaceRoles }}
-      namespaceRoles:
-        {{- range $userManagementValues.namespaceRoles }}
-        - name: {{ .name }}
-          refNamespace: {{ .refNamespace }}
-          {{- if .rules }}
-          rules:
-            {{- toYaml .rules | nindent 12 }}
-          {{- else }}
-          rules:
-            - apiGroups: ["", "extensions", "apps"]
-              resources: ["*"]
-              verbs: ["*"]
-            - apiGroups: ["batch"]
-              resources:
-              - jobs
-              - cronjobs
+        {{- if $userManagementValues.namespaceRoles }}
+        namespaceRoles:
+          {{- range $userManagementValues.namespaceRoles }}
+          - name: {{ .name }}
+            refNamespace: {{ .refNamespace }}
+            {{- if .rules }}
+            rules:
+              {{- toYaml .rules | nindent 12 }}
+            {{- else }}
+            rules:
+              - apiGroups: ["", "extensions", "apps"]
+                resources: ["*"]
+                verbs: ["*"]
+              - apiGroups: ["batch"]
+                resources:
+                - jobs
+                - cronjobs
+            {{- end }}
           {{- end }}
         {{- end }}
-      {{- end }}
-      {{- if $userManagementValues.clusterRoles }}
-      clusterRoles:
-        {{- range $userManagementValues.clusterRoles }}
-        - name: {{ .name }}
-          refRole: {{ .refRole }}
+        {{- if $userManagementValues.clusterRoles }}
+        clusterRoles:
+          {{- range $userManagementValues.clusterRoles }}
+          - name: {{ .name }}
+            refRole: {{ .refRole }}
+          {{- end }}
         {{- end }}
-      {{- end }}
 {{ end }}
