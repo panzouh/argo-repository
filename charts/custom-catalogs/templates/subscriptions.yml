@@ -33,12 +33,12 @@ data:
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
-imagePullSecrets:
-- name: mySecret
 kind: ServiceAccount
 metadata:
   name: {{ .svcAccount }}
   namespace: {{ default "olm" .installNamespace }}
+imagePullSecrets:
+- name: {{ .name }}-pull-secret
 {{- end }}
 ---
 apiVersion: operators.coreos.com/v1alpha1
