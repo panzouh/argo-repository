@@ -83,7 +83,7 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
 | velero.values.cloudSecretContent | string | `""` | cloudSecretContent, watch value file for examples |
 | velero.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | velero.values.provider | string | `"aws"` | Provider type can be aws, gcp or azure |
-| velero.values.tag | string | `"v1.5.0"` | Provider image tag [AWS] https://hub.docker.com/r/velero/velero-plugin-for-aws/tags [GCP] https://hub.docker.com/r/velero/velero-plugin-for-gcp/tags [Azure] https://hub.docker.com/r/velero/velero-plugin-for-microsoft-azure/tags |
+| velero.values.tag | string | `"v1.5.0"` | Provider image tag [AWS](https://hub.docker.com/r/velero/velero-plugin-for-aws/tags) [GCP](https://hub.docker.com/r/velero/velero-plugin-for-gcp/tags) [Azure](https://hub.docker.com/r/velero/velero-plugin-for-microsoft-azure/tags) |
 | velero.values.volumeSnapshotLocation.name | string | `"default"` | name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional |
 | velero.values.volumeSnapshotLocation.region | string | `"eu-west-3"` | region is the region of the bucket. Required |
 
@@ -244,6 +244,7 @@ gitlabRunners:
         # - UmVhbGx5IHJlYWxseSByZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGx5eXl5eXl5eXl5eXl5eXl5eXl5eSBsbGxsbGxsbGxsbGxsbG9vb29vb29vb29vb29vb29vb29vb29vb29vb25ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubmdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2cgYXV0aCBrZXlzCg==
         replicas: 1 # Value not mandatory, if not defined default is "1"
         isPrivileged: false # Value not mandatory, if not defined default is false
+        cached: false # Value not mandatory, if not defined default is false
 ```
 
 #### Harbor

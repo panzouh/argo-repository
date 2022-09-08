@@ -94,8 +94,13 @@ spec:
                 {{- if .isPrivileged }}
                 privileged = true
                 {{- end }}
+                {{- if .cached }}
                 disable_cache = false
                 volumes = ["/certs/client", "/cache"]
+                {{- else }}
+                disable_cache = true
+                volumes = ["/certs/client"]
+                {{- end }}
           runUntagged: false
           protected: false
           {{- if .isPrivileged }}
