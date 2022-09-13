@@ -1,0 +1,26 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+# -- ArgoCD install namespace
+argocdNamespace: argocd
+
+sync:
+  # -- Allow you to activate auto-sync w/ selfHeal & prune mecanism
+  enabled: true
+  # -- y default changes that are made to the live cluster will not trigger automated sync. This variable allow to enable automatic sync when the live cluster's state deviates from the state defined in Git
+  selfHeal: true
+  # -- By default (and as a safety mechanism), automated sync will not delete resources but on this chart it is enabled by default
+  prune: true
+
+# -- Charts spec
+charts: []
+  # - name: test
+  #   namespace: test
+  #   repo: https://test.git
+  #   type: git
+  #   path: charts/test
+  #   cName: test
+  #   targetRevision: HEAD
+  #   values:
+  #     debug: true 

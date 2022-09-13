@@ -1,0 +1,18 @@
+{{ if gt (len .Values.charts) 0 }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: external-charts
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    {{- range .Values.charts }}
+    - namespace: '{{ .namespace }}'
+      server: '*'
+    {{- end }}
+  sourceRepos:
+    - '*'
+{{ end }}

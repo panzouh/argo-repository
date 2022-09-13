@@ -203,6 +203,17 @@ customCatalogs:
         svcAccount: <operator-svc-account>
 ```
 
+#### External charts
+
+Use this chart to enable external charts in your cluster.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| externalCharts.chart.path | string | `"charts/external-charts"` | Chart path on repository |
+| externalCharts.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
+| externalCharts.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
+| externalCharts.values.charts | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
+
 #### Gitlab runners
 
 GitLab Runner is an application that works with GitLab CI/CD to run jobs in a pipeline. GitLab Runner is open-source and written in Go. It can be run as a single binary; no language-specific requirements are needed.
@@ -235,6 +246,7 @@ gitlabRunners:
       - runnerName: runner-a
         runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
         runnerToken: "<runner-token>"
+        concurrent 10 # Value not mandatory, if not defined default is 5
         runnerTags: "ci, test"
         dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
         gitlabUrl: "https://git.domain.tld"

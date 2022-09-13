@@ -1,0 +1,36 @@
+{{- $argoFinalizers := (include "argocd.applications.finalizers" .) -}}
+{{- $argoSyncPolicy := .Values.sync  -}}
+{{- $argocdNamespace := .Values.argocdNamespace -}}
+{{- range .Values.charts }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: {{ $argocdNamespace }}
+  finalizers:
+  {{- $argoFinalizers | nindent 4 }}
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  destination:
+    namespace: {{ .namespace }}
+    server: https://kubernetes.default.svc
+  project: external-charts
+  source:
+    {{- if eq .type "git" }}
+    path: {{ .path }}
+    {{- else if eq .type "helm" }}
+    chart: {{ .cName }}
+    {{- end }}
+    repoURL: {{ .repo }}
+    targetRevision: {{ .targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        {{- toYaml .values | nindent 8 }}
+{{- end }}

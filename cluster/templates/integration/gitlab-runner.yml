@@ -52,7 +52,7 @@ spec:
         terminationGracePeriodSeconds: 3600
         gitlabUrl: {{ .gitlabUrl }}
         runnerRegistrationToken: {{ .runnerToken }}
-        concurrent: 10
+        concurrent: {{ default 5 .concurrent }}
         checkInterval: 30
         rbac:
           create: true

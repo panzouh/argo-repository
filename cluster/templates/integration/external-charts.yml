@@ -1,0 +1,31 @@
+{{- define "external-charts.enabled" -}}
+{{- gt (len .Values.externalCharts.values.charts) 0 -}}
+{{- end -}}
+{{ if eq (include "external-charts.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-charts
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.argocd.namespace }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    path: {{ .Values.externalCharts.chart.path }}
+    repoURL: {{ .Values.externalCharts.chart.repo }}
+    targetRevision: {{ .Values.externalCharts.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        argocdNamespace: {{ .Values.argocd.namespace }}
+        sync:
+          {{- toYaml .Values.sync | nindent 10 }}
+        charts:
+          {{- toYaml .Values.externalCharts.values.charts | nindent 10 }}
+{{- end }}

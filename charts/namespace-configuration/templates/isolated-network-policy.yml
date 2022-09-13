@@ -25,6 +25,17 @@ spec:
       kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
       metadata:
+        name: allow-from-same-namespace
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        ingress:
+        - from:
+          - podSelector: {}
+      ---
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
         name: allow-to-coredns
         namespace: '{{ print "{{ .Name }}" }}'
       spec:
@@ -82,15 +93,4 @@ spec:
         podSelector: {}
         policyTypes:
         - Ingress
-      ---
-      kind: NetworkPolicy
-      apiVersion: networking.k8s.io/v1
-      metadata:
-        name: allow-from-same-namespace
-        namespace: '{{ print "{{ .Name }}" }}'
-      spec:
-        podSelector: {}
-        ingress:
-        - from:
-          - podSelector: {}
 {{ end }}

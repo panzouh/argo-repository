@@ -176,6 +176,18 @@ customCatalogs:
         svcAccount: <operator-svc-account>
 ```
 
+#### External charts
+
+Use this chart to enable external charts in your cluster.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "externalCharts" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 #### Gitlab runners
 
 GitLab Runner is an application that works with GitLab CI/CD to run jobs in a pipeline. GitLab Runner is open-source and written in Go. It can be run as a single binary; no language-specific requirements are needed.
@@ -209,6 +221,7 @@ gitlabRunners:
       - runnerName: runner-a
         runnerNamespace: runner-a-namespace # Value not mandatory, if not defined default is gitlab
         runnerToken: "<runner-token>"
+        concurrent 10 # Value not mandatory, if not defined default is 5
         runnerTags: "ci, test"
         dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
         gitlabUrl: "https://git.domain.tld"

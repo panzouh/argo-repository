@@ -145,6 +145,28 @@ customCatalogs:
     # -- Subscriptions definition, watch section bellow
     subscriptions: []
 
+externalCharts:
+  chart:
+    # -- Helm repository (This own repository)
+    repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path on repository
+    path: charts/external-charts
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    targetRevision: HEAD
+  values:
+    # -- Registered repositories, watch section below :warning: Credentials creation not handled yet :warning:
+    charts: []
+    # - name: test
+    #   namespace: test
+    #   repo: https://test.git
+    #   type: git
+    #   path: charts/test
+    #   cName: test
+    #   targetRevision: HEAD
+    #   values:
+    #     debug: true 
+
 gitlabRunners:
   chart:
     # -- Gitlab runners Helm repository
