@@ -9,7 +9,6 @@ spec:
       network-policy: isolated
   templates:
   - objectTemplate: |
-      ---
       kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
       metadata:
@@ -23,7 +22,6 @@ spec:
         policyTypes:
           - Egress
   - objectTemplate: |
-      ---
       kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
       metadata:
@@ -34,8 +32,7 @@ spec:
         ingress:
         - from:
           - podSelector: {}
-    - objectTemplate: |
-      ---
+  - objectTemplate: |
       kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
       metadata:
@@ -58,44 +55,44 @@ spec:
                     k8s-app: kube-dns
         policyTypes:
           - Egress
-    - objectTemplate: |
-        ---
-        kind: NetworkPolicy
-        apiVersion: networking.k8s.io/v1
-        metadata:
-          name: allow-to-external-network
-          namespace: '{{ print "{{ .Name }}" }}'
-        spec:
-          podSelector: {}
-          egress:
-            - to:
-                - ipBlock:
-                    cidr: 0.0.0.0/0
-                    {{- if .Values.isolatedNetworkPolicy.clusterCIDRs }}
-                    except:
-                      {{- range .Values.isolatedNetworkPolicy.clusterCIDRs }}
-                      - {{ . }}
-                      {{- end }}
-                    {{- else }}
-                    except:
-                      - 10.0.0.0/8
+  - objectTemplate: |
+      ---
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-to-external-network
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        podSelector: {}
+        egress:
+          - to:
+              - ipBlock:
+                  cidr: 0.0.0.0/0
+                  {{- if .Values.isolatedNetworkPolicy.clusterCIDRs }}
+                  except:
+                    {{- range .Values.isolatedNetworkPolicy.clusterCIDRs }}
+                    - {{ . }}
                     {{- end }}
-          policyTypes:
-            - Egress
-    - objectTemplate: |
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        metadata:
-          name: allow-from-ingress-namespace
-          namespace: '{{ print "{{ .Name }}" }}'
-        spec:
-          ingress:
-          - from:
-            - namespaceSelector:
-                matchLabels:
-                  kubernetes.io/metadata.name: {{ default "ingress-nginx" .Values.isolatedNetworkPolicy.ingressNamespace }}
-          podSelector: {}
-          policyTypes:
-          - Ingress
+                  {{- else }}
+                  except:
+                    - 10.0.0.0/8
+                  {{- end }}
+        policyTypes:
+          - Egress
+  - objectTemplate: |
+      ---
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: allow-from-ingress-namespace
+        namespace: '{{ print "{{ .Name }}" }}'
+      spec:
+        ingress:
+        - from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: {{ default "ingress-nginx" .Values.isolatedNetworkPolicy.ingressNamespace }}
+        podSelector: {}
+        policyTypes:
+        - Ingress
 {{ end }}
