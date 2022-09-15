@@ -10,7 +10,6 @@ A Chart based on Namespace Configuration Operator a project hosted by RedHat.
 |-----|------|---------|-------------|
 | isolatedNetworkPolicy.clusterCIDRs | list | `[]` | Add cluster CIDR, values should be your Service CIDR & Pod CIDR |
 | isolatedNetworkPolicy.enabled | bool | `false` | Enable the default Namespace configuration template enable it with `kubectl label ns <your-namespace> network-policy=isolated` |
-| isolatedNetworkPolicy.ingressNamespace | string | `"ingress-nginx"` | Allow ingress namespace to acess the namespace where the policy is applied |
 | nameOverride | string | `""` | Override chart default name |
 | networkPolicies | list | `[]` | Configure cluster network policies Namespace configuration template spec |
 | quotas | list | `[]` | Configure clusters quotas  |
