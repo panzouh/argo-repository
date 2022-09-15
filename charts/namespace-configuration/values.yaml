@@ -42,8 +42,6 @@ networkPolicies: []
 isolatedNetworkPolicy:
   # -- Enable the default Namespace configuration template enable it with `kubectl label ns <your-namespace> network-policy=isolated`
   enabled: false
-  # -- Allow ingress namespace to acess the namespace where the policy is applied
-  ingressNamespace: "ingress-nginx"
   # -- Add cluster CIDR, values should be your Service CIDR & Pod CIDR
   clusterCIDRs: []
 
