@@ -1,0 +1,25 @@
+{{- range .Values.users }}
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakUser
+metadata:
+  name: {{ .name }}
+spec:
+  user:
+    username: {{ .username }}
+    email: {{ .email }}
+    enabled: {{ .enabled }}
+    emailVerified: {{ .emailVerified }}
+    firstName: {{ .firstName }}
+    lastName: {{ .lastName }}
+    credentials:
+      {{- if .password }}
+        - type: password
+          value: {{ .password.value }}
+          temporary: {{ .password.temporary }}
+      {{- end }}
+      {{- if .otp }}
+        - type: otp
+          value: {{ .otp.value }}
+      {{- end }}  
+{{- end }}

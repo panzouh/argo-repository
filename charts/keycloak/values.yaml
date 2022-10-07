@@ -1,0 +1,18 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+# -- Custom users specs
+users: []
+# - name: passepartout
+#   username: passepartout
+#   email: superadmin@danstonkube.fr
+#   enabled: true
+#   emailVerified: true
+#   firstName: Passe
+#   lastName: Partout
+#   password:
+#     value: changeme
+#     temporary: true
+#   otp:
+#     value: 92192190 
