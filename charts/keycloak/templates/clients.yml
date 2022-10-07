@@ -1,0 +1,17 @@
+{{- range .Values.clients }}
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: {{ .name }}
+  labels: {{ .labels | toYaml | nindent 4 }}
+spec:
+  realmSelector:
+    matchLabels: {{ .matchLabels | toYaml | nindent 12 }}
+  client:
+    clientId: {{ .clientId }}
+    secret: {{ .secret }}
+    {{- range $key, $val := .customValues }}
+    {{ $key }}: {{ $val }}
+    {{- end }}
+{{- end }}

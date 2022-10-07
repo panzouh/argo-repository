@@ -29,3 +29,14 @@ realms: []
 #   displayName: Dans ton kube
 #   matchLabels: 
 #     realm: dtk
+
+clients: []
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   clientId: dtk
+#   secret: dtk-secret
+#   customValues:
+#     protocol: https
+#   matchLabels: 
+#     realm: dtk
