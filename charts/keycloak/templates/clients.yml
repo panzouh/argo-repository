@@ -11,7 +11,7 @@ spec:
   client:
     clientId: {{ .clientId }}
     secret: {{ .secret }}
-    {{- range $key, $val := .customValues }}
+    {{- range $key, $val := .additionalConfig }}
     {{ $key }}: {{ $val }}
     {{- end }}
 {{- end }}

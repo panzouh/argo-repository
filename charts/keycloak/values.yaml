@@ -28,7 +28,7 @@ realms: []
 #   enabled: true
 #   displayName: Dans ton kube
 #   matchLabels: 
-#     realm: dtk
+#     mylabeltomatch: dtk
 
 clients: []
 # - name: passepartout
@@ -36,7 +36,7 @@ clients: []
 #     mylabel: label1
 #   clientId: dtk
 #   secret: dtk-secret
-#   customValues:
+#   additionalConfig:
 #     protocol: https
 #   matchLabels: 
 #     realm: dtk
