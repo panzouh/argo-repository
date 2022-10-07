@@ -4,6 +4,7 @@ apiVersion: keycloak.org/v1alpha1
 kind: KeycloakUser
 metadata:
   name: {{ .name }}
+  labels: {{ .labels | toYaml | nindent 4 }}
 spec:
   user:
     username: {{ .username }}
