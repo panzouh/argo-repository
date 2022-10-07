@@ -2,22 +2,29 @@
 # -- Override chart default name
 nameOverride: ""
 
-# -- Custom users specs
+keycloakConfig: ""
+#    name: dtk
+#    labels:
+#        mylabel: label1
+#    instances: 1
+#    externalAcess: true
+#    storageClassName: local
+
 users: []
-  # - name: passepartout
-  #   labels:
-  #     mylabel: label1
-  #   username: passepartout
-  #   email: superadmin@danstonkube.fr
-  #   enabled: true
-  #   emailVerified: true
-  #   firstName: Passe
-  #   lastName: Partout
-  #   password:
-  #     value: changeme
-  #     temporary: true
-  #   otp:
-  #     value: 92192190 
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   username: passepartout
+#   email: superadmin@danstonkube.fr
+#   enabled: true
+#   emailVerified: true
+#   firstName: Passe
+#   lastName: Partout
+#   password:
+#     value: changeme
+#     temporary: true
+#   otp:
+#     value: 92192190 
 
 realms: []
 # - name: passepartout
