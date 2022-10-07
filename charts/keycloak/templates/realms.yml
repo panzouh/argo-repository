@@ -1,0 +1,16 @@
+{{- range .Values.realms }}
+---
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakRealm
+metadata:
+  name: {{ .name }}
+  labels: {{ .labels | toYaml | nindent 4 }}
+spec:
+  realm:
+    id: {{ .id }}
+    realm: {{ .realmName }}
+    enabled: {{ .enabled }}
+    displayName: {{ .displayName }}
+    instanceSelector:
+        matchLabels: {{ .matchLabels | toYaml | nindent 12 }}
+{{- end }}

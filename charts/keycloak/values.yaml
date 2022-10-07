@@ -18,3 +18,14 @@ users: []
   #     temporary: true
   #   otp:
   #     value: 92192190 
+
+realms: []
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   id: dtk
+#   realmName: dtk
+#   enabled: true
+#   displayName: Dans ton kube
+#   matchLabels: 
+#     realm: dtk
