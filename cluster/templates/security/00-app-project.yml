@@ -18,6 +18,10 @@ spec:
   - namespace: {{ . }}
     server: '*'
   {{- end }}
+  {{- if .Values.keycloak.enabled }}
+  - namespace: {{ .Values.keycloak.namespace }}
+    server: '*'
+  {{- end }}
   sourceRepos:
   - '*'
 {{ end }}
