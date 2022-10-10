@@ -127,7 +127,7 @@ argocd:
 
 customCatalogs:
   # -- Enable custom catalog sources, you will need to enable OLM
-  enabled: true
+  enabled: false
   # -- Destination namespace
   namespace: olm
   chart:
@@ -260,7 +260,7 @@ namespaceConfiguration:
 
 olm:
   # -- Enable OLM chart
-  enabled: true
+  enabled: false
   # -- Destination namespace
   namespace: olm
   chart:
@@ -704,7 +704,7 @@ certmanager:
 
 keycloak:
   # -- Enable Keycloak chart
-  enabled: true
+  enabled: false
   # -- Destination namespace
   namespace: keycloak
   chart: 
@@ -723,8 +723,11 @@ keycloak:
         mylabel: label1
       # -- Keycloak instance replicas
       instances: 1
-      # -- Keycloak instance access (creates ingress) 
-      externalAccess: true
+      externalAccess:
+        # -- Keycloak instance access (creates ingress) 
+        enabled: true
+        # --  Vault ingress name or path (weither it is an ingress wildcard or domain)
+        name: keycloak
     # -- Create users watch section below
     users: []
     # -- Create realms watch section below

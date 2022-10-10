@@ -10,8 +10,11 @@ keycloakConfig:
       mylabel: label1
   # -- Keycloak instance replicas
   instances: 1
-  # -- Keycloak instance access (creates ingress) 
-  externalAccess: true
+  externalAccess: 
+    # -- Keycloak instance access (creates ingress)
+    enabled: true
+    # -- Keycloak ingress host
+    host: danstonkube.fr
   # -- Keycloak instance storage class 
   storageClassName: local
 

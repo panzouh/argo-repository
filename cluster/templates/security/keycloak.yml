@@ -30,7 +30,13 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           instances: {{ .Values.keycloak.values.keycloakConfig.instances }}
-          externalAccess: {{ .Values.keycloak.values.keycloakConfig.externalAccess }}
+          externalAccess:
+            enabled: {{ .Values.keycloak.values.keycloakConfig.externalAccess }}
+            {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
+            host: {{ .Values.keycloak.values.keycloakConfig.externalAccess.name }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+            {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
+            host: {{ .Values.ingress.ingressDefinition.dns.domain }}
+            {{- end }}
           storageClassName: {{ .Values.default.storageClass }}
         {{- if .Values.keycloak.values.users }}
           {{- with .Values.keycloak.values.users }}

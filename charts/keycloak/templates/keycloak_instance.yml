@@ -6,5 +6,6 @@ metadata:
 spec:
   instances: {{ .Values.keycloakConfig.instances }}
   externalAccess:
-    enabled: {{ .Values.keycloakConfig.externalAccess }}
+    enabled: {{ .Values.keycloakConfig.externalAccess.enabled }}
+    host: {{ .Values.keycloakConfig.externalAccess.host }}
   storageClassName: {{ .Values.keycloakConfig.storageClassName }}
