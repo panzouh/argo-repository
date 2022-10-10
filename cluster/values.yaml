@@ -109,7 +109,7 @@ argocd:
       alp:
         # -- Enable Argo Lovely Plugin extension
         enabled: false
-         # -- Enable Argo Lovely Plugin version to install
+        # -- Enable Argo Lovely Plugin version to install
         version: stable
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
@@ -723,11 +723,11 @@ keycloak:
         mylabel: label1
       # -- Keycloak instance replicas
       instances: 1
-      externalAccess:
-        # -- Keycloak instance access (creates ingress) 
-        enabled: true
-        # --  Vault ingress name or path (weither it is an ingress wildcard or domain)
-        name: keycloak
+    ingress:
+      # -- Enable Keycloak UI Ingress
+      enabled: true
+      # -- Keycloak ingress name or path (weither it is an ingress wildcard or domain)
+      name: keycloak
     # -- Create users watch section below
     users: []
     # -- Create realms watch section below

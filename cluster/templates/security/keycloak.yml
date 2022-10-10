@@ -30,14 +30,15 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           instances: {{ .Values.keycloak.values.keycloakConfig.instances }}
-          externalAccess:
-            enabled: {{ .Values.keycloak.values.keycloakConfig.externalAccess.enabled }}
-            {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
-            host: {{ .Values.keycloak.values.keycloakConfig.externalAccess.name }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
-            {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
-            host: {{ .Values.ingress.ingressDefinition.dns.domain }}
-            {{- end }}
+          {{- if .Values.default.storageClass }}
           storageClassName: {{ .Values.default.storageClass }}
+          {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.keycloak.values.ingress.enabled }}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.keycloak.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.keycloak.values.ingress.enabled }}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.keycloak.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
         {{- if .Values.keycloak.values.users }}
           {{- with .Values.keycloak.values.users }}
             {{- toYaml . | nindent 10 }}

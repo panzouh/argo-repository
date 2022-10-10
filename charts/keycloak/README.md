@@ -9,14 +9,21 @@ A chart to manage various keycloak ressources
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | clients | list | `[]` | Watch [Value file](values.yaml) for examples. |
-| keycloakConfig.externalAccess.enabled | bool | `true` | Keycloak instance access (creates ingress) |
-| keycloakConfig.externalAccess.host | string | `"danstonkube.fr"` | Keycloak ingress host |
+| ingress.annotations | object | `{}` | Ingress annotations |
+| ingress.className | string | `""` | Ingress class name |
+| ingress.enabled | bool | `true` | Enable Keycloak ingress |
+| ingress.hosts[0] | object | `{"host":"keycloak.danstonkube.fr","paths":[{"path":"/","pathType":"Prefix"}]}` | Ingress hostname |
+| ingress.hosts[0].paths[0] | object | `{"path":"/","pathType":"Prefix"}` | Ingress path |
+| ingress.hosts[0].paths[0].pathType | string | `"Prefix"` | Ingress path type can be either : `Prefix`, `ImplementationSpecific` or `Exact`, watch [Official Documentation for more informations](https://kubernetes.io/docs/concepts/services-networking/ingress/#examples) |
+| ingress.tls | list | `[]` |  |
 | keycloakConfig.instances | int | `1` | Keycloak instance replicas |
 | keycloakConfig.labels | object | `{"mylabel":"label1"}` | Keycloak instance labels |
 | keycloakConfig.name | string | `"dtk"` | Keycloak instance name |
 | keycloakConfig.storageClassName | string | `"local"` | Keycloak instance storage class  |
 | nameOverride | string | `""` | Override chart default name |
 | realms | list | `[]` | Watch [Value file](values.yaml) for examples. |
+| service.name | string | `"keycloak-discovery"` |  |
+| service.port | int | `8080` |  |
 | users | list | `[]` | Watch [Value file](values.yaml) for examples. |
 
 ----------------------------------------------

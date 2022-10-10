@@ -10,13 +10,29 @@ keycloakConfig:
       mylabel: label1
   # -- Keycloak instance replicas
   instances: 1
-  externalAccess: 
-    # -- Keycloak instance access (creates ingress)
-    enabled: true
-    # -- Keycloak ingress host
-    host: danstonkube.fr
   # -- Keycloak instance storage class 
   storageClassName: local
+
+service:
+  name: keycloak-discovery
+  port: 8080
+
+ingress:
+  # -- Enable Keycloak ingress
+  enabled: true
+  # -- Ingress annotations
+  annotations: {}
+  # -- Ingress class name
+  className: ""
+  hosts:
+    # -- Ingress hostname
+    - host: keycloak.danstonkube.fr
+      paths:
+          # -- Ingress path
+        - path: /
+          # -- Ingress path type can be either : `Prefix`, `ImplementationSpecific` or `Exact`, watch [Official Documentation for more informations](https://kubernetes.io/docs/concepts/services-networking/ingress/#examples)
+          pathType: Prefix
+  tls: []
 
 # -- Watch [Value file](values.yaml) for examples.
 users: []
