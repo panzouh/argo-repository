@@ -16,7 +16,7 @@ metadata:
   {{- if .sameNamespace }}
 spec:
   targetNamespaces:
-  - {{ .installNamespace }}
+    - {{ .installNamespace }}
   {{- else }}
 spec: {}
   {{- end }}
@@ -47,7 +47,7 @@ metadata:
   name: {{ .name }}
   namespace: {{ default "olm" .installNamespace }}
 spec:
-  channel: {{ default "stable" .operatorChannel }}
+  channel: {{ default "stable" .channel }}
   name: {{ .name }}
   source: {{ .source }}
   sourceNamespace: {{ .sourceNamespace }}
