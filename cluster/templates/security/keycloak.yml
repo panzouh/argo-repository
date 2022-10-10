@@ -33,7 +33,7 @@ spec:
           externalAccess:
             enabled: {{ .Values.keycloak.values.keycloakConfig.externalAccess.enabled }}
             {{- if eq .Values.ingress.ingressDefinition.dns.mode "wildcard" }}
-            host: {{ .Values.keycloak.values.keycloakConfig.externalAccess.name }}{{ .Values.ingress.ingressDefinition.dns.wildcard }}
+            host: {{ .Values.keycloak.values.keycloakConfig.externalAccess.name }}.{{ .Values.ingress.ingressDefinition.dns.wildcard }}
             {{- else if eq .Values.ingress.ingressDefinition.dns.mode "domain" }}
             host: {{ .Values.ingress.ingressDefinition.dns.domain }}
             {{- end }}
