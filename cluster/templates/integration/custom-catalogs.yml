@@ -38,7 +38,7 @@ spec:
             {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- if .Values.keycloak.enabled }}
-          - name: keycloak
+          - name: keycloak-operator
             channel: alpha
             source: operatorhubio-catalog
             sourceNamespace: olm
