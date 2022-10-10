@@ -11,7 +11,7 @@ keycloakConfig:
   # -- Keycloak instance replicas
   instances: 1
   # -- Keycloak instance access (creates ingress) 
-  externalAcess: true
+  externalAccess: true
   # -- Keycloak instance storage class 
   storageClassName: local
 

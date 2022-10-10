@@ -163,7 +163,7 @@ A CatalogSource represents a store of metadata that OLM can query to discover an
 | customCatalogs.chart.path | string | `"charts/custom-catalogs"` | Chart path on repository |
 | customCatalogs.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | customCatalogs.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
-| customCatalogs.enabled | bool | `false` | Enable custom catalog sources, you will need to enable OLM |
+| customCatalogs.enabled | bool | `true` | Enable custom catalog sources, you will need to enable OLM |
 | customCatalogs.namespace | string | `"olm"` | Destination namespace |
 | customCatalogs.values.catalogs | list | `[]` | Custom catalogs definition, watch section bellow |
 | customCatalogs.values.olmNamespace | string | `"olm"` | OLM namespace |
@@ -368,7 +368,7 @@ This project is a component of the Operator Framework, an open source toolkit to
 | olm.chart.path | string | `"charts/olm-manifests"` | Chart path on repository |
 | olm.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | olm.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
-| olm.enabled | bool | `false` | Enable OLM chart |
+| olm.enabled | bool | `true` | Enable OLM chart |
 | olm.namespace | string | `"olm"` | Destination namespace |
 | olm.values | object | `{}` |  |
 

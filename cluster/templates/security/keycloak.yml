@@ -1,5 +1,5 @@
 {{- define "keycloak.enabled" -}}
-{{- .Values.keycloak.enabled -}}
+{{- and .Values.keycloak.enabled .Values.olm.enabled .Values.customCatalogs.enabled -}}
 {{- end -}}
 {{ if eq (include "keycloak.enabled" .) "true" }}
 ---
@@ -23,7 +23,29 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- with .Values.keycloak.values }}
-          {{- toYaml . | nindent 8 }}
+        keycloakConfig:
+          name: {{ .Values.keycloak.values.keycloakConfig.name }}
+          labels:
+            {{- with .Values.keycloak.values.keycloakConfig.labels }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          instances: {{ .Values.keycloak.values.keycloakConfig.instances }}
+          externalAccess: {{ .Values.keycloak.values.keycloakConfig.externalAccess }}
+          storageClassName: {{ .Values.default.storageClass }}
+        {{- if .Values.keycloak.values.users }}
+          {{- with .Values.keycloak.values.users }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.keycloak.values.realms }}
+          {{- with .Values.keycloak.values.realms }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.keycloak.values.clients }}
+        clients:
+          {{- with .Values.keycloak.values.clients }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
         {{- end }}
 {{ end }}

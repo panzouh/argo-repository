@@ -9,7 +9,7 @@ A chart to manage various keycloak ressources
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | clients | list | `[]` | Watch [Value file](values.yaml) for examples. |
-| keycloakConfig.externalAcess | bool | `true` | Keycloak instance access (creates ingress)  |
+| keycloakConfig.externalAccess | bool | `true` | Keycloak instance access (creates ingress)  |
 | keycloakConfig.instances | int | `1` | Keycloak instance replicas |
 | keycloakConfig.labels | object | `{"mylabel":"label1"}` | Keycloak instance labels |
 | keycloakConfig.name | string | `"dtk"` | Keycloak instance name |
