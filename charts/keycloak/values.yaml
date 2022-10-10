@@ -2,14 +2,20 @@
 # -- Override chart default name
 nameOverride: ""
 
-keycloakConfig: ""
-#    name: dtk
-#    labels:
-#        mylabel: label1
-#    instances: 1
-#    externalAcess: true
-#    storageClassName: local
+keycloakConfig:
+  # -- Keycloak instance name
+  name: dtk
+  # -- Keycloak instance labels
+  labels:
+      mylabel: label1
+  # -- Keycloak instance replicas
+  instances: 1
+  # -- Keycloak instance access (creates ingress) 
+  externalAcess: true
+  # -- Keycloak instance storage class 
+  storageClassName: local
 
+# -- Watch [Value file](values.yaml) for examples.
 users: []
 # - name: passepartout
 #   labels:
@@ -26,6 +32,7 @@ users: []
 #   otp:
 #     value: 92192190 
 
+# -- Watch [Value file](values.yaml) for examples.
 realms: []
 # - name: passepartout
 #   labels:
@@ -37,6 +44,7 @@ realms: []
 #   matchLabels: 
 #     mylabeltomatch: dtk
 
+# -- Watch [Value file](values.yaml) for examples.
 clients: []
 # - name: passepartout
 #   labels:

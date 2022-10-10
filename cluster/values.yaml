@@ -702,6 +702,38 @@ certmanager:
 
 # Security
 
+keycloak:
+  # -- Enable Keycloak chart
+  enabled: false
+  # -- Destination namespace
+  namespace: keycloak
+  chart: 
+    # -- Helm repository (This own repository)
+    repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path
+    path: charts/fio
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    targetRevision: HEAD
+  values:
+    keycloakConfig:
+      # -- Keycloak instance name
+      name: dtk
+      # -- Keycloak instance labels
+      labels:
+          mylabel: label1
+      # -- Keycloak instance replicas
+      instances: 1
+      # -- Keycloak instance access (creates ingress) 
+      externalAcess: true
+      # -- Keycloak instance storage class 
+      storageClassName: local
+    # -- Create users watch section below
+    users: []
+    # -- Create realms watch section below
+    realms: []
+    # -- Create clients watch section below
+    clients: []
+
 vault:
   # -- Enable Vault chart
   enabled: false

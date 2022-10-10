@@ -1,0 +1,29 @@
+{{- define "keycloak.enabled" -}}
+{{- .Values.keycloak.enabled -}}
+{{- end -}}
+{{ if eq (include "keycloak.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.keycloak.namespace }}
+    server: https://kubernetes.default.svc
+  project: security
+  source:
+    path: {{ .Values.keycloak.chart.path }}
+    repoURL: {{ .Values.keycloak.chart.repo }}
+    targetRevision: {{ .Values.keycloak.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        {{- with .Values.keycloak.values }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+{{ end }}

@@ -32,10 +32,18 @@ spec:
         {{- else }}
         catalogs: []
         {{- end }}
-        {{- if .Values.customCatalogs.values.subscriptions }}
+        {{- if or .Values.customCatalogs.values.subscriptions .Values.keycloak.enabled }}
         subscriptions:
           {{- with .Values.customCatalogs.values.subscriptions }}
             {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- if .Values.keycloak.enabled }}
+          - name: keycloak
+            channel: alpha
+            source: operatorhubio-catalog
+            sourceNamespace: olm
+            installNamespace: {{ .Values.keycloak.namespace }}
+            sameNamespace: true
           {{- end }}
         {{- else }}
         subscriptions: []
