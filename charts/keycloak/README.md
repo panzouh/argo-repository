@@ -11,7 +11,7 @@ A chart to manage various keycloak ressources
 | clients | list | `[]` | Watch [Value file](values.yaml) for examples. |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.className | string | `""` | Ingress class name |
-| ingress.enabled | bool | `true` | Enable Keycloak ingress |
+| ingress.enabled | bool | `false` | Enable Keycloak ingress |
 | ingress.hosts[0] | object | `{"host":"keycloak.danstonkube.fr","paths":[{"path":"/","pathType":"Prefix"}]}` | Ingress hostname |
 | ingress.hosts[0].paths[0] | object | `{"path":"/","pathType":"Prefix"}` | Ingress path |
 | ingress.hosts[0].paths[0].pathType | string | `"Prefix"` | Ingress path type can be either : `Prefix`, `ImplementationSpecific` or `Exact`, watch [Official Documentation for more informations](https://kubernetes.io/docs/concepts/services-networking/ingress/#examples) |

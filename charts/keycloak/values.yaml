@@ -19,7 +19,7 @@ service:
 
 ingress:
   # -- Enable Keycloak ingress
-  enabled: true
+  enabled: false
   # -- Ingress annotations
   annotations: {}
   # -- Ingress class name
