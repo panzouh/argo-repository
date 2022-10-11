@@ -1,0 +1,10 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: {{ .Values.keycloakConfig.name }}
+  labels: {{ .Values.keycloakConfig.labels | toYaml | nindent 4 }}
+spec:
+  instances: {{ .Values.keycloakConfig.instances }}
+  externalAccess:
+    enabled: false
+  storageClassName: {{ .Values.keycloakConfig.storageClassName }}

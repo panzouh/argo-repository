@@ -1,0 +1,76 @@
+---
+# -- Override chart default name
+nameOverride: ""
+
+keycloakConfig:
+  # -- Keycloak instance name
+  name: dtk
+  # -- Keycloak instance labels
+  labels:
+      mylabel: label1
+  # -- Keycloak instance replicas
+  instances: 1
+  # -- Keycloak instance storage class 
+  storageClassName: local
+
+service:
+  name: keycloak-discovery
+  port: 8080
+
+ingress:
+  # -- Enable Keycloak ingress
+  enabled: false
+  # -- Ingress annotations
+  annotations: {}
+  # -- Ingress class name
+  className: ""
+  hosts:
+    # -- Ingress hostname
+    - host: keycloak.danstonkube.fr
+      paths:
+          # -- Ingress path
+        - path: /
+          # -- Ingress path type can be either : `Prefix`, `ImplementationSpecific` or `Exact`, watch [Official Documentation for more informations](https://kubernetes.io/docs/concepts/services-networking/ingress/#examples)
+          pathType: Prefix
+  tls: []
+
+# -- Watch [Value file](values.yaml) for examples.
+users: []
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   username: passepartout
+#   email: superadmin@danstonkube.fr
+#   enabled: true
+#   emailVerified: true
+#   firstName: Passe
+#   lastName: Partout
+#   password:
+#     value: changeme
+#     temporary: true
+#   otp:
+#     value: 92192190 
+
+# -- Watch [Value file](values.yaml) for examples.
+realms: []
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   id: dtk
+#   realmName: dtk
+#   enabled: true
+#   displayName: Dans ton kube
+#   matchLabels: 
+#     mylabeltomatch: dtk
+
+# -- Watch [Value file](values.yaml) for examples.
+clients: []
+# - name: passepartout
+#   labels:
+#     mylabel: label1
+#   clientId: dtk
+#   secret: dtk-secret
+#   additionalConfig:
+#     protocol: https
+#   matchLabels: 
+#     realm: dtk

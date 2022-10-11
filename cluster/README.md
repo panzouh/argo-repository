@@ -920,6 +920,61 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 ### Security
 
+#### Keycloak
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+
+##### Adding realms
+
+```yaml
+realms:
+  - name: passepartout
+    labels:
+      mylabel: label1
+    id: dtk
+    realmName: dtk
+    enabled: true
+    displayName: Dans ton kube
+    matchLabels:
+      mylabeltomatch: dtk
+```
+
+##### Adding clients
+
+```yaml
+clients:
+  - name: passepartout
+    labels:
+      mylabel: label1
+    clientId: dtk
+    secret: dtk-secret
+    additionalConfig:
+      protocol: https
+    matchLabels:
+      realm: dtk
+```
+
+##### Adding users
+
+```yaml
+users:
+  - name: passepartout
+    labels:
+      mylabel: label1
+    username: passepartout
+    email: superadmin@danstonkube.fr
+    enabled: true
+    emailVerified: true
+    firstName: Passe
+    lastName: Partout
+    password:
+      value: changeme
+      temporary: true
+    otp:
+      value: 92192190
+```
+
 #### User management
 
 User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).

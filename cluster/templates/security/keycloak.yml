@@ -1,0 +1,58 @@
+{{- define "keycloak.enabled" -}}
+{{- and .Values.keycloak.enabled .Values.olm.enabled .Values.customCatalogs.enabled -}}
+{{- end -}}
+{{ if eq (include "keycloak.enabled" .) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.keycloak.namespace }}
+    server: https://kubernetes.default.svc
+  project: security
+  source:
+    path: {{ .Values.keycloak.chart.path }}
+    repoURL: {{ .Values.keycloak.chart.repo }}
+    targetRevision: {{ .Values.keycloak.chart.targetRevision }}
+    helm:
+      version: v3
+      values: |-
+        keycloakConfig:
+          name: {{ .Values.keycloak.values.keycloakConfig.name }}
+          labels:
+            {{- with .Values.keycloak.values.keycloakConfig.labels }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          instances: {{ .Values.keycloak.values.keycloakConfig.instances }}
+          {{- if .Values.default.storageClass }}
+          storageClassName: {{ .Values.default.storageClass }}
+          {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.keycloak.values.ingress.enabled }}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.keycloak.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.keycloak.values.ingress.enabled }}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.keycloak.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if .Values.keycloak.values.users }}
+          {{- with .Values.keycloak.values.users }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.keycloak.values.realms }}
+          {{- with .Values.keycloak.values.realms }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.keycloak.values.clients }}
+        clients:
+          {{- with .Values.keycloak.values.clients }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- end }}
+{{ end }}

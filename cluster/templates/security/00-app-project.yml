@@ -1,5 +1,5 @@
 {{- define "security.enabled" -}}
-{{- or .Values.vault.enabled .Values.userManagement.enabled (eq (include "secrets.isVault" .) "true") -}}
+{{- or .Values.keycloak.enabled .Values.vault.enabled .Values.userManagement.enabled (eq (include "secrets.isVault" .) "true") -}}
 {{- end -}}
 {{ if eq (include "security.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
@@ -16,6 +16,10 @@ spec:
     server: '*'
   {{- range .Values.userManagement.values.allowedNamespace }}
   - namespace: {{ . }}
+    server: '*'
+  {{- end }}
+  {{- if .Values.keycloak.enabled }}
+  - namespace: {{ .Values.keycloak.namespace }}
     server: '*'
   {{- end }}
   sourceRepos:
