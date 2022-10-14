@@ -115,8 +115,7 @@ spec:
             cpuRequests: 100m
             memoryRequests: 128Mi
           sessionServer:
-            enabled: true
-            externalPort: {{ default 9000 .sessionServerPort }}
+            enabled: false
           helpers:
             cpuRequests: 100m
             memoryRequests: 128Mi
