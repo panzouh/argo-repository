@@ -66,6 +66,8 @@ spec:
             enabled: false
             resourceNames:
               - gitlab-runner
+        sessionServer:
+          enabled: false
         runners:
           disable_cache: false
           tags: {{ .runnerTags }}
@@ -114,8 +116,6 @@ spec:
           services:
             cpuRequests: 100m
             memoryRequests: 128Mi
-          sessionServer:
-            enabled: false
           helpers:
             cpuRequests: 100m
             memoryRequests: 128Mi
