@@ -11,6 +11,7 @@
 {{- $runnerName := .runnerName -}}
 {{- $runnerNamespace := default "gitlab" .runnerNamespace -}}
 {{- range $k,$v := .pullSecrets }}
+---
 apiVersion: v1
 kind: Secret
 metadata:
