@@ -257,6 +257,7 @@ gitlabRunners:
         replicas: 1 # Value not mandatory, if not defined default is "1"
         isPrivileged: false # Value not mandatory, if not defined default is false
         cached: false # Value not mandatory, if not defined default is false
+        sessionServerPort: 9003 # Value not mandatory, if not defined default is 9000
 ```
 
 #### Harbor
