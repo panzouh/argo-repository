@@ -74,7 +74,8 @@ spec:
         {{- end }}
         resources:
           requests:
-            memory: {{ .Values.minio.values.rMemory }}
+            memory: {{ .Values.minio.values.rMemory | default "1Gi" }}
+            cpu: {{ .Values.minio.values.rCpu | default "500m" }}
         {{- if .Values.minio.values.buckets }}
         buckets:
           {{- with .Values.minio.values.buckets }}
