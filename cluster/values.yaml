@@ -770,7 +770,7 @@ minio:
     # -- Chart name
     name: minio
     # -- Chart version
-    version: "4.0.2"
+    version: "5.0.0"
   values:
     # -- MinIO deployment mode supported values are `standalone`, `distributed` `gateway`
     mode: standalone

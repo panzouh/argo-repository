@@ -1011,7 +1011,7 @@ MinIO is a High Performance Object Storage released under GNU Affero General Pub
 |-----|------|---------|-------------|
 | minio.chart.name | string | `"minio"` | Chart name |
 | minio.chart.repo | string | `"https://charts.min.io/"` | Helm repository |
-| minio.chart.version | string | `"4.0.2"` | Chart version |
+| minio.chart.version | string | `"5.0.0"` | Chart version |
 | minio.enabled | bool | `false` | Enable MinIO chart |
 | minio.namespace | string | `"minio-system"` | Destination namespace |
 | minio.values.auth.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
