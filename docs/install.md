@@ -99,7 +99,7 @@ spec:
     #   - name: AVP_TYPE
     #     value: vault
     #   - name: VAULT_ADDR
-    #     value: 'http://vault.{{ .Values.vault.namespace }}:8200'
+    #     value: 'http://vault.{{ .Values.argocd.namespace }}:8200'
     #   - name: AVP_AUTH_TYPE
     #     value: k8s
     helm:

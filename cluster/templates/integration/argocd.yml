@@ -43,7 +43,7 @@ data:
   AVP_K8S_ROLE: {{ .Values.argocd.values.plugins.avp.saName | b64enc }}
   AVP_TYPE: {{ print "vault" | b64enc }}
   {{- if .Values.vault.enabled }}
-  VAULT_ADDR: {{ printf "http://vault.%v:8200" .Values.vault.namespace | b64enc }}
+  VAULT_ADDR: {{ printf "http://vault.%v:8200" .Values.argocd.namespace | b64enc }}
   {{- else }}
   VAULT_ADDR: {{ .Values.argocd.values.plugins.avp.auth.vaultUrl | b64enc }}
   {{- end }}
@@ -127,7 +127,7 @@ spec:
             - --enable-gzip
             {{- end }}
           {{- end }}
-          {{- if .Values.argocd.values.plugins.gzip.enabled }}
+          {{- if and .Values.argocd.values.plugins.gzip.enabled (eq (include "ingress.namespace" .) "disabled") }}
           extraArgs:
             - --enable-gzip
           {{- end }}

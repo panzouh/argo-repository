@@ -112,7 +112,7 @@ metadata:
 spec:
   vault:
     {{- if .Values.vault.enabled }}
-    server: {{ printf "http://vault.%v:8200" .Values.vault.namespace }}
+    server: {{ printf "http://vault.%v:8200" .Values.argocd.namespace }}
     {{- else }}
     server: {{ .Values.certmanager.values.clusterIssuerVault.vaultUrl }}
     {{- end }}
