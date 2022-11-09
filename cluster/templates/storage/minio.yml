@@ -58,6 +58,10 @@ spec:
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.minio.values.ingress.console.enabled }}
           {{- include "helm-ingress.namedSpec" (dict "ingressDict" "consoleIngress" "name" .Values.minio.values.ingress.console.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
+        service:
+          type: {{ .Values.minio.values.serviceType }}
+        consoleService:
+          type: {{ .Values.minio.values.serviceType }}
         {{- if .Values.default.storageClass }}
         persistence:
           enabled: true

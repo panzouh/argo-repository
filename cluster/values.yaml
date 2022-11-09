@@ -794,6 +794,8 @@ minio:
     users: []
     # -- MinIO persistence size, you will need to define a StorageClass in `default.storageClass`
     pvcSize: 5OGi
+    # -- MinIO services type for console and api
+    serviceType: ClusterIP
     ingress:
       api:
         # -- Enable MinIO API Ingress

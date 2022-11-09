@@ -1029,6 +1029,7 @@ MinIO is a High Performance Object Storage released under GNU Affero General Pub
 | minio.values.policies | list | `[]` | Add policies, watch section bellow |
 | minio.values.pvcSize | string | `"5OGi"` | MinIO persistence size, you will need to define a StorageClass in `default.storageClass` |
 | minio.values.rMemory | string | `"2Gi"` | Memory requests |
+| minio.values.serviceType | string | `"ClusterIP"` | MinIO services type for console and api |
 | minio.values.users | list | `[]` | Add users, watch section bellow |
 
 ##### Add buckets
