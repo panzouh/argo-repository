@@ -115,11 +115,21 @@ spec:
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
+            {{- if .Values.argocd.values.plugins.gzip.enabled }}
+            - --enable-gzip
+            {{- end }}
           {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argocd.values.ingress.enabled }}
             {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argocd.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
           extraArgs:
             - --insecure
+            {{- if .Values.argocd.values.plugins.gzip.enabled }}
+            - --enable-gzip
+            {{- end }}
+          {{- end }}
+          {{- if .Values.argocd.values.plugins.gzip.enabled }}
+          extraArgs:
+            - --enable-gzip
           {{- end }}
           logLevel: {{ .Values.argocd.values.logLevel }}
           {{- if or .Values.argocd.values.ha .Values.proxies.enabled }}

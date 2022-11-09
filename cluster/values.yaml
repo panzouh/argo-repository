@@ -106,6 +106,9 @@ argocd:
           type: k8s
           # AVP auth path
           path: auth/kubernetes
+      gzip:
+        # -- Enable gzip 
+        enabled: false
       alp:
         # -- Enable Argo Lovely Plugin extension
         enabled: false

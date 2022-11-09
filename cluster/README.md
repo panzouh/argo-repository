@@ -117,6 +117,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.plugins.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
 | argocd.values.plugins.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
 | argocd.values.plugins.avp.version | string | `"1.11.0"` | AVP version to install |
+| argocd.values.plugins.gzip.enabled | bool | `false` | Enable gzip  |
 | argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
 ##### Repositories
