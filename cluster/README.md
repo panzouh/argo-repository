@@ -99,7 +99,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 |-----|------|---------|-------------|
 | argocd.chart.name | string | `"argo-cd"` | Chart name |
 | argocd.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
-| argocd.chart.version | string | `"4.7.0"` | Chart version |
+| argocd.chart.version | string | `"5.8.3"` | Chart version |
 | argocd.enabled | bool | `false` | Enable ArgoCD chart |
 | argocd.namespace | string | `"argocd"` | Destination namespace & Applications source namespace |
 | argocd.values.enableAlternateHelmPlugin | bool | `false` |  |
