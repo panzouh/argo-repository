@@ -85,7 +85,7 @@ argocd:
     # -- Chart name
     name: argo-cd
     # -- Chart version
-    version: "4.7.0"
+    version: "5.8.3"
   values:
     # -- Application controller logLevel 
     logLevel: debug
@@ -112,7 +112,7 @@ argocd:
       alp:
         # -- Enable Argo Lovely Plugin extension
         enabled: false
-         # -- Enable Argo Lovely Plugin version to install
+        # -- Enable Argo Lovely Plugin version to install
         version: stable
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
