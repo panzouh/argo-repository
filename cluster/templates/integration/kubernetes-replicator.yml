@@ -15,7 +15,7 @@ spec:
   destination:
     namespace: {{ .Values.argocd.namespace }}
     server: https://kubernetes.default.svc
-  project: security
+  project: integration
   source:
     chart: {{ .Values.kubernetesReplicator.chart.name }}
     repoURL: {{ .Values.kubernetesReplicator.chart.repo }}

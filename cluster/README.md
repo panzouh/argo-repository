@@ -284,6 +284,19 @@ Harbor is an open source registry that secures artifacts with policies and role-
 | harbor.values.persitence.trivy | string | `"5Gi"` | Trivy PVC size, you will need to define a StorageClass in `default.storageClass` |
 | harbor.values.secretKey | string | `"not-a-secure-key"` | The secret key used for encryption. Must be a string of 16 chars. |
 
+#### Kubernetes replicator
+
+Kubernetes replicator is a custom Kubernetes controller that can be used to make secrets and config maps available in multiple namespaces.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetesReplicator.chart.name | string | `"kubernetes-replicator"` | Chart name |
+| kubernetesReplicator.chart.repo | string | `"https://helm.mittwald.de"` | Helm repository |
+| kubernetesReplicator.chart.version | string | `"2.7.3"` | Chart version |
+| kubernetesReplicator.enabled | bool | `false` | Enable Kubernetes replicator chart |
+| kubernetesReplicator.namespace | string | `"kubernetes-replicator"` | Destination namespace |
+| kubernetesReplicator.values.grantClusterAdmin | bool | `true` | Grant Kubernetes replicator controller admin cluster role binding |
+
 #### Namespace configuration operator
 
 The namespace-configuration-operator is a project hosted by RedHat. It helps keeping configurations related to Users, Groups and Namespaces aligned with one of more policies specified as a CRs. The purpose is to provide the foundational building block to create an end-to-end onboarding process. By onboarding process we mean all the provisioning steps needed to a developer team working on one or more applications to OpenShift. This usually involves configuring resources such as: Groups, RoleBindings, Namespaces, ResourceQuotas, NetworkPolicies, EgressNetworkPolicies, etc... Depending on the specific environment the list could continue. Naturally such a process should be as automatic and scalable as possible.
@@ -920,19 +933,6 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 > :warning: Traefik is not currently well implemented, if you are using strictTLS you should add this key : `traefik.ingress.kubernetes.io/router.middlewares: traefik-system-security@kubernetescrd`
 
 ### Security
-
-#### Kubernetes replicator
-
-Kubernetes replicator is a custom Kubernetes controller that can be used to make secrets and config maps available in multiple namespaces.
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| kubernetesReplicator.chart.name | string | `"kubernetes-replicator"` | Chart name |
-| kubernetesReplicator.chart.repo | string | `"https://helm.mittwald.de"` | Helm repository |
-| kubernetesReplicator.chart.version | string | `"2.7.3"` | Chart version |
-| kubernetesReplicator.enabled | bool | `false` | Enable Kubernetes replicator chart |
-| kubernetesReplicator.namespace | string | `"kubernetes-replicator"` | Destination namespace |
-| kubernetesReplicator.values.grantClusterAdmin | bool | `true` | Grant Kubernetes replicator controller admin cluster role binding |
 
 #### User management
 
