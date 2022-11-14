@@ -7,7 +7,7 @@
 {{- $gitlabChart := .Values.gitlabRunners.chart -}}
 {{ if eq (include "gitlab-runners.enabled" .) "true" }}
 {{- range .Values.gitlabRunners.values.runners }}
-{{- if gt (len (default 0 .pullSecrets)) 0 }}
+{{- if .pullSecrets }}
 {{- $runnerName := .runnerName -}}
 {{- $runnerNamespace := default "gitlab" .runnerNamespace -}}
 {{- range $k,$v := .pullSecrets }}
@@ -71,7 +71,7 @@ spec:
         runners:
           disable_cache: false
           tags: {{ .runnerTags }}
-          {{- if gt (len ( default 0 .pullSecrets)) 0 }}
+          {{- if .pullSecrets }}
           {{- $runnerName := .runnerName }}
           imagePullSecrets:
             {{- range $k, $v := .pullSecrets }}

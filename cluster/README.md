@@ -859,7 +859,7 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 |-----|------|---------|-------------|
 | certmanager.chart.name | string | `"cert-manager"` | Chart name |
 | certmanager.chart.repo | string | `"https://charts.jetstack.io"` | Helm repository |
-| certmanager.chart.version | string | `"1.8.2"` | Chart version |
+| certmanager.chart.version | string | `"v1.10.0"` | Chart version |
 | certmanager.enabled | bool | `false` | Enable Cert-manager chart |
 | certmanager.namespace | string | `"cert-manager"` | Destination namespace |
 | certmanager.values.clusterIssuerLetsEncrypt.email | string | `"jdoe@domain.tld"` | Configure certificate expiracy notice notifications |
