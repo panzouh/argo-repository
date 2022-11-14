@@ -13,7 +13,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.argocd.namespace }}
+    namespace: {{ .Values.kubernetesReplicator.namespace }}
     server: https://kubernetes.default.svc
   project: integration
   source:
