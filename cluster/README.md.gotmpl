@@ -798,6 +798,18 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 ### Security
 
+#### Kubernetes replicator
+
+Kubernetes replicator is a custom Kubernetes controller that can be used to make secrets and config maps available in multiple namespaces.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "kubernetesReplicator" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 #### User management
 
 User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).

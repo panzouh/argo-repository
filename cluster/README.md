@@ -921,6 +921,19 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 
 ### Security
 
+#### Kubernetes replicator
+
+Kubernetes replicator is a custom Kubernetes controller that can be used to make secrets and config maps available in multiple namespaces.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetesReplicator.chart.name | string | `"kubernetes-replicator"` | Chart name |
+| kubernetesReplicator.chart.repo | string | `"https://helm.mittwald.de"` | Helm repository |
+| kubernetesReplicator.chart.version | string | `"2.7.3"` | Chart version |
+| kubernetesReplicator.enabled | bool | `false` | Enable Kubernetes replicator chart |
+| kubernetesReplicator.namespace | string | `"kubernetes-replicator"` | Destination namespace |
+| kubernetesReplicator.values.grantClusterAdmin | bool | `true` | Grant Kubernetes replicator controller admin cluster role binding |
+
 #### User management
 
 User management is a chart hosted on this repository, you can retrieve templates [here](../charts/users/).

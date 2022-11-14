@@ -1,5 +1,5 @@
 {{- define "security.enabled" -}}
-{{- or .Values.vault.enabled .Values.userManagement.enabled (eq (include "secrets.isVault" .) "true") -}}
+{{- or .Values.vault.enabled .Values.userManagement.enabled .Values.kubernetesReplicator.enabled (eq (include "secrets.isVault" .) "true") -}}
 {{- end -}}
 {{ if eq (include "security.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

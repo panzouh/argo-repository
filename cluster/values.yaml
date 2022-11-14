@@ -705,6 +705,22 @@ certmanager:
 
 # Security
 
+kubernetesReplicator:
+  # -- Enable Kubernetes replicator chart
+  enabled: false
+  # -- Destination namespace
+  namespace: kubernetes-replicator
+  chart:
+    # -- Helm repository
+    repo: https://helm.mittwald.de
+    # -- Chart name
+    name: kubernetes-replicator
+    # -- Chart version
+    version: "2.7.3"
+  values:
+    # -- Grant Kubernetes replicator controller admin cluster role binding
+    grantClusterAdmin: true
+
 vault:
   # -- Enable Vault chart
   enabled: false
