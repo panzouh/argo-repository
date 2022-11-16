@@ -723,7 +723,6 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
 | monitoring.prometheus.values.rules.customs | object | `{}` | Create Prometheus custom rules (not available yet) |
 | monitoring.prometheus.values.rules.preconfiguredEnabled | bool | `true` | Enable Prometheus rules watch preconfigured rules below |
-| monitoring.prometheus.values.server.dataRetention | string | `"720h"` | Prometheus data retention |
 | monitoring.prometheus.values.server.ingress.auth.authKey | string | `"htpasswd"` | Configure password key in vault kv-v2 secret, only for `auth.type: vault` |
 | monitoring.prometheus.values.server.ingress.auth.avpPath | string | `"avp/data/prometheus"` | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.prometheus.values.server.ingress.auth.password | string | `"changeme"` | Basic auth password (only for `raw` type)  |
@@ -732,6 +731,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.server.ingress.enabled | bool | `true` | Enable Prometheus UI Ingress |
 | monitoring.prometheus.values.server.ingress.name | string | `"prometheus"` | Prometheus ingress name or path (weither it is an ingress wildcard or domain) |
 | monitoring.prometheus.values.server.pvcSize | string | `"30Gi"` | Prometheus PVC size, you will need to define a StorageClass in `default.storageClass` |
+| monitoring.prometheus.values.server.retention | string | `"720h"` | Prometheus data retention |
 | monitoring.prometheusMsTeams.chart.name | string | `"prometheus-msteams"` | Chart name |
 | monitoring.prometheusMsTeams.chart.repo | string | `"https://prometheus-msteams.github.io/prometheus-msteams/"` | Helm repository |
 | monitoring.prometheusMsTeams.chart.version | string | `"1.3.0"` | Chart version |

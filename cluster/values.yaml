@@ -567,7 +567,7 @@ monitoring:
         # -- Prometheus PVC size, you will need to define a StorageClass in `default.storageClass`
         pvcSize: "30Gi"
         # -- Prometheus data retention
-        dataRetention: 720h
+        retention: 720h
         ingress:
           # -- Enable Prometheus UI Ingress
           enabled: true

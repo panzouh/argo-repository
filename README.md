@@ -46,7 +46,7 @@ TBA
   - Goldpinger
   - Grafana
   - Prometheus
-  - Helm exporter 
+  - Helm exporter
   - Prometheus Ms Teams alerting hook
 - Networking :
   - CertManager
