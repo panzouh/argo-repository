@@ -718,7 +718,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` | Alertmanager configuration file, example below |
 | monitoring.prometheus.values.alertmanager.enabled | bool | `false` | Enable Alertmanager in the chart |
 | monitoring.prometheus.values.alertmanager.pvcSize | string | `"5Gi"` | Alertmanager PVC size, you will need to define a StorageClass in `default.storageClass` |
-| monitoring.prometheus.values.extraScrapeConfigs | string | `nil` | Enable extra configuration scrapes in the, watch section bellow for examples |
+| monitoring.prometheus.values.extraScrapeConfigs | list | `[{"job_name":"node","static_configs":[{"targets":["localhost:9100"]}]}]` | Enable extra configuration scrapes in the, watch section bellow for examples |
 | monitoring.prometheus.values.kubeStateMetrics.enabled | bool | `true` | Enable kubeStateMetrics in the chart |
 | monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
 | monitoring.prometheus.values.rules.customs | object | `{}` | Create Prometheus custom rules (not available yet) |

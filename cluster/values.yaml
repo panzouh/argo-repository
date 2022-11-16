@@ -559,7 +559,11 @@ monitoring:
         # -- Enable kubeStateMetrics in the chart
         enabled: true
       # -- Enable extra configuration scrapes in the, watch section bellow for examples
-      extraScrapeConfigs: null
+      extraScrapeConfigs:
+        - job_name: node
+          static_configs:
+            - targets:
+              - localhost:9100
       nodeExporter:
         # -- Enable nodeExporter in the chart
         enabled: true
