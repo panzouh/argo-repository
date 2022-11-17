@@ -33,7 +33,7 @@ spec:
                 no_follow_redirects: false
                 preferred_ip_protocol: "ip4"
                 valid_status_codes: [200, 401]
-            {{ if eq .Values.monitoring.blackboxExporter.dns.enabled "true" }}
+            {{- if eq .Values.monitoring.blackboxExporter.dns.enabled "true" }}
             {{- range $key, $value := .Values.monitoring.blackboxExporter.dns.targets }}
             {{ $key }}:
             dns_{{ $value}}
