@@ -35,7 +35,6 @@ spec:
                 valid_status_codes: [200, 401]
             {{- if .Values.monitoring.blackboxExporter.dns.enabled }}
             {{- range $key, $value := .Values.monitoring.blackboxExporter.dns.targets }}
-            {{ $key }}:
             dns_{{ $value}}
               prober: dns
               timeout: 5s
