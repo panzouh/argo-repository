@@ -42,6 +42,7 @@ spec:
               dns:
                 query_name: {{ $value }}
                 query_type: A
+                preferred_ip_protocol: "ip4"
             {{- end }}
             {{- end }}
             
