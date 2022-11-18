@@ -77,6 +77,10 @@ spec:
               {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations "authSecret" $secretAuthValue) | nindent 10 }}
             {{- end }}
           {{- end }}
+          {{- if .Values.monitoring.prometheus.values.server.extraArgs }}
+          extraArgs:
+            {{- toYaml .Values.monitoring.prometheus.values.server.extraArgs | nindent 12 }}
+          {{- end }}
         {{- if eq (include "kubeStateMetrics.enabled" .) "true" }}
         kubeStateMetrics:
           enabled: true
