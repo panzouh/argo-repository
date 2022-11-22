@@ -30,7 +30,7 @@ proxies:
   # -- Define noProxy value should be `noProxy: .cluster.local,.svc,podsCIDR,svcCIDR`
   noProxy: ""
 
-# Backup 
+# Backup
 
 velero:
   # -- Enable Velero chart
@@ -68,7 +68,7 @@ velero:
       region: eu-west-3
     volumeSnapshotLocation:
       # -- name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional
-      name:  default
+      name: default
       # -- region is the region of the bucket. Required
       region: eu-west-3
 
@@ -85,9 +85,9 @@ argocd:
     # -- Chart name
     name: argo-cd
     # -- Chart version
-    version: "5.8.3"
+    version: "5.14.0"
   values:
-    # -- Application controller logLevel 
+    # -- Application controller logLevel
     logLevel: debug
     # -- Enable Helm alternate plugin `helm upgrade --install` instead of `helm template . | kubectl apply -f -`
     enableAlternateHelmPlugin: false
@@ -107,7 +107,7 @@ argocd:
           # AVP auth path
           path: auth/kubernetes
       gzip:
-        # -- Enable gzip 
+        # -- Enable gzip
         enabled: false
       alp:
         # -- Enable Argo Lovely Plugin extension
@@ -168,7 +168,7 @@ externalCharts:
     #   cName: test
     #   targetRevision: HEAD
     #   values:
-    #     debug: true 
+    #     debug: true
 
 gitlabRunners:
   chart:
@@ -197,7 +197,7 @@ harbor:
   values:
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
-    # -- Initial admin user password if the application is exposed consider changing it 
+    # -- Initial admin user password if the application is exposed consider changing it
     bootstrapPassword: changeme
     # -- The secret key used for encryption. Must be a string of 16 chars.
     secretKey: not-a-secure-key
@@ -404,7 +404,7 @@ rancher:
   values:
     # -- Rancher replicas
     replicas: 1
-    # -- Only for bootstrapp, if the application is exposed consider changing it 
+    # -- Only for bootstrapp, if the application is exposed consider changing it
     bootstrapPassword: changeme
     # -- Additionnal CA Bundle b64encoded
     caBundle: null
@@ -413,7 +413,6 @@ rancher:
       enabled: false
       # -- Rancher ingress name or path (weither it is an ingress wildcard or domain)
       name: rancher
-
 
 # Monitoring
 
@@ -563,7 +562,7 @@ monitoring:
         - job_name: node
           static_configs:
             - targets:
-              - localhost:9100
+                - localhost:9100
       nodeExporter:
         # -- Enable nodeExporter in the chart
         enabled: true
@@ -582,7 +581,7 @@ monitoring:
             type: raw
             # -- Basic auth username (only for `raw` type)
             username: admin
-            # -- Basic auth password (only for `raw` type) 
+            # -- Basic auth password (only for `raw` type)
             password: changeme
             # -- Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
             avpPath: avp/data/prometheus
@@ -668,7 +667,7 @@ ingress:
         type: LoadBalancer
         # -- Only for BareMetal support if you want to enforce Traefik's service IP
         LoadBalancerIps: []
-        
+
 certmanager:
   # -- Enable Cert-manager chart
   enabled: false
@@ -680,7 +679,7 @@ certmanager:
     # -- Chart name
     name: cert-manager
     # -- Chart version
-    version: 'v1.10.0'
+    version: "v1.10.0"
   values:
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
@@ -745,7 +744,7 @@ vault:
       name: vault
     # -- Vault persistence size, you will need to define a StorageClass in `default.storageClass`
     pvcSize: "10Gi"
-    # -- Enable Vault HA 
+    # -- Enable Vault HA
     ha: false
     # -- Enable Vault agent injector
     injector: false
@@ -834,4 +833,3 @@ minio:
         name: minio-console
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
-
