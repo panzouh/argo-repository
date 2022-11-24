@@ -50,7 +50,7 @@ spec:
       values: |-
         replicas: {{ default 1 .replicas }}
         imagePullPolicy: {{ default "IfNotPresent" .imagePullPolicy }}
-        terminationGracePeriodSeconds: 3600
+        terminationGracePeriodSeconds: {{ default "3600" .terminationGracePeriodSeconds }}
         gitlabUrl: {{ .gitlabUrl }}
         runnerRegistrationToken: {{ .runnerToken }}
         concurrent: {{ default 5 .concurrent }}

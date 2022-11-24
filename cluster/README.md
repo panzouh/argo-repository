@@ -251,6 +251,7 @@ gitlabRunners:
         runnerTags: "ci, test"
         dockerVersion: "20.03.12" # Value not mandatory, if not defined default is "19.03.12"
         gitlabUrl: "https://git.domain.tld"
+        terminationGracePeriodSeconds # Value not mandatory, if not defined default is 3600
         imagePullPolicy: Always # Value not mandatory, if not defined default is "IfNotPresent"
         pullSecrets: [] # Define a list .dockerconfigjson b64 encoded
         # Ex:
