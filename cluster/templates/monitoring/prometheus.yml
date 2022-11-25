@@ -124,10 +124,11 @@ spec:
             {{- end }}
           {{- end }}
         {{- end }}
-        {{- if eq (include "preconfigureRules.enabled" .) "true" }}
+        {{- if or (.Values.monitoring.prometheus.values.rules.customs) (eq (include "preconfigureRules.enabled" .) "true") }}
         serverFiles:
           alerting_rules.yml:
             groups:
+            {{- if eq (include "preconfigureRules.enabled" .) "true" }}
             - name: Rules
               rules:
                 - alert: DTKJob_AnyDown
@@ -416,6 +417,12 @@ spec:
                         1, max by(namespace, pod, owner_kind) (kube_pod_owner{namespace!="", owner_kind!="Job"})
                       )
                     ) > 0
+          {{- end }}
+          {{- if .Values.monitoring.prometheus.values.rules.customs }}
+            {{- with .Values.monitoring.prometheus.values.rules.customs }}
+              {{- toYaml . | replace "|" "" | nindent 10 }}
+            {{- end }}
+          {{- end }}
         {{- else }}
         serverFiles: {}
         {{- end }}

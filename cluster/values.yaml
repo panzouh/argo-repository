@@ -545,8 +545,8 @@ monitoring:
       rules:
         # -- Enable Prometheus rules watch preconfigured rules below
         preconfiguredEnabled: true
-        # -- Create Prometheus custom rules (not available yet)
-        customs: {}
+        # -- Create Prometheus custom rules
+        customs: ""
       alertmanager:
         # -- Enable Alertmanager in the chart
         enabled: false

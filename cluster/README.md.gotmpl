@@ -701,6 +701,23 @@ extraScrapeConfigs: |
         regex: 'container_label_.*'
 ```
 
+##### Additionnal set of rules
+
+```yaml
+customs: |
+  - name: Example Rules
+    rules:
+      - alert: DTKJob_AnyDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: average
+        annotations:
+          identifiers: {{ quote (include "labels.instance" .) }}
+          summary: "Component Down on instance {{ (include "labels.instance" .) }}"
+          description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+```
+
 ### Networking
 
 You should note that you can either activate Nginx or Traefik.
