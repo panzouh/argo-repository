@@ -555,7 +555,7 @@ monitoring:
           datasource: Prometheus
 ```
 
-##### Add custom dashboards from JSON
+##### Add custom dashboards from JSON or file
 
 > :warning: You will also need to enable Prometheus first :warning:
 > :warning: Using this technique in order to import dashboards is not advised, export your dashboard from Grafana and import it to Grafana net : [documentation](https://grafana.com/docs/grafana/latest/dashboards/export-import/) :warning:
@@ -571,6 +571,78 @@ monitoring:
             {
             # your dashboard json formatted
             }
+```
+
+##### Add custom notifiers
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      notifiers:
+      - name: email-notifier
+        type: email
+        uid: email1
+        # either:
+        org_id: 1
+        # or
+        org_name: Main Org.
+        is_default: true
+        settings:
+          addresses: an_email_address@example.com
+      delete_notifiers: ""
+```
+
+##### Add custom alerts
+
+```yaml
+monitoring:
+  grafana:
+    enabled: true
+    values:
+      alerting:
+      - orgId: 1
+        name: '{{ .Chart.Name }}_my_rule_group'
+        folder: my_first_folder
+        interval: 60s
+        rules:
+          - uid: my_id_1
+            title: my_first_rule
+            condition: A
+            data:
+              - refId: A
+                datasourceUid: '-100'
+                model:
+                  conditions:
+                    - evaluator:
+                        params:
+                          - 3
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                          - A
+                      reducer:
+                        type: last
+                      type: query
+                  datasource:
+                    type: __expr__
+                    uid: '-100'
+                  expression: 1==0
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+                  type: math
+            dashboardUid: my_dashboard
+            panelId: 123
+            noDataState: Alerting
+            for: 60s
+            annotations:
+              some_key: some_value
+            labels:
+              team: sre_team_1
 ```
 
 #### Prometheus MsTeams alerting

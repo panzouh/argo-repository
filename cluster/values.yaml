@@ -516,6 +516,10 @@ monitoring:
       customDashboards: {}
       # -- Create Grafana Dashboard available on Grafana Net, watch section bellow, you will also need to enable Prometheus as well
       customDashboardsGNET: {}
+      # -- Create Grafana notifiers, watch section bellow.
+      notifiers: []
+      # -- Create Grafana alerts, watch section bellow.
+      alerting: []
   helmExporter:
     # -- Enable Helm Exporter chart
     enabled: false
@@ -558,11 +562,7 @@ monitoring:
         # -- Enable kubeStateMetrics in the chart
         enabled: true
       # -- Enable extra configuration scrapes in the, watch section bellow for examples
-      extraScrapeConfigs:
-        - job_name: node
-          static_configs:
-            - targets:
-                - localhost:9100
+      extraScrapeConfigs: []
       nodeExporter:
         # -- Enable nodeExporter in the chart
         enabled: true
