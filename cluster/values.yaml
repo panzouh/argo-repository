@@ -490,7 +490,7 @@ monitoring:
       # -- Chart name
       name: grafana
       # -- Chart version
-      version: "6.32.1"
+      version: "6.44.10"
     values:
       auth:
         # -- Can be either raw or vault in order to pull password from Vault, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true`
