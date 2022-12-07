@@ -14,6 +14,10 @@ Default
 General
 */}}
 
+{{- define "kubeVersion" }}
+  {{- default .Capabilities.KubeVersion.Version (regexFind "v[0-9]+\\.[0-9]+\\.[0-9]+" .Capabilities.KubeVersion.Version) -}}
+{{- end }}
+
 {{- define "cluster.syncPolicy.default" }}
   syncPolicy:
     syncOptions:
@@ -223,10 +227,6 @@ Monitoring
 
 {{- define "alertmanager.enabled" -}}
   {{- and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.alertmanager.enabled -}}
-{{- end }}
-
-{{- define "data.retention" -}}
-  {{- print .Values.monitoring.prometheus.values.server.dataRetention -}}
 {{- end }}
 
 {{- define "kubeStateMetrics.enabled" -}}

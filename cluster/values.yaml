@@ -571,6 +571,7 @@ monitoring:
         pvcSize: "30Gi"
         # -- Prometheus data retention
         retention: 720h
+        extraArgs: []
         ingress:
           # -- Enable Prometheus UI Ingress
           enabled: true
