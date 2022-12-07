@@ -39,23 +39,6 @@ spec:
           existingSecret: "grafana-credentials"
           userKey: username
           passwordKey: password
-        {{- if .Values.monitoring.grafana.values.notifiers }}
-        notifiers:
-          notifiers.yaml:
-            notifiers:
-              {{- with .Values.monitoring.grafana.values.notifiers }}
-                {{- toYaml . | nindent 14 }}
-              {{- end }}
-        {{- end }}
-        {{- if .Values.monitoring.grafana.values.alerting }}
-        alerting:
-          rules.yaml:
-            apiVersion: 1
-            groups:
-            {{- with .Values.monitoring.grafana.values.alerting }}
-              {{- toYaml . | nindent 14 }}
-            {{- end }}
-        {{- end }}
         {{- if .Values.monitoring.prometheus.enabled }}
         datasources:
           datasources.yaml:
