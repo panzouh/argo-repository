@@ -35,6 +35,10 @@ spec:
     helm:
       version: v3
       values: |-
+        {{- if .Values.monitoring.grafana.values.server.root_url }}
+        server:
+          root_url: {{ .Values.monitoring.grafana.values.server.root_url }}
+        {{- end }}
         admin:
           existingSecret: "grafana-credentials"
           userKey: username
