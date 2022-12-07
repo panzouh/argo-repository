@@ -558,11 +558,7 @@ monitoring:
         # -- Enable kubeStateMetrics in the chart
         enabled: true
       # -- Enable extra configuration scrapes in the, watch section bellow for examples
-      extraScrapeConfigs:
-        - job_name: node
-          static_configs:
-            - targets:
-                - localhost:9100
+      extraScrapeConfigs: []
       nodeExporter:
         # -- Enable nodeExporter in the chart
         enabled: true
@@ -571,6 +567,7 @@ monitoring:
         pvcSize: "30Gi"
         # -- Prometheus data retention
         retention: 720h
+        extraArgs: []
         ingress:
           # -- Enable Prometheus UI Ingress
           enabled: true
