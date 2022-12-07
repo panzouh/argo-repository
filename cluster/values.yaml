@@ -516,10 +516,6 @@ monitoring:
       customDashboards: {}
       # -- Create Grafana Dashboard available on Grafana Net, watch section bellow, you will also need to enable Prometheus as well
       customDashboardsGNET: {}
-      # -- Create Grafana notifiers, watch section bellow.
-      notifiers: []
-      # -- Create Grafana alerts, watch section bellow.
-      alerting: []
   helmExporter:
     # -- Enable Helm Exporter chart
     enabled: false
