@@ -16,7 +16,7 @@ spec:
   destination:
     namespace: {{ .Values.data.airbyte.namespace }}
     server: https://kubernetes.default.svc
-  project: airbyte
+  project: data
   source:
     chart: {{ .Values.data.airbyte.chart.name }}
     repoURL: {{ .Values.data.airbyte.chart.repo }}
