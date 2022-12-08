@@ -833,3 +833,13 @@ minio:
         name: minio-console
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
+
+#Data
+
+data:
+  airbyte:
+    enabled: false
+    chart:
+      repo: https://airbytehq.github.io/helm-charts/
+      name: airbyte
+      version: "0.42.0"
