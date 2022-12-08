@@ -14,6 +14,10 @@ Default
 General
 */}}
 
+{{- define "kubeVersion" }}
+  {{- default .Capabilities.KubeVersion.Version (regexFind "v[0-9]+\\.[0-9]+\\.[0-9]+" .Capabilities.KubeVersion.Version) -}}
+{{- end }}
+
 {{- define "cluster.syncPolicy.default" }}
   syncPolicy:
     syncOptions:

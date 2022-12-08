@@ -24,6 +24,17 @@ spec:
   basicAuth:
     secret: prometheus-basic-auth
 {{- end }}
+{{- if semverCompare ">= 1.24.x" (include "kubeVersion" .) }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-token
+  namespace: {{ .Values.monitoring.namespace }}
+  annotations:
+    kubernetes.io/service-account.name: prometheus-server
+type: kubernetes.io/service-account-token
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
