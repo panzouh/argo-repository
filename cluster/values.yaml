@@ -837,6 +837,7 @@ minio:
 #Data
 
 data:
+  namespace: data
   airbyte:
     enabled: false
     chart:
