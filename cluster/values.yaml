@@ -445,7 +445,7 @@ monitoring:
       # -- Chart name
       name: alertmanager-discord
       # -- Chart version
-      version: "0.0.5"
+      version: "0.0.6"
     values:
       # -- Roles to mention in discord you can obtain the id by typing `\@Role_Name` in discord's chat
       rolesToMention: []
