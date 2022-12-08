@@ -14,7 +14,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.data.airbyte.namespace }}
+    namespace: {{ .Values.data.namespace }}
     server: https://kubernetes.default.svc
   project: data
   source:
