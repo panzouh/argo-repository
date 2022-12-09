@@ -72,6 +72,14 @@ spec:
           persistentVolume:
             enabled: false
           {{- end }}
+          {{- if .Values.monitoring.prometheus.values.server.nodeSelector }}
+          nodeSelector:
+            {{- toYaml .Values.monitoring.prometheus.values.server.nodeSelector | nindent 12 }}
+          {{- end }}
+          {{- if .Values.monitoring.prometheus.values.server.tolerations }}
+          tolerations:
+            {{- toYaml .Values.monitoring.prometheus.values.server.tolerations | nindent 12 }}
+          {{- end }}
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.values.server.ingress.enabled }}
             {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "none" }}
               {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}

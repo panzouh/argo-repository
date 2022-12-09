@@ -95,10 +95,10 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
 Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| data.airbyte.chart.name | string | `"airbyte"` |  |
-| data.airbyte.chart.repo | string | `"https://airbytehq.github.io/helm-charts/"` |  |
-| data.airbyte.chart.version | string | `"0.42.0"` |  |
-| data.airbyte.enabled | bool | `false` |  |
+| data.airbyte.chart.name | string | `"airbyte"` | Chart name |
+| data.airbyte.chart.repo | string | `"https://airbytehq.github.io/helm-charts/"` | Helm repository |
+| data.airbyte.chart.version | string | `"0.42.0"` | Chart version |
+| data.airbyte.enabled | bool | `false` | Enabe Airbyte chart |
 
 ### Integration
 
@@ -737,7 +737,7 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
 | monitoring.prometheus.values.rules.customs | string | `""` | Create Prometheus custom rules |
 | monitoring.prometheus.values.rules.preconfiguredEnabled | bool | `true` | Enable Prometheus rules watch preconfigured rules below |
-| monitoring.prometheus.values.server.extraArgs | list | `[]` |  |
+| monitoring.prometheus.values.server.extraArgs | list | `[]` | Prometheus server extra args |
 | monitoring.prometheus.values.server.ingress.auth.authKey | string | `"htpasswd"` | Configure password key in vault kv-v2 secret, only for `auth.type: vault` |
 | monitoring.prometheus.values.server.ingress.auth.avpPath | string | `"avp/data/prometheus"` | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
 | monitoring.prometheus.values.server.ingress.auth.password | string | `"changeme"` | Basic auth password (only for `raw` type) |
@@ -745,8 +745,10 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.server.ingress.auth.username | string | `"admin"` | Basic auth username (only for `raw` type) |
 | monitoring.prometheus.values.server.ingress.enabled | bool | `true` | Enable Prometheus UI Ingress |
 | monitoring.prometheus.values.server.ingress.name | string | `"prometheus"` | Prometheus ingress name or path (weither it is an ingress wildcard or domain) |
+| monitoring.prometheus.values.server.nodeSelector | object | `{}` | Node labels for controller pod assignment |
 | monitoring.prometheus.values.server.pvcSize | string | `"30Gi"` | Prometheus PVC size, you will need to define a StorageClass in `default.storageClass` |
 | monitoring.prometheus.values.server.retention | string | `"720h"` | Prometheus data retention |
+| monitoring.prometheus.values.server.tolerations | list | `[]` | Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 | monitoring.prometheusMsTeams.chart.name | string | `"prometheus-msteams"` | Chart name |
 | monitoring.prometheusMsTeams.chart.repo | string | `"https://prometheus-msteams.github.io/prometheus-msteams/"` | Helm repository |
 | monitoring.prometheusMsTeams.chart.version | string | `"1.3.0"` | Chart version |
