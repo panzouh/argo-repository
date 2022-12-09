@@ -80,6 +80,19 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
   {{- end }}
 {{- end }}
 
+### Data
+
+#### Airbyte
+
+Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "data.airbyte" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ### Integration
 
 By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
@@ -714,9 +727,11 @@ customs: |
         labels:
           severity: average
         annotations:
-          identifiers: {{ quote (include "labels.instance" .) }}
-          summary: "Component Down on instance {{ (include "labels.instance" .) }}"
-          description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+          identifiers: {{ print `$labels.instance` }}
+          summary: |
+            Component Down
+          description: 
+            K8S component down
 ```
 
 ### Networking
@@ -928,20 +943,6 @@ buckets:
   policy: none
   purge: false
 ```
-
-### Data
-
-#### Airbyte
-
-Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-{{- range .Values }}
-  {{- if hasPrefix "data.airbyte" .Key }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-
-
 
 ##### Add polices
 
