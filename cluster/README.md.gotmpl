@@ -928,6 +928,20 @@ buckets:
   purge: false
 ```
 
+### Data
+
+#### Airbyte
+
+Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "airbyte" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+
+
+
 ##### Add polices
 
 ```yaml
