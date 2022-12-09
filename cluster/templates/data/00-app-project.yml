@@ -16,4 +16,4 @@ spec:
     server: '*'
   sourceRepos:
   - '*'
-{{ end }}
+{{ end }} 
