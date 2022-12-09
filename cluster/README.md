@@ -13,14 +13,14 @@ A Must Have Apps Cluster Management Provided by DTK (danstonkube.fr)
 ## Index
 
 1. [General](#general)
-2. [Integration](#integration)
-3. [Logging](#logging)
-4. [Management](#management)
-5. [Monitoring](#monitoring)
-6. [Networking](#networking)
-7. [Security](#security)
-8. [Storage](#storage)
-9. [Data](#data)
+2. [Data](#data)
+3. [Integration](#integration)
+4. [Logging](#logging)
+5. [Management](#management)
+6. [Monitoring](#monitoring)
+7. [Networking](#networking)
+8. [Security](#security)
+9. [Storage](#storage)
 
 ## General
 
