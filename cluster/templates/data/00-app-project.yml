@@ -1,0 +1,19 @@
+{{- define "data.enabled" -}}
+{{- or .Values.data.airbyte.enabled -}}
+{{- end -}}
+{{ if eq (include "data.enabled" .) "true" }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: data
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '{{ .Values.data.namespace }}'
+    server: '*'
+  sourceRepos:
+  - '*'
+{{ end }} 

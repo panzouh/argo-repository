@@ -9,13 +9,14 @@
 ## Index 
 
 1. [General](#general)
-2. [Integration](#integration)
-3. [Logging](#logging)
-4. [Management](#management)
-5. [Monitoring](#monitoring)
-6. [Networking](#networking)
-7. [Security](#security)
-8. [Storage](#storage)
+2. [Data](#data)
+3. [Integration](#integration)
+4. [Logging](#logging)
+5. [Management](#management)
+6. [Monitoring](#monitoring)
+7. [Networking](#networking)
+8. [Security](#security)
+9. [Storage](#storage)
 
 ## General
 
@@ -75,6 +76,19 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
 |-----|------|---------|-------------|
 {{- range .Values }}
   {{- if hasPrefix "velero" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Data
+
+#### Airbyte
+
+Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "data.airbyte" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
@@ -713,9 +727,11 @@ customs: |
         labels:
           severity: average
         annotations:
-          identifiers: {{ quote (include "labels.instance" .) }}
-          summary: "Component Down on instance {{ (include "labels.instance" .) }}"
-          description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
+          identifiers: {{ print `$labels.instance` }}
+          summary: |
+            Component Down
+          description: 
+            K8S component down
 ```
 
 ### Networking

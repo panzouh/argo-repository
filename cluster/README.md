@@ -13,13 +13,14 @@ A Must Have Apps Cluster Management Provided by DTK (danstonkube.fr)
 ## Index
 
 1. [General](#general)
-2. [Integration](#integration)
-3. [Logging](#logging)
-4. [Management](#management)
-5. [Monitoring](#monitoring)
-6. [Networking](#networking)
-7. [Security](#security)
-8. [Storage](#storage)
+2. [Data](#data)
+3. [Integration](#integration)
+4. [Logging](#logging)
+5. [Management](#management)
+6. [Monitoring](#monitoring)
+7. [Networking](#networking)
+8. [Security](#security)
+9. [Storage](#storage)
 
 ## General
 
@@ -87,6 +88,18 @@ Velero is an open source tool to safely backup and restore, perform disaster rec
 | velero.values.volumeSnapshotLocation.name | string | `"default"` | name is the name of the backup storage location where backups should be stored. If a name is not provided,    # a backup storage location will be created with the name "default". Optional |
 | velero.values.volumeSnapshotLocation.region | string | `"eu-west-3"` | region is the region of the bucket. Required |
 
+### Data
+
+#### Airbyte
+
+Airbyte is an open-source platform for building data integration pipelines. It allows you to sync data from applications, APIs & databases to data warehouses lakes & DBs. It is designed for teams that need a flexible and scalable solution to move their data from application A to application B.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| data.airbyte.chart.name | string | `"airbyte"` |  |
+| data.airbyte.chart.repo | string | `"https://airbytehq.github.io/helm-charts/"` |  |
+| data.airbyte.chart.version | string | `"0.42.0"` |  |
+| data.airbyte.enabled | bool | `false` |  |
+
 ### Integration
 
 By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
@@ -99,7 +112,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 |-----|------|---------|-------------|
 | argocd.chart.name | string | `"argo-cd"` | Chart name |
 | argocd.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
-| argocd.chart.version | string | `"5.8.3"` | Chart version |
+| argocd.chart.version | string | `"5.14.0"` | Chart version |
 | argocd.enabled | bool | `false` | Enable ArgoCD chart |
 | argocd.namespace | string | `"argocd"` | Destination namespace & Applications source namespace |
 | argocd.values.enableAlternateHelmPlugin | bool | `false` |  |
@@ -107,7 +120,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.ingress.enabled | bool | `true` | Enable ArgoCD UI ingress |
 | argocd.values.ingress.name | string | `"argocd"` | ArgoCD ingress name or path (weither it is an ingress wildcard or domain |
 | argocd.values.insecure | bool | `false` | Enable ArgoCD all the way TLS, will be deactivated if ingress are enabled |
-| argocd.values.logLevel | string | `"debug"` | Application controller logLevel  |
+| argocd.values.logLevel | string | `"debug"` | Application controller logLevel |
 | argocd.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | argocd.values.plugins.alp.enabled | bool | `false` | Enable Argo Lovely Plugin extension |
 | argocd.values.plugins.alp.version | string | `"stable"` | Enable Argo Lovely Plugin version to install |
@@ -117,7 +130,7 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.plugins.avp.enabled | bool | `false` | Enable AVP extension, watch [AVP Documention](../docs/security/avp-documention.md) first |
 | argocd.values.plugins.avp.saName | string | `"avp"` | Tell to Argo which SA to create |
 | argocd.values.plugins.avp.version | string | `"1.11.0"` | AVP version to install |
-| argocd.values.plugins.gzip.enabled | bool | `false` | Enable gzip  |
+| argocd.values.plugins.gzip.enabled | bool | `false` | Enable gzip |
 | argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
 ##### Repositories
@@ -272,7 +285,7 @@ Harbor is an open source registry that secures artifacts with policies and role-
 | harbor.chart.version | string | `"1.9.2"` | Chart version |
 | harbor.enabled | bool | `false` | Enable Harbor repository chart, you will need to enable Traefik or Nginx as well |
 | harbor.namespace | string | `"harbor-system"` | Destination namespace |
-| harbor.values.bootstrapPassword | string | `"changeme"` | Initial admin user password if the application is exposed consider changing it  |
+| harbor.values.bootstrapPassword | string | `"changeme"` | Initial admin user password if the application is exposed consider changing it |
 | harbor.values.ingress.coreName | string | `"core"` | Harbor core ingress name or path (weither it is an ingress wildcard or domain) |
 | harbor.values.ingress.enabled | bool | `true` | Enable Harbor ingresses |
 | harbor.values.ingress.notaryName | string | `"notary"` | Harbor notary ingress name or path (weither it is an ingress wildcard or domain) |
@@ -491,7 +504,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | rancher.chart.version | string | `"2.6.8"` | Chart version |
 | rancher.enabled | bool | `false` | Enable Prometheus chart |
 | rancher.namespace | string | `"cattle-system"` | Destination namespace |
-| rancher.values.bootstrapPassword | string | `"changeme"` | Only for bootstrapp, if the application is exposed consider changing it  |
+| rancher.values.bootstrapPassword | string | `"changeme"` | Only for bootstrapp, if the application is exposed consider changing it |
 | rancher.values.caBundle | string | `nil` | Additionnal CA Bundle b64encoded |
 | rancher.values.ingress.enabled | bool | `false` | Enable Rancher ingress UI |
 | rancher.values.ingress.name | string | `"rancher"` | Rancher ingress name or path (weither it is an ingress wildcard or domain) |
@@ -543,7 +556,7 @@ However, there are a few other things you might want in a production environment
 |-----|------|---------|-------------|
 | monitoring.discord.chart.name | string | `"alertmanager-discord"` | Chart name |
 | monitoring.discord.chart.repo | string | `"https://masgustavos.github.io/helm"` | Helm repository |
-| monitoring.discord.chart.version | string | `"0.0.5"` | Chart version |
+| monitoring.discord.chart.version | string | `"0.0.6"` | Chart version |
 | monitoring.discord.enabled | bool | `false` | Enable Discord alerting hooks, you will need to enable Prometheus & Alertmanager as well |
 | monitoring.discord.values.channels | object | `{}` | Channels list, watch section below for more informations |
 | monitoring.discord.values.rolesToMention | list | `[]` | Roles to mention in discord you can obtain the id by typing `\@Role_Name` in discord's chat |
@@ -602,7 +615,7 @@ Grafana allows you to query, visualize, alert on and understand your metrics no 
 |-----|------|---------|-------------|
 | monitoring.grafana.chart.name | string | `"grafana"` | Chart name |
 | monitoring.grafana.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| monitoring.grafana.chart.version | string | `"6.32.1"` | Chart version |
+| monitoring.grafana.chart.version | string | `"6.44.10"` | Chart version |
 | monitoring.grafana.enabled | bool | `false` | Enable Grafana chart |
 | monitoring.grafana.values.auth.adminPassword | string | `"changeme"` | Grafana default admin password, only for raw type :warning: insecure :warning: |
 | monitoring.grafana.values.auth.adminUser | string | `"admin"` | Grafana default admin username, only for raw type :warning: insecure :warning |
@@ -636,7 +649,7 @@ monitoring:
           datasource: Prometheus
 ```
 
-##### Add custom dashboards from JSON
+##### Add custom dashboards from JSON or file
 
 > :warning: You will also need to enable Prometheus first :warning:
 > :warning: Using this technique in order to import dashboards is not advised, export your dashboard from Grafana and import it to Grafana net : [documentation](https://grafana.com/docs/grafana/latest/dashboards/export-import/) :warning:
@@ -719,14 +732,15 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.alertmanager.configurationFile | object | `{}` | Alertmanager configuration file, example below |
 | monitoring.prometheus.values.alertmanager.enabled | bool | `false` | Enable Alertmanager in the chart |
 | monitoring.prometheus.values.alertmanager.pvcSize | string | `"5Gi"` | Alertmanager PVC size, you will need to define a StorageClass in `default.storageClass` |
-| monitoring.prometheus.values.extraScrapeConfigs | list | `[{"job_name":"node","static_configs":[{"targets":["localhost:9100"]}]}]` | Enable extra configuration scrapes in the, watch section bellow for examples |
+| monitoring.prometheus.values.extraScrapeConfigs | list | `[]` | Enable extra configuration scrapes in the, watch section bellow for examples |
 | monitoring.prometheus.values.kubeStateMetrics.enabled | bool | `true` | Enable kubeStateMetrics in the chart |
 | monitoring.prometheus.values.nodeExporter.enabled | bool | `true` | Enable nodeExporter in the chart |
-| monitoring.prometheus.values.rules.customs | object | `{}` | Create Prometheus custom rules (not available yet) |
+| monitoring.prometheus.values.rules.customs | string | `""` | Create Prometheus custom rules |
 | monitoring.prometheus.values.rules.preconfiguredEnabled | bool | `true` | Enable Prometheus rules watch preconfigured rules below |
+| monitoring.prometheus.values.server.extraArgs | list | `[]` |  |
 | monitoring.prometheus.values.server.ingress.auth.authKey | string | `"htpasswd"` | Configure password key in vault kv-v2 secret, only for `auth.type: vault` |
 | monitoring.prometheus.values.server.ingress.auth.avpPath | string | `"avp/data/prometheus"` | Prometheus username and password path on Vault if your kv-v2 path is `avp`, your avp path will be `avp/data/prometheus` in order to pull secrets from Vault you should pass `vault kv put avp/prometheus htpasswd=<htpasswd-chain> htpasswd_plain_password=admin:changeme` (creating htpasswd_plain_password is not mandatory but recommended in order to find your username & password values), only for `auth.type: vault`, you will need to enable AVP in ArgoCD with `.Values.argocd.values.plugins.avp.enabled=true` |
-| monitoring.prometheus.values.server.ingress.auth.password | string | `"changeme"` | Basic auth password (only for `raw` type)  |
+| monitoring.prometheus.values.server.ingress.auth.password | string | `"changeme"` | Basic auth password (only for `raw` type) |
 | monitoring.prometheus.values.server.ingress.auth.type | string | `"raw"` | Can be `none`, `raw` (:warning: both insecure :warning:) `vault` |
 | monitoring.prometheus.values.server.ingress.auth.username | string | `"admin"` | Basic auth username (only for `raw` type) |
 | monitoring.prometheus.values.server.ingress.enabled | bool | `true` | Enable Prometheus UI Ingress |
@@ -803,6 +817,25 @@ extraScrapeConfigs: |
     metric_relabel_configs:
       - action: labeldrop
         regex: 'container_label_.*'
+```
+
+##### Additionnal set of rules
+
+```yaml
+customs: |
+  - name: Example Rules
+    rules:
+      - alert: DTKJob_AnyDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: average
+        annotations:
+          identifiers: $labels.instance
+          summary: |
+            Component Down
+          description:
+            K8S component down
 ```
 
 ### Networking
@@ -995,7 +1028,7 @@ Vault is an identity-based secret and encryption management system. A secret is 
 | vault.chart.repo | string | `"https://helm.releases.hashicorp.com"` | Helm repository |
 | vault.chart.version | string | `"0.20.1"` |  |
 | vault.enabled | bool | `false` | Enable Vault chart |
-| vault.values.ha | bool | `false` | Enable Vault HA  |
+| vault.values.ha | bool | `false` | Enable Vault HA |
 | vault.values.ingress.enabled | bool | `true` | Enable Vault UI Ingress |
 | vault.values.ingress.name | string | `"vault"` | Vault ingress name or path (weither it is an ingress wildcard or domain) |
 | vault.values.injector | bool | `false` | Enable Vault agent injector |

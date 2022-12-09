@@ -1,0 +1,31 @@
+{{- define "airbyte.enabled" -}}
+{{- .Values.data.airbyte.enabled -}}
+{{- end -}}
+{{ if eq (include "airbyte.enabled" .) "true" }}
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airbyte
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.data.namespace }}
+    server: https://kubernetes.default.svc
+  project: data
+  source:
+    chart: {{ .Values.data.airbyte.chart.name }}
+    repoURL: {{ .Values.data.airbyte.chart.repo }}
+    targetRevision: {{ .Values.data.airbyte.chart.version }}
+    helm:
+      version: v3
+      values: |-
+        {{- with .Values.data.airbyte.values }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+
+{{ end }}
