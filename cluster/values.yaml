@@ -72,6 +72,22 @@ velero:
       # -- region is the region of the bucket. Required
       region: eu-west-3
 
+# Data
+
+data:
+  # -- Data installation namespace
+  namespace: data
+  airbyte:
+    # -- Enabe Airbyte chart
+    enabled: false
+    chart:
+      # -- Helm repository
+      repo: https://airbytehq.github.io/helm-charts/
+      # -- Chart name
+      name: airbyte
+      # -- Chart version
+      version: "0.42.0"
+
 # Integration
 
 argocd:
@@ -567,7 +583,12 @@ monitoring:
         pvcSize: "30Gi"
         # -- Prometheus data retention
         retention: 720h
+        # -- Prometheus server extra args
         extraArgs: []
+        # -- Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+        tolerations: []
+        # -- Node labels for controller pod assignment
+        nodeSelector: {}
         ingress:
           # -- Enable Prometheus UI Ingress
           enabled: true
@@ -830,14 +851,3 @@ minio:
         name: minio-console
     # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
     monitor: false
-
-#Data
-
-data:
-  namespace: data
-  airbyte:
-    enabled: false
-    chart:
-      repo: https://airbytehq.github.io/helm-charts/
-      name: airbyte
-      version: "0.42.0"
