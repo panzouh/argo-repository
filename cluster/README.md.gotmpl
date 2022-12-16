@@ -109,6 +109,30 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
   {{- end }}
 {{- end }}
 
+#### Argo Events
+
+Argo Events is a Kubernetes-native event-based dependency manager. It allows you to define your event dependencies declaratively and trigger workflows based on those dependencies.
+
+| Key | Type | Default | Description |*
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "argo-events" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Argo Workflows
+
+Argo Workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "argo-workflows" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ##### Repositories
 
 ###### Without authentication
