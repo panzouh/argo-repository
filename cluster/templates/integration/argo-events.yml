@@ -2,8 +2,6 @@
 {{- or .Values.argo_events.enabled .Values.default.enabled -}}
 {{- end -}}
 {{ if eq (include "argo_events.enabled" .) "true" }}
-
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
