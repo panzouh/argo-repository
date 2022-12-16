@@ -2,6 +2,25 @@
 {{- or .Values.argoEvents.enabled .Values.default.enabled -}}
 {{- end -}}
 {{ if eq (include "argoEvents.enabled" .) "true" }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workflow-operator-sa
+  namespace: {{ .Values.argoEvents.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: workflow-operator
+subjects:
+  - kind: ServiceAccount
+    name: workflow-operator-sa
+    namespace: argo-events
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-admin
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
