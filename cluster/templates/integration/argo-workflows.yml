@@ -2,8 +2,6 @@
 {{- or .Values.argo_workflows.enabled .Values.default.enabled -}}
 {{- end -}}
 {{ if eq (include "argo_workflows.enabled" .) "true" }}
-
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
