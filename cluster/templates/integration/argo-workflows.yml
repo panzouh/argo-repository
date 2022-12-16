@@ -24,12 +24,10 @@ spec:
       values: |-
         {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argoWorkflows.values.ingress.enabled }}
         server:
-          ingress:
-            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argoWorkflows.values.ingress.enabled }}
         server:
-          ingress:
-            {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
         {{- end }}
 {{ end }}
