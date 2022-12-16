@@ -300,7 +300,7 @@ argo_events:
     # -- Helm repository
     repo: https://argoproj.github.io/argo-helm
     # -- Chart name
-    Name: argo-events
+    name: argo-events
     # -- Chart version
     version: 2.0.8
   values: {}
@@ -314,7 +314,7 @@ argo_workflows:
     # -- Helm repository
     repo: https://argoproj.github.io/argo-helm
     # -- Chart name
-    Name: argo-workflows
+    name: argo-workflows
     # -- Chart version
     version: 0.22.1
   values:
