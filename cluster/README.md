@@ -133,6 +133,20 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.plugins.gzip.enabled | bool | `false` | Enable gzip |
 | argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
+#### Argo Events
+
+Argo Events is a Kubernetes-native event-based dependency manager. It allows you to define your event dependencies declaratively and trigger workflows based on those dependencies.
+
+| Key | Type | Default | Description |*
+|-----|------|---------|-------------|
+
+#### Argo Workflows
+
+Argo Workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+
 ##### Repositories
 
 ###### Without authentication
