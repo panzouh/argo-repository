@@ -10,7 +10,7 @@ metadata:
   name: argo_workflows
   namespace: {{ .Values.argo_workflows.namespace }}
   finalizers:
-  {{- include "argo_workflows.applications.finalizers" . | nindent 4 }}
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:

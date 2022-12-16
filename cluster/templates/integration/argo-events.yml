@@ -10,7 +10,7 @@ metadata:
   name: argo_events
   namespace: {{ .Values.argo_events.namespace }}
   finalizers:
-  {{- include "argo_events.applications.finalizers" . | nindent 4 }}
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
