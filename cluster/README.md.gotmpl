@@ -116,7 +116,7 @@ Argo Events is a Kubernetes-native event-based dependency manager. It allows you
 | Key | Type | Default | Description |*
 |-----|------|---------|-------------|
 {{- range .Values }}
-  {{- if hasPrefix "argo-events" .Key }}
+  {{- if hasPrefix "argoEvents" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
@@ -128,7 +128,7 @@ Argo Workflows is a container-native workflow engine for orchestrating parallel 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
-  {{- if hasPrefix "argo-workflows" .Key }}
+  {{- if hasPrefix "argoWorkflows" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}

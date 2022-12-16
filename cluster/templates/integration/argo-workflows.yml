@@ -1,31 +1,31 @@
-{{- define "argo_workflows.enabled" -}}
-{{- or .Values.argo_workflows.enabled .Values.default.enabled -}}
+{{- define "argoWorkflows.enabled" -}}
+{{- or .Values.argoWorkflows.enabled .Values.default.enabled -}}
 {{- end -}}
-{{ if eq (include "argo_workflows.enabled" .) "true" }}
+{{ if eq (include "argoWorkflows.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argo_workflows
-  namespace: {{ .Values.argo_workflows.namespace }}
+  name: argoWorkflows
+  namespace: {{ .Values.argoWorkflows.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.argo_workflows.namespace }}
+    namespace: {{ .Values.argoWorkflows.namespace }}
     server: https://kubernetes.default.svc
   project: integration
   source:
-    chart: {{ .Values.argo_workflows.chart.name }}
-    repoURL: {{ .Values.argo_workflows.chart.repo }}
-    targetRevision: {{ .Values.argo_workflows.chart.version }}
+    chart: {{ .Values.argoWorkflows.chart.name }}
+    repoURL: {{ .Values.argoWorkflows.chart.repo }}
+    targetRevision: {{ .Values.argoWorkflows.chart.version }}
     helm:
       version: v3
       values: |-
-        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argo_workflows.values.ingress.enabled }}
-          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argo_workflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.argoWorkflows.values.ingress.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
         {{- end }}
-        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argo_workflows.values.ingress.enabled }}
-          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argo_workflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.argoWorkflows.values.ingress.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.argoWorkflows.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 }}
         {{- end }}
 {{ end }}

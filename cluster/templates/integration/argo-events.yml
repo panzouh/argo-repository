@@ -1,24 +1,24 @@
-{{- define "argo_events.enabled" -}}
-{{- or .Values.argo_events.enabled .Values.default.enabled -}}
+{{- define "argoEvents.enabled" -}}
+{{- or .Values.argoEvents.enabled .Values.default.enabled -}}
 {{- end -}}
-{{ if eq (include "argo_events.enabled" .) "true" }}
+{{ if eq (include "argoEvents.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argo_events
-  namespace: {{ .Values.argo_events.namespace }}
+  name: argoEvents
+  namespace: {{ .Values.argoEvents.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.argo_events.namespace }}
+    namespace: {{ .Values.argoEvents.namespace }}
     server: https://kubernetes.default.svc
   project: integration
   source:
-    chart: {{ .Values.argo_events.chart.name }}
-    repoURL: {{ .Values.argo_events.chart.repo }}
-    targetRevision: {{ .Values.argo_events.chart.version }}
+    chart: {{ .Values.argoEvents.chart.name }}
+    repoURL: {{ .Values.argoEvents.chart.repo }}
+    targetRevision: {{ .Values.argoEvents.chart.version }}
     helm:
       version: v3
       values: |-
