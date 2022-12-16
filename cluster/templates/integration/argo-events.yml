@@ -12,10 +12,10 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   ignoreDifferences:
-  - group: "core"
+  - group: "*"
     kind: "ConfigMap"
     jsonPointers:
-    - /data/controller-config.yaml
+    - /data
   destination:
     namespace: {{ .Values.argoEvents.namespace }}
     server: https://kubernetes.default.svc
