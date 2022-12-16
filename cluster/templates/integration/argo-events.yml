@@ -5,7 +5,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argoEvents
+  name: argo-events
   namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
