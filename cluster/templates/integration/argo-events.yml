@@ -11,6 +11,11 @@ metadata:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
+  ignoreDifferences:
+  - group: "core"
+    kind: "ConfigMap"
+    jsonPointers:
+    - /data/controller-config.yaml
   destination:
     namespace: {{ .Values.argoEvents.namespace }}
     server: https://kubernetes.default.svc
