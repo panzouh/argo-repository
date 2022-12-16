@@ -1,5 +1,5 @@
 {{- define "integration.enabled" -}}
-{{- or .Values.argocd.enabled .Values.default.enabled .Values.harbor.enabled .Values.kubernetesReplicator.enabled -}}
+{{- or .Values.argocd.enabled .Values.default.enabled .Values.harbor.enabled .Values.kubernetesReplicator.enabled .Values.argo_workflows.enabled .Values.argo_events.enabled -}}
 {{- end -}}
 {{ if eq (include "integration.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
