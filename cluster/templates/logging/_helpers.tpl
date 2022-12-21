@@ -22,15 +22,15 @@ Logging
     {{- end }}
 {{- end }}
 
-{{- define "lp.enabled" }}
-  {{- and .Values.logging.loki.enabled .Values.logging.promtail.enabled }}
+{{- define "l.enabled" }}
+  {{- .Values.logging.loki.enabled }}
 {{- end }}
 
 {{- define "logging.namespace" }}
-  {{- if or (eq (include "lp.enabled" .) "true") (eq (include "elfk.enabled" .) "true") }}
-    {{- if and (eq (include "lp.enabled" .) "true") (eq (include "elfk.enabled" .) "true") }}
+  {{- if or (eq (include "l.enabled" .) "true") (eq (include "elfk.enabled" .) "true") }}
+    {{- if and (eq (include "l.enabled" .) "true") (eq (include "elfk.enabled" .) "true") }}
       {{- print "disabled" }}
-    {{- else if eq (include "lp.enabled" .) "true" }}
+    {{- else if eq (include "l.enabled" .) "true" }}
       {{- print "monitoring" }}
     {{- else if eq (include "elfk.enabled" .) "true" }}
       {{- print "elastic-system" }}

@@ -1,5 +1,5 @@
 {{- define "promtail.enabled" -}}
-{{- eq (include "logging.namespace" .) "monitoring" -}}
+{{- and .Values.logging.promtail.enabled (eq (include "logging.namespace" .) "monitoring") -}}
 {{- end -}}
 {{ if eq (include "promtail.enabled" .) "true" }}
 ---
@@ -44,8 +44,8 @@ spec:
       - name: pods
         mountPath: /var/log/pods
         readOnly: true
-      config:
-        logLevel: info
-        serverPort: 3101
-        lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+    config:
+      logLevel: info
+      serverPort: 3101
+      lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
 {{ end }}
