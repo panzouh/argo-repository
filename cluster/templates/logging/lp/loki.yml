@@ -17,9 +17,9 @@ spec:
     server: https://kubernetes.default.svc
   project: logging
   source:
-    chart: {{ .Values.monitoring.grafana.chart.name }}
-    repoURL: {{ .Values.monitoring.grafana.chart.repo }}
-    targetRevision: {{ .Values.monitoring.grafana.chart.version }}
+    chart: {{ .Values.logging.loki.chart.name }}
+    repoURL: {{ .Values.logging.loki.chart.repo }}
+    targetRevision: {{ .Values.logging.loki.chart.version }}
     helm:
       version: v3
       values: |
