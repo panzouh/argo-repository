@@ -22,10 +22,10 @@ spec:
     targetRevision: {{ .Values.logging.loki.chart.version }}
     helm: |
       {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
-        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 6 -}}
       {{- end }}
       {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.logging.loki.values.ingress.enabled }}
-        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 6 -}}
       {{- end }}
       config:
         auth_enabled: false
