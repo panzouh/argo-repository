@@ -29,25 +29,26 @@ spec:
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
           {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
-        config:
-          auth_enabled: false
-          ingester:
-            chunk_idle_period: 3m
-            chunk_block_size: 262144
-            chunk_retain_period: 1m
-            max_transfer_retries: 0
-            lifecycler:
-              ring:
-                kvstore:
-                  store: inmemory
-                replication_factor: 1
-          limits_config:
-            enforce_metric_name: false
-            reject_old_samples: true
-            reject_old_samples_max_age: 168h
-            retention_period: {{ .Values.logging.loki.values.retention }}
-          server:
-            http_listen_port: 3100
+        loki:
+          config: |
+            auth_enabled: false
+            ingester:
+              chunk_idle_period: 3m
+              chunk_block_size: 262144
+              chunk_retain_period: 1m
+              max_transfer_retries: 0
+              lifecycler:
+                ring:
+                  kvstore:
+                    store: inmemory
+                  replication_factor: 1
+            limits_config:
+              enforce_metric_name: false
+              reject_old_samples: true
+              reject_old_samples_max_age: 168h
+              retention_period: {{ .Values.logging.loki.values.retention }}
+            server:
+              http_listen_port: 3100
         livenessProbe:
           httpGet:
             path: /ready
