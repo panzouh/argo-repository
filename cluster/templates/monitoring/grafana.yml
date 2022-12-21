@@ -35,9 +35,9 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if .Values.monitoring.grafana.values.server.root_url }}
+        {{- if and .Values.monitoring.grafana.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         server:
-          root_url: {{ .Values.monitoring.grafana.values.server.root_url }}
+          root_url: {{ include "url-constructor" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
         {{- end }}
         admin:
           existingSecret: "grafana-credentials"
