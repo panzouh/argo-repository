@@ -51,6 +51,7 @@ spec:
               http_listen_port: 3100
         read:
           replicas: 1
+          minReplicas: 0
           {{- if .Values.default.storageClass }}
           persistence:
             enabled: true
@@ -63,6 +64,7 @@ spec:
           {{- end }}
         write:
           replicas: 1
+          minReplicas: 0
           {{- if .Values.default.storageClass }}
           persistence:
             enabled: true
@@ -82,5 +84,7 @@ spec:
           minAvailable: 0
         replicas: 1
         serviceMonitor:
+          enabled: false
+        test:
           enabled: false
 {{ end }}
