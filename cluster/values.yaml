@@ -291,6 +291,39 @@ olm:
     targetRevision: HEAD
   values: {}
 
+argoEvents:
+  # -- Enable Argo Events chart
+  enabled: false
+  # -- Destination namespace
+  namespace: argo-events
+  chart:
+    # -- Helm repository
+    repo: https://argoproj.github.io/argo-helm
+    # -- Chart name
+    name: argo-events
+    # -- Chart version
+    version: 2.0.8
+  values: {}
+
+argoWorkflows:
+  # -- Enable Argo Workflows chart
+  enabled: false
+  # -- Destination namespace
+  namespace: argo-workflows
+  chart:
+    # -- Helm repository
+    repo: https://argoproj.github.io/argo-helm
+    # -- Chart name
+    name: argo-workflows
+    # -- Chart version
+    version: 0.22.1
+  values:
+    ingress:
+      # -- Enable Argo workflows UI ingress
+      enabled: true
+      # -- Argo workflows ingress name or path (weither it is an ingress wildcard or domain)
+      name: argo-workflows
+
 # Logging
 
 logging:

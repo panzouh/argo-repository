@@ -1,0 +1,49 @@
+{{- define "argoEvents.enabled" -}}
+{{- or .Values.argoEvents.enabled .Values.default.enabled -}}
+{{- end -}}
+{{ if eq (include "argoEvents.enabled" .) "true" }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workflow-operator-sa
+  namespace: {{ .Values.argoEvents.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: workflow-operator
+subjects:
+  - kind: ServiceAccount
+    name: workflow-operator-sa
+    namespace: argo-events
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-admin
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-events
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  ignoreDifferences:
+  - group: "*"
+    kind: "ConfigMap"
+    jsonPointers:
+    - /data
+  destination:
+    namespace: {{ .Values.argoEvents.namespace }}
+    server: https://kubernetes.default.svc
+  project: integration
+  source:
+    chart: {{ .Values.argoEvents.chart.name }}
+    repoURL: {{ .Values.argoEvents.chart.repo }}
+    targetRevision: {{ .Values.argoEvents.chart.version }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}
