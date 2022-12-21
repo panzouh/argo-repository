@@ -17,53 +17,55 @@ spec:
     server: https://kubernetes.default.svc
   project: logging
   source:
-    chart: {{ .Values.logging.loki.chart.name }}
-    repoURL: {{ .Values.logging.loki.chart.repo }}
-    targetRevision: {{ .Values.logging.loki.chart.version }}
-    helm: |-
-      {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
-        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 6 -}}
-      {{- end }}
-      {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.logging.loki.values.ingress.enabled }}
-        {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 6 -}}
-      {{- end }}
-      config:
-        auth_enabled: false
-        ingester:
-          chunk_idle_period: 3m
-          chunk_block_size: 262144
-          chunk_retain_period: 1m
-          max_transfer_retries: 0
-          lifecycler:
-            ring:
-              kvstore:
-                store: inmemory
-              replication_factor: 1
-        limits_config:
-          enforce_metric_name: false
-          reject_old_samples: true
-          reject_old_samples_max_age: 168h
-          retention_period: {{ .Values.logging.loki.values.retention }}
-        server:
-          http_listen_port: 3100
-      livenessProbe:
-        httpGet:
-          path: /ready
-          port: http-metrics
-        initialDelaySeconds: 45
-      {{- if .Values.default.storageClass }}
-      persistence:
-        enabled: true
-        size: {{ .Values.logging.loki.values.pvcSize }}
-        accessModes:
-          - {{ (include "accessModes.template" .) }}
-      {{- else }}
-      persistence:
-        enabled: false
-      {{- end }}
-      podDisruptionBudget:
-        minAvailable: 0
-      replicas: 1
-      serviceMonitor:
-        enabled: false
+    chart: {{ .Values.monitoring.grafana.chart.name }}
+    repoURL: {{ .Values.monitoring.grafana.chart.repo }}
+    targetRevision: {{ .Values.monitoring.grafana.chart.version }}
+    helm:
+      version: v3
+      values: |
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
+        {{- end }}
+        config:
+          auth_enabled: false
+          ingester:
+            chunk_idle_period: 3m
+            chunk_block_size: 262144
+            chunk_retain_period: 1m
+            max_transfer_retries: 0
+            lifecycler:
+              ring:
+                kvstore:
+                  store: inmemory
+                replication_factor: 1
+          limits_config:
+            enforce_metric_name: false
+            reject_old_samples: true
+            reject_old_samples_max_age: 168h
+            retention_period: {{ .Values.logging.loki.values.retention }}
+          server:
+            http_listen_port: 3100
+        livenessProbe:
+          httpGet:
+            path: /ready
+            port: http-metrics
+          initialDelaySeconds: 45
+        {{- if .Values.default.storageClass }}
+        persistence:
+          enabled: true
+          size: {{ .Values.logging.loki.values.pvcSize }}
+          accessModes:
+            - {{ (include "accessModes.template" .) }}
+        {{- else }}
+        persistence:
+          enabled: false
+        {{- end }}
+        podDisruptionBudget:
+          minAvailable: 0
+        replicas: 1
+        serviceMonitor:
+          enabled: false
 {{ end }}
