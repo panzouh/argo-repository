@@ -481,6 +481,7 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 | logging.loki.values.ingress.name | string | `"loki"` | Kibana ingress name or path (weither it is an ingress wildcard or domain) |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
 | logging.loki.values.pvcSize | string | `"100Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass` |
+| logging.loki.values.retention | string | `"740h"` | Loki retention |
 
 ##### Promtail
 

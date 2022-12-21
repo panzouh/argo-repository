@@ -311,6 +311,8 @@ logging:
       pvcSize: 100Gi
       # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
       enableGrafanaDashboard: true
+      # -- Loki retention
+      retention: 740h
       ingress:
         # -- Enable Kibana UI Ingress
         enabled: true
