@@ -49,21 +49,35 @@ spec:
               retention_period: {{ .Values.logging.loki.values.retention }}
             server:
               http_listen_port: 3100
+        read:
+          replicas: 1
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            size: {{ .Values.logging.loki.values.persitence.read }}
+            accessModes:
+              - {{ (include "accessModes.template" .) }}
+          {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
+        write:
+          replicas: 1
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            size: {{ .Values.logging.loki.values.persitence.write }}
+            accessModes:
+              - {{ (include "accessModes.template" .) }}
+          {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
         livenessProbe:
           httpGet:
             path: /ready
             port: http-metrics
           initialDelaySeconds: 45
-        {{- if .Values.default.storageClass }}
-        persistence:
-          enabled: true
-          size: {{ .Values.logging.loki.values.pvcSize }}
-          accessModes:
-            - {{ (include "accessModes.template" .) }}
-        {{- else }}
-        persistence:
-          enabled: false
-        {{- end }}
         podDisruptionBudget:
           minAvailable: 0
         replicas: 1
