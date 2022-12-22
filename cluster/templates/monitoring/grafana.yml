@@ -47,17 +47,21 @@ spec:
         datasources:
           datasources.yaml:
             apiVersion: 1
+            {{- if and .Values.monitoring.prometheus.enabled (eq (include "monitoring.namespace" .) "monitoring") }}
             datasources:
+              {{- if .Values.monitoring.prometheus.enabled }}
               - name: Prometheus
                 type: prometheus
                 url: http://prometheus-server.monitoring
                 access: proxy
+              {{- end }}
               {{- if eq (include "logging.namespace" .) "monitoring" }}
               - name: Loki
                 type: loki
                 url: http://loki.monitoring:3100
                 access: proxy
               {{- end }}
+            {{- end }}
         dashboardProviders:
           dashboardproviders.yaml:
             apiVersion: 1
