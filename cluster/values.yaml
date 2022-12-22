@@ -303,7 +303,7 @@ logging:
       # -- Chart name
       name: loki-simple-scalable
       # -- Chart version
-      version: "3.6.0"
+      version: "1.18.11"
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
