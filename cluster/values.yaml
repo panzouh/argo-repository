@@ -301,7 +301,7 @@ logging:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
       # -- Chart name
-      name: loki
+      name: loki-simple-scalable
       # -- Chart version
       version: "3.6.0"
     values:
