@@ -29,64 +29,44 @@ spec:
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
           {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
-        loki:
-          config: |
-            auth_enabled: false
-            ingester:
-              chunk_idle_period: 3m
-              chunk_block_size: 262144
-              chunk_retain_period: 1m
-              max_transfer_retries: 0
-              lifecycler:
-                ring:
-                  kvstore:
-                    store: inmemory
-                  replication_factor: 1
-            limits_config:
-              enforce_metric_name: false
-              reject_old_samples: true
-              reject_old_samples_max_age: 168h
-              retention_period: {{ .Values.logging.loki.values.retention }}
-            server:
-              http_listen_port: 3100
-        read:
-          replicas: 1
-          minReplicas: 0
-          {{- if .Values.default.storageClass }}
-          persistence:
-            enabled: true
-            size: {{ .Values.logging.loki.values.persitence.read }}
-            accessModes:
-              - {{ (include "accessModes.template" .) }}
-            storageClass: {{ .Values.default.storageClass }}
-          {{- else }}
-          persistence:
-            enabled: false
-          {{- end }}
-        write:
-          replicas: 1
-          minReplicas: 0
-          {{- if .Values.default.storageClass }}
-          persistence:
-            enabled: true
-            size: {{ .Values.logging.loki.values.persitence.write }}
-            accessModes:
-              - {{ (include "accessModes.template" .) }}
-            storageClass: {{ .Values.default.storageClass }}
-          {{- else }}
-          persistence:
-            enabled: false
-          {{- end }}
-        livenessProbe:
-          httpGet:
-            path: /ready
-            port: http-metrics
-          initialDelaySeconds: 45
-        podDisruptionBudget:
-          minAvailable: 0
-        replicas: 1
-        serviceMonitor:
-          enabled: false
         test:
           enabled: false
+        monitoring:
+          dashboards:
+            enabled: false
+          rules:
+            enabled: false
+          serviceMonitor:
+            enabled: false
+          selfMonitoring:
+            enabled: false
+          lokiCanary:
+            enabled: false
+        {{- if .Values.default.storageClass }}
+        singleBinary:
+          persistence:
+            enabled: true
+            storageClassName: {{ .Values.default.storageClass }}
+        {{- else }}
+        singleBinary:
+          persistence:
+            enabled: false
+        {{- end }}
+        loki:
+          auth_enabled: false
+          storage:
+            type: filesystem
+          commonConfig:
+            replication_factor: 1
+          limits_config:
+            enforce_metric_name: false
+            reject_old_samples: true
+            reject_old_samples_max_age: 168h
+          podSecurityContext:
+            fsGroup: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          server:
+            http_listen_port: 3100
 {{ end }}
