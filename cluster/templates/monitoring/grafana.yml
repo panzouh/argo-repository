@@ -43,7 +43,7 @@ spec:
           existingSecret: "grafana-credentials"
           userKey: username
           passwordKey: password
-        {{- if .Values.monitoring.prometheus.enabled }}
+        {{- if or .Values.monitoring.prometheus.enabled (eq (include "monitoring.namespace" .) "monitoring") }}
         datasources:
           datasources.yaml:
             apiVersion: 1
