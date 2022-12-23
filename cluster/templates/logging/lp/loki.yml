@@ -78,4 +78,9 @@ spec:
             reject_old_samples_max_age: 168h
           server:
             http_listen_port: 3100
+          podSecurityContext:
+            fsGroup: 0
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 0
 {{ end }}
