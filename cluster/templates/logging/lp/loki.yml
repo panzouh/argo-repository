@@ -42,14 +42,27 @@ spec:
             enabled: false
           lokiCanary:
             enabled: false
-        {{- if .Values.default.storageClass }}
-        singleBinary:
+        write:
+          replicas: 1
+          minReplicas: 0
+          {{- if .Values.default.storageClass }}
           persistence:
             enabled: true
             storageClassName: {{ .Values.default.storageClass }}
-            size: {{ .Values.logging.loki.values.pvcSize }}
-        {{- else }}
-        singleBinary:
+            size: {{ .Values.logging.loki.values.persistence.write }}
+          {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
+        read:
+          replicas: 1
+          minReplicas: 0
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            storageClassName: {{ .Values.default.storageClass }}
+            size: {{ .Values.logging.loki.values.persistence.write }}
+          {{- else }}
           persistence:
             enabled: false
         {{- end }}
@@ -63,11 +76,6 @@ spec:
             enforce_metric_name: false
             reject_old_samples: true
             reject_old_samples_max_age: 168h
-          podSecurityContext:
-            fsGroup: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-            runAsUser: 0
           server:
             http_listen_port: 3100
 {{ end }}
