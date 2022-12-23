@@ -93,11 +93,14 @@ ingress:
   hosts:
   {{- if eq $ingressDefinition.dns.mode "wildcard" }}
     - host: {{ $name }}.{{ $ingressDefinition.dns.wildcard }}
-      - path: /
-        pathType: Prefix
+      paths:
+        - path: /
+          pathType: Prefix
   {{- else if eq $ingressDefinition.dns.mode "domain" }}
     - host: {{ $ingressDefinition.dns.domain }}
       paths:
+        - path: /{{ $name }}
+          pathType: Prefix
         - {{ $name }}
   {{- end }}
   {{- if $ingressDefinition.ssl.enabled }}
