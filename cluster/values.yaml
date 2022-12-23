@@ -307,8 +307,11 @@ logging:
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
-      # -- Loki PVC size, you will need to define a StorageClass in `default.storageClass`
-      pvcSize: 50Gi
+      persistence:
+        # -- Loki write PVC size, you will need to define a StorageClass in `default.storageClass`
+        write: 50Gi
+        # -- Loki read PVC size, you will need to define a StorageClass in `default.storageClass`
+        read: 10Gi
       # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
       enableGrafanaDashboard: true
       # -- Loki retention
