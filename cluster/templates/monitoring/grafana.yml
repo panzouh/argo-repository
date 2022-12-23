@@ -47,7 +47,7 @@ spec:
         datasources:
           datasources.yaml:
             apiVersion: 1
-            {{- if and .Values.monitoring.prometheus.enabled (eq (include "monitoring.namespace" .) "monitoring") }}
+            {{- if or .Values.monitoring.prometheus.enabled (eq (include "monitoring.namespace" .) "monitoring") }}
             datasources:
               {{- if .Values.monitoring.prometheus.enabled }}
               - name: Prometheus
@@ -58,7 +58,7 @@ spec:
               {{- if eq (include "logging.namespace" .) "monitoring" }}
               - name: Loki
                 type: loki
-                url: http://loki.monitoring:3100
+                url: http://loki-read.monitoring:3100
                 access: proxy
               {{- end }}
             {{- end }}
