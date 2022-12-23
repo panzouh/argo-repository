@@ -26,12 +26,12 @@ spec:
         {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
         gateway:
           enabled: true
-          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 -}}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 -}}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
         gateway:
           enabled: true
-          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
         {{- end }}
         test:
           enabled: false
