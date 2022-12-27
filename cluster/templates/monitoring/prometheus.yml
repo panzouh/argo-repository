@@ -303,14 +303,6 @@ spec:
                   annotations:
                     summary: Kubernetes out of capacity {{ quote (include "labels.instance" .) }}
                     description: "Node {{ (include "labels.node" .) }} is out of capacity\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
-                - alert: DTKubernetes_JobFailed
-                  expr: kube_job_status_failed > 0
-                  for: 0m
-                  labels:
-                    severity: warning
-                  annotations:
-                    summary: Kubernetes Job failed instance {{ quote (include "labels.instance" .) }}
-                    description: "Job {{ (include "labels.namespace" .) }}/{{ (include "labels.exported_job" .) }} failed to complete\n VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
                 - alert: DTKPod_Restarting_Warning
                   expr: 5 > dtk_pod:restart:minutes_rate > 1
                   for: 30s
