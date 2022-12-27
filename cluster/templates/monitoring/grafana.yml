@@ -35,29 +35,33 @@ spec:
     helm:
       version: v3
       values: |-
-        {{- if .Values.monitoring.grafana.values.server.root_url }}
+        {{- if and .Values.monitoring.grafana.values.ingress.enabled (or (eq (include "ingress.namespace" .) "traefik-system") (eq (include "ingress.namespace" .) "ingress-nginx")) }}
         server:
-          root_url: {{ .Values.monitoring.grafana.values.server.root_url }}
+          root_url: {{ include "url-constructor" (dict "name" .Values.monitoring.grafana.values.ingress.name "ingress" .Values.ingress.ingressDefinition) }}
         {{- end }}
         admin:
           existingSecret: "grafana-credentials"
           userKey: username
           passwordKey: password
-        {{- if .Values.monitoring.prometheus.enabled }}
+        {{- if or .Values.monitoring.prometheus.enabled (eq (include "logging.namespace" .) "monitoring") }}
         datasources:
           datasources.yaml:
             apiVersion: 1
+            {{- if or .Values.monitoring.prometheus.enabled (eq (include "logging.namespace" .) "monitoring") }}
             datasources:
+              {{- if .Values.monitoring.prometheus.enabled }}
               - name: Prometheus
                 type: prometheus
                 url: http://prometheus-server.monitoring
                 access: proxy
+              {{- end }}
               {{- if eq (include "logging.namespace" .) "monitoring" }}
               - name: Loki
                 type: loki
-                url: http://loki.monitoring:3100
+                url: http://loki-read.monitoring:3100
                 access: proxy
               {{- end }}
+            {{- end }}
         dashboardProviders:
           dashboardproviders.yaml:
             apiVersion: 1
@@ -72,6 +76,7 @@ spec:
                   path: /var/lib/grafana/dashboards/default
         dashboards:
           default:
+            {{- if and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.enableGrafanaDashboard }}
             node-monitor-detailled:
               gnetId: 1860
               revision: 27
@@ -88,6 +93,7 @@ spec:
               gnetId: 13646
               revision: 2
               datasource: Prometheus
+            {{- end }}
             {{- if and .Values.monitoring.goldpinger.enabled .Values.monitoring.goldpinger.values.enableGrafanaDashboard }}
             goldpinger:
               gnetId: 10949
@@ -134,7 +140,7 @@ spec:
                 {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}
-            {{- if eq (include "logging.namespace" .) "monitoring" }}
+            {{- if and (eq (include "logging.namespace" .) "monitoring") .Values.logging.loki.values.enableGrafanaDashboard .Values.monitoring.prometheus.enabled.enabled }}
             loki:
               json: |-
                 {

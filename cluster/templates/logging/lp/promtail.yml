@@ -1,5 +1,5 @@
 {{- define "promtail.enabled" -}}
-{{- eq (include "logging.namespace" .) "monitoring" -}}
+{{- and .Values.logging.promtail.enabled (eq (include "logging.namespace" .) "monitoring") -}}
 {{- end -}}
 {{ if eq (include "promtail.enabled" .) "true" }}
 ---
@@ -21,29 +21,29 @@ spec:
     repoURL: {{ .Values.logging.promtail.chart.repo }}
     targetRevision: {{ .Values.logging.promtail.chart.version }}
     helm: |
-    {{- if .Values.logging.promtail.values.installOnControllPlane }}
-    tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/control-plane
-        operator: Exists
-        effect: NoSchedule
-    {{- end }}
-    defaultVolumes:
-      - name: containers
-        hostPath:
+      {{- if .Values.logging.promtail.values.installOnControllPlane }}
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      {{- end }}
+      defaultVolumes:
+        - name: containers
+          hostPath:
+            path: {{ .Values.logging.promtail.values.runtimeLogs }}
+        - name: pods
+          hostPath:
+            path: /var/log/pods
+      defaultVolumeMounts:
+        - name: containers
           path: {{ .Values.logging.promtail.values.runtimeLogs }}
-      - name: pods
-        hostPath:
-          path: /var/log/pods
-    defaultVolumeMounts:
-      - name: containers
-        path: {{ .Values.logging.promtail.values.runtimeLogs }}
-        readOnly: true
-      - name: pods
-        mountPath: /var/log/pods
-        readOnly: true
+          readOnly: true
+        - name: pods
+          mountPath: /var/log/pods
+          readOnly: true
       config:
         logLevel: info
         serverPort: 3101

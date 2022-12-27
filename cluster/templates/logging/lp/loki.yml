@@ -20,45 +20,78 @@ spec:
     chart: {{ .Values.logging.loki.chart.name }}
     repoURL: {{ .Values.logging.loki.chart.repo }}
     targetRevision: {{ .Values.logging.loki.chart.version }}
-    helm: |
-      ingress:
-        enabled: false
-      config:
-        auth_enabled: false
-        ingester:
-          chunk_idle_period: 3m
-          chunk_block_size: 262144
-          chunk_retain_period: 1m
-          max_transfer_retries: 0
-          lifecycler:
-            ring:
-              kvstore:
-                store: inmemory
-              replication_factor: 1
-        limits_config:
-          enforce_metric_name: false
-          reject_old_samples: true
-          reject_old_samples_max_age: 168h
-        server:
-          http_listen_port: 3100
-      livenessProbe:
-        httpGet:
-          path: /ready
-          port: http-metrics
-        initialDelaySeconds: 45
-      {{- if .Values.default.storageClass }}
-      persistence:
-        enabled: true
-        size: {{ .Values.logging.loki.values.pvcSize }}
-        accessModes:
-          - {{ (include "accessModes.template" .) }}
-      {{- else }}
-      persistence:
-        enabled: false
-      {{- end }}
-      podDisruptionBudget:
-        minAvailable: 0
-      replicas: 1
-      serviceMonitor:
-        enabled: false
+    helm:
+      version: v3
+      values: |
+        {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
+        gateway:
+          enabled: true
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 -}}
+        {{- end }}
+        {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
+        gateway:
+          enabled: true
+          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
+        {{- end }}
+        test:
+          enabled: false
+        monitoring:
+          dashboards:
+            enabled: false
+          rules:
+            enabled: false
+          serviceMonitor:
+            enabled: false
+          selfMonitoring:
+            enabled: false
+          lokiCanary:
+            enabled: false
+        write:
+          replicas: 1
+          minReplicas: 0
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            storageClassName: {{ .Values.default.storageClass }}
+            size: {{ .Values.logging.loki.values.persistence.write }}
+          {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
+        read:
+          replicas: 1
+          minReplicas: 0
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            storageClassName: {{ .Values.default.storageClass }}
+            size: {{ .Values.logging.loki.values.persistence.write }}
+          {{- else }}
+          persistence:
+            enabled: false
+        {{- end }}
+        loki:
+          auth_enabled: false
+          commonConfig:
+            replication_factor: 1
+          storage:
+            type: filesystem
+          limits_config:
+            enforce_metric_name: false
+            reject_old_samples: true
+            reject_old_samples_max_age: 336h
+            retention_period: {{ .Values.logging.loki.values.retention }}
+          server:
+            http_listen_port: 3100
+          podSecurityContext:
+            fsGroup: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 60
+            timeoutSeconds: 15
 {{ end }}

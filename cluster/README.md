@@ -499,13 +499,17 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| logging.loki.chart.name | string | `"loki"` | Chart name |
+| logging.loki.chart.name | string | `"loki-simple-scalable"` | Chart name |
 | logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
-| logging.loki.chart.version | string | `"2.12.2"` | Chart version |
+| logging.loki.chart.version | string | `"1.8.11"` | Chart version |
 | logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
+| logging.loki.values.ingress.enabled | bool | `true` | Enable Kibana UI Ingress |
+| logging.loki.values.ingress.name | string | `"loki"` | Kibana ingress name or path (weither it is an ingress wildcard or domain) |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
-| logging.loki.values.pvcSize | string | `"100Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass` |
+| logging.loki.values.persistence.read | string | `"10Gi"` | Loki read PVC size, you will need to define a StorageClass in `default.storageClass` |
+| logging.loki.values.persistence.write | string | `"50Gi"` | Loki write PVC size, you will need to define a StorageClass in `default.storageClass` |
+| logging.loki.values.retention | string | `"740h"` | Loki retention |
 
 ##### Promtail
 
@@ -974,7 +978,7 @@ NGINX Ingress Controller is a best-in-class traffic management solution for clou
 | ingress.nginx.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | ingress.nginx.values.ingressAnnotations | object | `{}` | Allow to add ingress annotations manually |
 | ingress.nginx.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
-| ingress.nginx.values.service.LoadBalancerIps | list | `[]` | Only for BareMetal support if you want to enforce Traefik's service IP |
+| ingress.nginx.values.service.LoadBalancerIps | list | `[]` | Only for BareMetal support if you want to enforce Nginx's service IP |
 | ingress.nginx.values.service.type | string | `"LoadBalancer"` | Can be either Loadbalancer or NodePort |
 
 #### Traefik
