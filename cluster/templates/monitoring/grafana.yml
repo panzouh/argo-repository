@@ -140,7 +140,7 @@ spec:
                 {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}
-            {{- if and (eq (include "logging.namespace" .) "monitoring") .values.monitoring.loki.values.enableGrafanaDashboard .Values.monitoring.prometheus.enabled.enabled }}
+            {{- if and (eq (include "logging.namespace" .) "monitoring") .values.logging.loki.values.enableGrafanaDashboard .Values.monitoring.prometheus.enabled.enabled }}
             loki:
               json: |-
                 {
