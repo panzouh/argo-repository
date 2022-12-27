@@ -72,6 +72,8 @@ spec:
         {{- end }}
         loki:
           auth_enabled: false
+          storage:
+            type: filesystem
           limits_config:
             enforce_metric_name: false
             reject_old_samples: true
