@@ -76,6 +76,7 @@ spec:
                   path: /var/lib/grafana/dashboards/default
         dashboards:
           default:
+            {{- if and .Values.monitoring.prometheus.enabled .Values.monitoring.prometheus.values.enableGrafanaDashboard }}
             node-monitor-detailled:
               gnetId: 1860
               revision: 27
@@ -92,6 +93,7 @@ spec:
               gnetId: 13646
               revision: 2
               datasource: Prometheus
+            {{- end }}
             {{- if and .Values.monitoring.goldpinger.enabled .Values.monitoring.goldpinger.values.enableGrafanaDashboard }}
             goldpinger:
               gnetId: 10949
@@ -138,7 +140,7 @@ spec:
                 {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}
-            {{- if eq (include "logging.namespace" .) "monitoring" }}
+            {{- if and (eq (include "logging.namespace" .) "monitoring") .values.monitoring.loki.values.enableGrafanaDashboard .Values.monitoring.prometheus.enabled.enabled }}
             loki:
               json: |-
                 {
