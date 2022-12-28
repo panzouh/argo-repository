@@ -58,7 +58,7 @@ spec:
               {{- if eq (include "logging.namespace" .) "monitoring" }}
               - name: Loki
                 type: loki
-                url: http://loki.monitoring:3100
+                url: http://loki-read.monitoring:3100
                 access: proxy
               {{- end }}
             {{- end }}

@@ -133,6 +133,33 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 | argocd.values.plugins.gzip.enabled | bool | `false` | Enable gzip |
 | argocd.values.repositories | list | `[]` | Registered repositories, watch section below :warning: Credentials creation not handled yet :warning: |
 
+#### Argo Events
+
+Argo Events is a Kubernetes-native event-based dependency manager. It allows you to define your event dependencies declaratively and trigger workflows based on those dependencies.
+
+| Key | Type | Default | Description |*
+|-----|------|---------|-------------|
+| argoEvents.chart.name | string | `"argo-events"` | Chart name |
+| argoEvents.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
+| argoEvents.chart.version | string | `"2.0.8"` | Chart version |
+| argoEvents.enabled | bool | `false` | Enable Argo Events chart |
+| argoEvents.namespace | string | `"argo-events"` | Destination namespace |
+| argoEvents.values | object | `{}` |  |
+
+#### Argo Workflows
+
+Argo Workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| argoWorkflows.chart.name | string | `"argo-workflows"` | Chart name |
+| argoWorkflows.chart.repo | string | `"https://argoproj.github.io/argo-helm"` | Helm repository |
+| argoWorkflows.chart.version | string | `"0.22.1"` | Chart version |
+| argoWorkflows.enabled | bool | `false` | Enable Argo Workflows chart |
+| argoWorkflows.namespace | string | `"argo-workflows"` | Destination namespace |
+| argoWorkflows.values.ingress.enabled | bool | `true` | Enable Argo workflows UI ingress |
+| argoWorkflows.values.ingress.name | string | `"argo-workflows"` | Argo workflows ingress name or path (weither it is an ingress wildcard or domain) |
+
 ##### Repositories
 
 ###### Without authentication
@@ -472,8 +499,8 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| logging.loki.chart.name | string | `"loki"` | Chart name |
-| logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
+| logging.loki.chart.name | string | `"loki-simple-scalable"` | Chart name |
+| logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository 
 | logging.loki.chart.version | string | `"3.8.0"` | Chart version |
 | logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
