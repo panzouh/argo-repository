@@ -301,9 +301,9 @@ logging:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
       # -- Chart name
-      name: loki-simple-scalable
+      name: loki
       # -- Chart version
-      version: "1.8.11"
+      version: "3.8.0"
     values:
       # -- Enable prometheus metrics scraping, you will need to enable Prometheus as well
       monitor: false
@@ -312,6 +312,8 @@ logging:
         write: 50Gi
         # -- Loki read PVC size, you will need to define a StorageClass in `default.storageClass`
         read: 10Gi
+      # -- Loki PVC size, you will need to define a StorageClass in `default.storageClass`
+      pvcSize: 50Gi
       # -- Enable a Grafana specific dashboard, you will need to have Grafana enabled
       enableGrafanaDashboard: true
       # -- Loki retention
