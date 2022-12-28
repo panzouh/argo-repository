@@ -24,14 +24,10 @@ spec:
       version: v3
       values: |
         {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.logging.loki.values.ingress.enabled }}
-        gateway:
-          enabled: true
-          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 -}}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         {{- if and (eq (include "ingress.namespace" .) "ingress-nginx") .Values.monitoring.grafana.values.ingress.enabled }}
-        gateway:
-          enabled: true
-          {{- include "helm-ingress.alternateSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 10 -}}
+          {{- include "helm-ingress.defaultSpec" (dict "name" .Values.logging.loki.values.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.nginx.values.ingressAnnotations) | nindent 8 -}}
         {{- end }}
         test:
           enabled: false
@@ -46,41 +42,22 @@ spec:
             enabled: false
           lokiCanary:
             enabled: false
-        write:
-          replicas: 1
-          minReplicas: 0
-          {{- if .Values.default.storageClass }}
-          persistence:
-            enabled: true
-            storageClassName: {{ .Values.default.storageClass }}
-            size: {{ .Values.logging.loki.values.persistence.write }}
-          {{- else }}
-          persistence:
-            enabled: false
-          {{- end }}
-        read:
-          replicas: 1
-          minReplicas: 0
-          {{- if .Values.default.storageClass }}
-          persistence:
-            enabled: true
-            storageClassName: {{ .Values.default.storageClass }}
-            size: {{ .Values.logging.loki.values.persistence.write }}
-          {{- else }}
-          persistence:
-            enabled: false
-        {{- end }}
         loki:
           auth_enabled: false
-          commonConfig:
-            replication_factor: 1
           storage:
             type: filesystem
+          commonConfig:
+            replication_factor: 1
           limits_config:
             enforce_metric_name: false
             reject_old_samples: true
             reject_old_samples_max_age: 336h
             retention_period: {{ .Values.logging.loki.values.retention }}
+          podSecurityContext:
+            fsGroup: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
           server:
             http_listen_port: 3100
           podSecurityContext:
@@ -88,10 +65,16 @@ spec:
             runAsGroup: 0
             runAsNonRoot: false
             runAsUser: 0
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: http-metrics
-            initialDelaySeconds: 60
-            timeoutSeconds: 15
+          singleBinary:
+            {{- if .Values.default.storageClass }}
+            persistence:
+              enabled: true
+              size: {{ .Values.logging.loki.values.pvcSize }}
+              accessModes:
+                - {{ (include "accessModes.template" .) }}
+              storageClass: local-path
+            {{- else }}
+            persistence:
+              enabled: false
+            {{- end }}
 {{ end }}
