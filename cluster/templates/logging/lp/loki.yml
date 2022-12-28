@@ -65,14 +65,14 @@ spec:
             runAsGroup: 0
             runAsNonRoot: false
             runAsUser: 0
-          singleBinary:
-            {{- if .Values.default.storageClass }}
-            persistence:
-              enabled: true
-              size: {{ .Values.logging.loki.values.pvcSize }}
-              storageClass: local-path
-            {{- else }}
-            persistence:
-              enabled: false
-            {{- end }}
+        singleBinary:
+          {{- if .Values.default.storageClass }}
+          persistence:
+            enabled: true
+            size: {{ .Values.logging.loki.values.pvcSize }}
+            storageClass: local-path
+          {{- else }}
+          persistence:
+            enabled: false
+          {{- end }}
 {{ end }}
