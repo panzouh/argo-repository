@@ -499,8 +499,8 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| logging.loki.chart.name | string | `"loki-simple-scalable"` | Chart name |
-| logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository 
+| logging.loki.chart.name | string | `"loki"` | Chart name |
+| logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.loki.chart.version | string | `"3.8.0"` | Chart version |
 | logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
