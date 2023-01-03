@@ -1,5 +1,5 @@
 {{- define "management.enabled" -}}
-{{- .Values.rancher.enabled -}}
+{{- or .Values.rancher.enabled .Values.uxp.enabled -}}
 {{- end -}}
 {{ if eq (include "management.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
@@ -14,6 +14,10 @@ spec:
   destinations:
   {{- if .Values.rancher.enabled }}
   - namespace: '{{ .Values.rancher.namespace }}'
+    server: '*'
+  {{- end }}
+  {{- if .Values.uxp.enabled }}
+  - namespace: '{{ .Values.uxp.namespace }}'
     server: '*'
   {{- end }}
   sourceRepos:
