@@ -532,7 +532,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | rancher.chart.name | string | `"rancher"` | Chart name |
 | rancher.chart.repo | string | `"https://releases.rancher.com/server-charts/stable"` | Helm repository |
 | rancher.chart.version | string | `"2.6.8"` | Chart version |
-| rancher.enabled | bool | `false` | Enable Prometheus chart |
+| rancher.enabled | bool | `false` | Enable Rancher chart |
 | rancher.namespace | string | `"cattle-system"` | Destination namespace |
 | rancher.values.bootstrapPassword | string | `"changeme"` | Only for bootstrapp, if the application is exposed consider changing it |
 | rancher.values.caBundle | string | `nil` | Additionnal CA Bundle b64encoded |
