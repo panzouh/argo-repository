@@ -7,13 +7,13 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: uxp
-  namespace: {{ .Values.uxp.namespace }}
+  namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.argocd.namespace }}
+    namespace: {{ .Values.uxp.namespace }}
     server: https://kubernetes.default.svc
   project: management
   source:
