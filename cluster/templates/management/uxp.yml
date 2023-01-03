@@ -13,7 +13,7 @@ metadata:
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.uxp.namespace }}
+    namespace: {{ .Values.argocd.namespace }}
     server: https://kubernetes.default.svc
   project: management
   source:
