@@ -540,6 +540,17 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | rancher.values.ingress.name | string | `"rancher"` | Rancher ingress name or path (weither it is an ingress wildcard or domain) |
 | rancher.values.replicas | int | `1` | Rancher replicas |
 
+#### Uxp
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| uxp.chart.name | string | `"uxp"` | Chart name |
+| uxp.chart.repo | string | `"https://charts.upbound.io/stable"` | Helm repository |
+| uxp.chart.version | string | `"1.10.1-up.1"` | Chart version |
+| uxp.enabled | bool | `false` | Enable Universal Crossplane chart |
+| uxp.namespace | string | `"upbound-system"` | Destination namespace |
+| uxp.values | object | `{}` |  |
+
 ### Monitoring
 
 #### Define Monitoring global variables
