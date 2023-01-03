@@ -464,6 +464,16 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
   {{- end }}
 {{- end }}
 
+#### Uxp
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if (hasPrefix "uxp" .Key) }} 
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ### Monitoring
 
 #### Define Monitoring global variables
