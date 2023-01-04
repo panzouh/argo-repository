@@ -544,7 +544,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| uxp.chart.name | string | `"uxp"` | Chart name |
+| uxp.chart.name | string | `"universal-crossplane"` | Chart name |
 | uxp.chart.repo | string | `"https://charts.upbound.io/stable"` | Helm repository |
 | uxp.chart.version | string | `"1.10.1-up.1"` | Chart version |
 | uxp.enabled | bool | `false` | Enable Universal Crossplane chart |
