@@ -1,0 +1,26 @@
+{{- define "uxp.enabled" -}}
+{{- .Values.uxp.enabled -}}
+{{- end -}}
+{{ if eq (include "uxp.enabled" .) "true" }}
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: uxp
+  namespace: {{ .Values.argocd.namespace }}
+  finalizers:
+  {{- include "argocd.applications.finalizers" . | nindent 4 }}
+spec:
+  {{- template "cluster.syncPolicy.default" . }}
+  destination:
+    namespace: {{ .Values.uxp.namespace }}
+    server: https://kubernetes.default.svc
+  project: management
+  source:
+    chart: {{ .Values.uxp.chart.name }}
+    repoURL: {{ .Values.uxp.chart.repo }}
+    targetRevision: {{ .Values.uxp.chart.version }}
+    helm:
+      version: v3
+      values: |-
+{{ end }}
