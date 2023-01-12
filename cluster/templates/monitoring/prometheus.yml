@@ -154,15 +154,6 @@ spec:
             {{- if eq (include "preconfigureRules.enabled" .) "true" }}
             - name: Rules
               rules:
-                - alert: DTKJob_AnyDown
-                  expr: up == 0
-                  for: 5m
-                  labels:
-                    severity: average
-                  annotations:
-                    identifiers: {{ quote (include "labels.instance" .) }}
-                    summary: "Component Down on instance {{ (include "labels.instance" .) }}"
-                    description: "K8S component down\n  VALUE = {{ (include "value" .) }}\n  LABELS: {{ (include "labels" .) }}"
                 - alert: DTKNode_Down
                   expr: up{job="kubernetes-nodes"} == 0
                   for: 1m
