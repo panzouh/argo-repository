@@ -80,6 +80,16 @@ spec:
           tolerations:
             {{- toYaml .Values.monitoring.prometheus.values.server.tolerations | nindent 12 }}
           {{- end }}
+          readinessProbeInitialDelay: 600
+          readinessProbePeriodSeconds: 30
+          readinessProbeTimeout: 5
+          readinessProbeFailureThreshold: 5
+          readinessProbeSuccessThreshold: 1
+          livenessProbeInitialDelay: 30
+          livenessProbePeriodSeconds: 15
+          livenessProbeTimeout: 10
+          livenessProbeFailureThreshold: 3
+          livenessProbeSuccessThreshold: 1
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.values.server.ingress.enabled }}
             {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "none" }}
               {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
