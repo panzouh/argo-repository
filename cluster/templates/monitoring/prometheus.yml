@@ -90,6 +90,13 @@ spec:
           livenessProbeTimeout: 10
           livenessProbeFailureThreshold: 3
           livenessProbeSuccessThreshold: 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 3Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
           {{- if and (eq (include "ingress.namespace" .) "traefik-system") .Values.monitoring.prometheus.values.server.ingress.enabled }}
             {{- if eq .Values.monitoring.prometheus.values.server.ingress.auth.type "none" }}
               {{- include "helm-ingress.defaultSpec" (dict "name" .Values.monitoring.prometheus.values.server.ingress.name "ingressDefinition" .Values.ingress.ingressDefinition "annotations" .Values.ingress.traefik.values.ingressAnnotations) | nindent 10 }}
