@@ -75,4 +75,12 @@ spec:
           persistence:
             enabled: false
           {{- end }}
+          {{- if .Values.logging.loki.values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml .Values.logging.loki.values.nodeSelector | nindent 12 }}
+          {{- end }}
+          {{- if .Values.logging.loki.values.tolerations }}
+          tolerations:
+            {{- toYaml .Values.logging.loki.values.tolerations | nindent 12 }}
+          {{- end }}
 {{ end }}
