@@ -51,7 +51,6 @@ spec:
             readOnly: true
           - name: pods
             mountPath: /var/log/pods
-            readOnly: true
         {{- if .Values.logging.promtail.values.extraVolumes }}
         extraVolumes:
           {{- toYaml .Values.logging.promtail.values.extraVolumes | nindent 10 }}
