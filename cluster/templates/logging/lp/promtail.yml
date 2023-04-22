@@ -57,7 +57,8 @@ spec:
         config:
           logLevel: info
           serverPort: 3101
-          lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+          clients: 
+            - url: http://loki:3100.{{ (include "logging.namespace" .) }}/loki/api/v1/push
           {{- if .Values.logging.promtail.values.extraScrapeConfigs }}
           extraScrapeConfigs: |-
               {{- with .Values.logging.promtail.values.extraScrapeConfigs }}
