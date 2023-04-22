@@ -23,6 +23,9 @@ spec:
     helm:
       version: v3
       values: |
+        containerSecurityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
         {{- if .Values.logging.promtail.values.installOnControllPlane }}
         tolerations:
           - key: node-role.kubernetes.io/master
