@@ -480,6 +480,26 @@ extraScrapeConfigs:
     regex: true
 ```
 
+###### Pipeline stages
+
+If you want to add any additional pipeline stages to "kubernetes-pods" job, you can add extra pipeline stages to Promtail. Here is an example:
+
+```yaml
+extraPipelineStages:
+  - docker: {}
+  - cri: {}
+  - labeldrop:
+      - filename
+  - match:
+      selector: '{app="nginx"}'
+      stages:
+        - json:
+            expressions:
+              log: log
+```
+
+In this example we are adding json parser to all pods with label "app" set to "nginx".
+
 In this example we are keeping only those pods which have label "log_me" set to true.
 
 ### Management

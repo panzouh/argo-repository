@@ -527,6 +527,7 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | logging.promtail.values.extraVolumeMounts | list | `[]` | Extra volume mounts together. Corresponds to `extraVolumes`. |
 | logging.promtail.values.extraVolumes | list | `[]` | Extra volumes to be added in addition to those specified by default |
 | logging.promtail.values.installOnControllPlane | bool | `true` | Enable Promtail on the controll plane |
+| logging.promtail.values.pipelineStages | list | `[]` | Enabl |
 | logging.promtail.values.runtimeLogs | string | `"/var/log/containers"` | Path to runtime containers |
 
 ###### Extra scrape config
@@ -556,6 +557,26 @@ extraScrapeConfigs:
     action: keep
     regex: true
 ```
+
+###### Pipeline stages
+
+If you want to add any additional pipeline stages to "kubernetes-pods" job, you can add extra pipeline stages to Promtail. Here is an example:
+
+```yaml
+extraPipelineStages:
+  - docker: {}
+  - cri: {}
+  - labeldrop:
+      - filename
+  - match:
+      selector: '{app="nginx"}'
+      stages:
+        - json:
+            expressions:
+              log: log
+```
+
+In this example we are adding json parser to all pods with label "app" set to "nginx".
 
 In this example we are keeping only those pods which have label "log_me" set to true.
 
