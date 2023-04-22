@@ -78,7 +78,7 @@ spec:
                   {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}
-            {{- if .Values.logging.promtail.values.pielineStages }}
+            {{- if .Values.logging.promtail.values.pipelineStages }}
             pipelineStages:
               {{- with .Values.logging.promtail.values.pipelineStages }}
                   {{- toYaml . | nindent 12 }}
