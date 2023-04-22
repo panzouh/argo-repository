@@ -64,7 +64,7 @@ spec:
           serverPort: 3101
           clients: 
             - url: http://loki.{{ (include "logging.namespace" .) }}:3100/loki/api/v1/push
-          {{- if or .Values.logging.promtail.values.extraScrapeConfigs .Values.logging.promtail.values.extraRelabelConfigs }}
+          {{- if or .Values.logging.promtail.values.extraScrapeConfigs .Values.logging.promtail.values.extraRelabelConfigs .Values.logging.promtail.values.pipelineStages }}
           snippets:
             {{- if .Values.logging.promtail.values.extraScrapeConfigs }}
             extraScrapeConfigs: |-
@@ -75,6 +75,12 @@ spec:
             {{- if .Values.logging.promtail.values.extraRelabelConfigs }}
             extraRelabelConfigs:
               {{- with .Values.logging.promtail.values.extraRelabelConfigs }}
+                  {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.logging.promtail.values.pielineStages }}
+            pipelineStages:
+              {{- with .Values.logging.promtail.values.pipelineStages }}
                   {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}

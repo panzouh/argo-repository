@@ -379,6 +379,8 @@ logging:
       extraScrapeConfigs: []
       # -- Enable extra configuration relabels in the, watch section bellow for examples
       extraRelabelConfigs: []
+      # -- Enabl
+      pipelineStages: []
 
   eck:
     # -- Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory
