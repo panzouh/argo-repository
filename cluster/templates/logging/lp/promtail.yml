@@ -44,8 +44,27 @@ spec:
         - name: pods
           mountPath: /var/log/pods
           readOnly: true
+      {{- if .Values.logging.promtail.values.extraVolumes }}
+      extraVolumes:
+        {{- toYaml .Values.logging.promtail.values.extraVolumes | nindent 8 }}
+      {{- end }}
+      {{- if .Values.logging.promtail.values.extraVolumeMounts }}
+      extraVolumeMounts:
+        {{- toYaml .Values.logging.promtail.values.extraVolumeMounts | nindent 8 }}
+      {{- end }}
+      {{- if .Values.logging.promtail.values.extraContainers }}
       config:
         logLevel: info
         serverPort: 3101
         lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+        extraScrapeConfigs: |-
+          {{- if .Values.logging.promtail.values.extraScrapeConfigs -}}
+            {{- with .Values.logging.promtail.values.extraScrapeConfigs }}
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          {{- end }}
+        extraRelabelConfigs:
+          {{- with .Values.logging.promtail.values.extraRelabelConfigs }}
+              {{- toYaml . | nindent 10 }}
+          {{- end }}
 {{ end }}

@@ -452,6 +452,36 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
   {{- end }}
 {{- end }}
 
+###### Extra scrape config
+
+If you want to ship more logs into Loki, you can add extra scrape config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+  - job_name: system
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'system_logs'
+          host: 'myhostname'
+          __path__: '/var/log/syslog'
+```
+
+In this example we are shipping /var/log/syslog from localhost with label "host" set to "myhostname". You might need to add an extraVolumeMounts and extraVolumes to Promtail to make this work.
+
+###### Extra relabel config
+
+If you want to add any additional relabel_configs to "kubernetes-pods" job, you can add extra relabel config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+   source_labels: [__meta_kubernetes_pod_label_log_me]
+    action: keep
+    regex: true
+```
+
+In this example we are keeping only those pods which have label "log_me" set to true.
+
 ### Management
 
 #### Rancher

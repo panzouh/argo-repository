@@ -329,7 +329,7 @@ olm:
 logging:
   loki:
     # -- Enable Loki chart
-    enabled: false
+    enabled: true
     chart:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
@@ -354,7 +354,7 @@ logging:
 
   promtail:
     # -- Enable Promtail chart
-    enabled: false
+    enabled: true
     chart:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
@@ -366,7 +366,16 @@ logging:
       # -- Enable Promtail on the controll plane
       installOnControllPlane: true
       # -- Path to runtime containers
-      runtimeLogs: "/var/lib/docker/containers"
+      runtimeLogs: "/var/log/containers"
+      # -- Extra volumes to be added in addition to those specified by default
+      extraVolumes: []
+      # -- Extra volume mounts together. Corresponds to `extraVolumes`.
+      extraVolumeMounts: []
+      # -- Enable extra configuration scrapes in the, watch section bellow for examples
+      extraScrapeConfigs: []
+      # -- Enable extra configuration relabels in the, watch section bellow for examples
+      extraRelabelConfigs: []
+
   eck:
     # -- Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory
     enabled: false
