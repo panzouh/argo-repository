@@ -520,8 +520,42 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | logging.promtail.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.promtail.chart.version | string | `"6.0.2"` | Chart version |
 | logging.promtail.enabled | bool | `false` | Enable Promtail chart |
+| logging.promtail.values.extraRelabelConfigs | list | `[]` | Enable extra configuration relabels in the, watch section bellow for examples |
+| logging.promtail.values.extraScrapeConfigs | list | `[]` | Enable extra configuration scrapes in the, watch section bellow for examples |
+| logging.promtail.values.extraVolumeMounts | list | `[]` | Extra volume mounts together. Corresponds to `extraVolumes`. |
+| logging.promtail.values.extraVolumes | list | `[]` | Extra volumes to be added in addition to those specified by default |
 | logging.promtail.values.installOnControllPlane | bool | `true` | Enable Promtail on the controll plane |
-| logging.promtail.values.runtimeLogs | string | `"/var/lib/docker/containers"` | Path to runtime containers |
+| logging.promtail.values.runtimeLogs | string | `"/var/log/containers"` | Path to runtime containers |
+
+###### Extra scrape config
+
+If you want to ship more logs into Loki, you can add extra scrape config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+  - job_name: system
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'system_logs'
+          host: 'myhostname'
+          __path__: '/var/log/syslog'
+```
+
+In this example we are shipping /var/log/syslog from localhost with label "host" set to "myhostname". You might need to add an extraVolumeMounts and extraVolumes to Promtail to make this work.
+
+###### Extra relabel config
+
+If you want to add any additional relabel_configs to "kubernetes-pods" job, you can add extra relabel config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+   source_labels: [__meta_kubernetes_pod_label_log_me]
+    action: keep
+    regex: true
+```
+
+In this example we are keeping only those pods which have label "log_me" set to true.
 
 ### Management
 
