@@ -41,7 +41,7 @@ spec:
               path: /var/log/pods
         defaultVolumeMounts:
           - name: containers
-            path: {{ .Values.logging.promtail.values.runtimeLogs }}
+            mountPath: {{ .Values.logging.promtail.values.runtimeLogs }}
             readOnly: true
           - name: pods
             mountPath: /var/log/pods
@@ -58,14 +58,16 @@ spec:
           logLevel: info
           serverPort: 3101
           lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+          {{- if .Values.logging.promtail.values.extraScrapeConfigs -}}
           extraScrapeConfigs: |-
-            {{- if .Values.logging.promtail.values.extraScrapeConfigs -}}
               {{- with .Values.logging.promtail.values.extraScrapeConfigs }}
                 {{- toYaml . | nindent 12 }}
               {{- end }}
-            {{- end }}
+          {{- end }}
+          {{- if .Values.logging.promtail.values.extraRelabelConfigs -}}
           extraRelabelConfigs:
             {{- with .Values.logging.promtail.values.extraRelabelConfigs }}
                 {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- end }}
 {{ end }}
