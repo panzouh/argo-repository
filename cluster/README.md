@@ -502,13 +502,15 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 | logging.loki.chart.name | string | `"loki"` | Chart name |
 | logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.loki.chart.version | string | `"3.8.0"` | Chart version |
-| logging.loki.enabled | bool | `false` | Enable Loki chart |
+| logging.loki.enabled | bool | `true` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | logging.loki.values.ingress.enabled | bool | `true` | Enable Kibana UI Ingress |
-| logging.loki.values.ingress.name | string | `"loki"` | Kibana ingress name or path (weither it is an ingress wildcard or domain) |
+| logging.loki.values.ingress.name | string | `"loki"` | Loki ingress name or path (weither it is an ingress wildcard or domain) |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| logging.loki.values.nodeSelector | object | `{}` | Node labels for Loki pod assignment |
 | logging.loki.values.pvcSize | string | `"50Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass` |
 | logging.loki.values.retention | string | `"740h"` | Loki retention |
+| logging.loki.values.tolerations | list | `[]` | Node tolerations for scheduling Loki to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 
 ##### Promtail
 
@@ -820,10 +822,10 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.server.ingress.auth.username | string | `"admin"` | Basic auth username (only for `raw` type) |
 | monitoring.prometheus.values.server.ingress.enabled | bool | `true` | Enable Prometheus UI Ingress |
 | monitoring.prometheus.values.server.ingress.name | string | `"prometheus"` | Prometheus ingress name or path (weither it is an ingress wildcard or domain) |
-| monitoring.prometheus.values.server.nodeSelector | object | `{}` | Node labels for controller pod assignment |
+| monitoring.prometheus.values.server.nodeSelector | object | `{}` | Node labels for prometheus pod assignment |
 | monitoring.prometheus.values.server.pvcSize | string | `"30Gi"` | Prometheus PVC size, you will need to define a StorageClass in `default.storageClass` |
 | monitoring.prometheus.values.server.retention | string | `"720h"` | Prometheus data retention |
-| monitoring.prometheus.values.server.tolerations | list | `[]` | Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
+| monitoring.prometheus.values.server.tolerations | list | `[]` | Node tolerations for scheduling Prometheus to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 | monitoring.prometheusMsTeams.chart.name | string | `"prometheus-msteams"` | Chart name |
 | monitoring.prometheusMsTeams.chart.repo | string | `"https://prometheus-msteams.github.io/prometheus-msteams/"` | Helm repository |
 | monitoring.prometheusMsTeams.chart.version | string | `"1.3.0"` | Chart version |
