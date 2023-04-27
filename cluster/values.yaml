@@ -329,7 +329,7 @@ olm:
 logging:
   loki:
     # -- Enable Loki chart
-    enabled: false
+    enabled: true
     chart:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
@@ -347,10 +347,14 @@ logging:
       # -- Loki retention
       retention: 740h
       ingress:
-        # -- Enable Kibana UI Ingress
+        # -- Enable Loki UI Ingress
         enabled: true
-        # -- Kibana ingress name or path (weither it is an ingress wildcard or domain)
+        # -- Loki ingress name or path (weither it is an ingress wildcard or domain)
         name: loki
+      # -- Node tolerations for scheduling Loki to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+      tolerations: []
+      # -- Node labels for Loki pod assignment
+      nodeSelector: {}
 
   promtail:
     # -- Enable Promtail chart
@@ -366,7 +370,18 @@ logging:
       # -- Enable Promtail on the controll plane
       installOnControllPlane: true
       # -- Path to runtime containers
-      runtimeLogs: "/var/lib/docker/containers"
+      runtimeLogs: "/var/log/containers"
+      # -- Extra volumes to be added in addition to those specified by default
+      extraVolumes: []
+      # -- Extra volume mounts together. Corresponds to `extraVolumes`.
+      extraVolumeMounts: []
+      # -- Enable extra configuration scrapes in the, watch section bellow for examples
+      extraScrapeConfigs: []
+      # -- Enable extra configuration relabels in the, watch section bellow for examples
+      extraRelabelConfigs: []
+      # -- Enabl
+      pipelineStages: []
+
   eck:
     # -- Enable ECK chart, installing [OLM](https://github.com/operator-framework/operator-lifecycle-manager) is mandantory
     enabled: false
@@ -640,9 +655,9 @@ monitoring:
         retention: 720h
         # -- Prometheus server extra args
         extraArgs: []
-        # -- Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+        # -- Node tolerations for scheduling Prometheus to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
         tolerations: []
-        # -- Node labels for controller pod assignment
+        # -- Node labels for prometheus pod assignment
         nodeSelector: {}
         ingress:
           # -- Enable Prometheus UI Ingress

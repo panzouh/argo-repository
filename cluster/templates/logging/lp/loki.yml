@@ -52,6 +52,8 @@ spec:
             enforce_metric_name: false
             reject_old_samples: true
             reject_old_samples_max_age: 336h
+            ingestion_burst_size_mb: 1000
+            ingestion_rate_mb: 10000
             retention_period: {{ .Values.logging.loki.values.retention }}
           podSecurityContext:
             fsGroup: 0
@@ -74,5 +76,13 @@ spec:
           {{- else }}
           persistence:
             enabled: false
+          {{- end }}
+          {{- if .Values.logging.loki.values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml .Values.logging.loki.values.nodeSelector | nindent 12 }}
+          {{- end }}
+          {{- if .Values.logging.loki.values.tolerations }}
+          tolerations:
+            {{- toYaml .Values.logging.loki.values.tolerations | nindent 12 }}
           {{- end }}
 {{ end }}

@@ -6,7 +6,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki
+  name: promtail
   namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
@@ -20,32 +20,74 @@ spec:
     chart: {{ .Values.logging.promtail.chart.name }}
     repoURL: {{ .Values.logging.promtail.chart.repo }}
     targetRevision: {{ .Values.logging.promtail.chart.version }}
-    helm: |
-      {{- if .Values.logging.promtail.values.installOnControllPlane }}
-      tolerations:
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-      {{- end }}
-      defaultVolumes:
-        - name: containers
-          hostPath:
-            path: {{ .Values.logging.promtail.values.runtimeLogs }}
-        - name: pods
-          hostPath:
-            path: /var/log/pods
-      defaultVolumeMounts:
-        - name: containers
-          path: {{ .Values.logging.promtail.values.runtimeLogs }}
-          readOnly: true
-        - name: pods
-          mountPath: /var/log/pods
-          readOnly: true
-      config:
-        logLevel: info
-        serverPort: 3101
-        lokiAddress: http://loki:3100.monitoring/loki/api/v1/push
+    helm:
+      version: v3
+      values: |
+        containerSecurityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
+        {{- if .Values.logging.promtail.values.installOnControllPlane }}
+        tolerations:
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/etcd
+            operator: Exists
+            effect: NoSchedule
+        {{- end }}
+        defaultVolumes:
+          - name: run
+            hostPath:
+              path: /run/promtail
+          - name: containers
+            hostPath:
+              path: {{ .Values.logging.promtail.values.runtimeLogs }}
+          - name: pods
+            hostPath:
+              path: /var/log/pods
+        defaultVolumeMounts:
+          - name: run
+            mountPath: /run/promtail
+          - name: containers
+            mountPath: {{ .Values.logging.promtail.values.runtimeLogs }}
+            readOnly: true
+          - name: pods
+            mountPath: /var/log/pods
+        {{- if .Values.logging.promtail.values.extraVolumes }}
+        extraVolumes:
+          {{- toYaml .Values.logging.promtail.values.extraVolumes | nindent 10 }}
+        {{- end }}
+        {{- if .Values.logging.promtail.values.extraVolumeMounts }}
+        extraVolumeMounts:
+          {{- toYaml .Values.logging.promtail.values.extraVolumeMounts | nindent 10 }}
+        {{- end }}
+        config:
+          logLevel: info
+          serverPort: 3101
+          clients: 
+            - url: http://loki.{{ (include "logging.namespace" .) }}:3100/loki/api/v1/push
+          {{- if or .Values.logging.promtail.values.extraScrapeConfigs .Values.logging.promtail.values.extraRelabelConfigs .Values.logging.promtail.values.pipelineStages }}
+          snippets:
+            {{- if .Values.logging.promtail.values.extraScrapeConfigs }}
+            extraScrapeConfigs: |-
+                {{- with .Values.logging.promtail.values.extraScrapeConfigs }}
+                  {{- toYaml . | nindent 12 }}
+                {{- end }}
+            {{- end }}
+            {{- if .Values.logging.promtail.values.extraRelabelConfigs }}
+            extraRelabelConfigs:
+              {{- with .Values.logging.promtail.values.extraRelabelConfigs }}
+                  {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.logging.promtail.values.pipelineStages }}
+            pipelineStages:
+              {{- with .Values.logging.promtail.values.pipelineStages }}
+                  {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
 {{ end }}

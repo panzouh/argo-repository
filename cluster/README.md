@@ -502,13 +502,15 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 | logging.loki.chart.name | string | `"loki"` | Chart name |
 | logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.loki.chart.version | string | `"3.8.0"` | Chart version |
-| logging.loki.enabled | bool | `false` | Enable Loki chart |
+| logging.loki.enabled | bool | `true` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
-| logging.loki.values.ingress.enabled | bool | `true` | Enable Kibana UI Ingress |
-| logging.loki.values.ingress.name | string | `"loki"` | Kibana ingress name or path (weither it is an ingress wildcard or domain) |
+| logging.loki.values.ingress.enabled | bool | `true` | Enable Loki UI Ingress |
+| logging.loki.values.ingress.name | string | `"loki"` | Loki ingress name or path (weither it is an ingress wildcard or domain) |
 | logging.loki.values.monitor | bool | `false` | Enable prometheus metrics scraping, you will need to enable Prometheus as well |
+| logging.loki.values.nodeSelector | object | `{}` | Node labels for Loki pod assignment |
 | logging.loki.values.pvcSize | string | `"50Gi"` | Loki PVC size, you will need to define a StorageClass in `default.storageClass` |
 | logging.loki.values.retention | string | `"740h"` | Loki retention |
+| logging.loki.values.tolerations | list | `[]` | Node tolerations for scheduling Loki to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 
 ##### Promtail
 
@@ -520,8 +522,63 @@ Promtail is an agent which ships the contents of local logs to a Loki instance.
 | logging.promtail.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.promtail.chart.version | string | `"6.0.2"` | Chart version |
 | logging.promtail.enabled | bool | `false` | Enable Promtail chart |
+| logging.promtail.values.extraRelabelConfigs | list | `[]` | Enable extra configuration relabels in the, watch section bellow for examples |
+| logging.promtail.values.extraScrapeConfigs | list | `[]` | Enable extra configuration scrapes in the, watch section bellow for examples |
+| logging.promtail.values.extraVolumeMounts | list | `[]` | Extra volume mounts together. Corresponds to `extraVolumes`. |
+| logging.promtail.values.extraVolumes | list | `[]` | Extra volumes to be added in addition to those specified by default |
 | logging.promtail.values.installOnControllPlane | bool | `true` | Enable Promtail on the controll plane |
-| logging.promtail.values.runtimeLogs | string | `"/var/lib/docker/containers"` | Path to runtime containers |
+| logging.promtail.values.pipelineStages | list | `[]` | Enabl |
+| logging.promtail.values.runtimeLogs | string | `"/var/log/containers"` | Path to runtime containers |
+
+###### Extra scrape config
+
+If you want to ship more logs into Loki, you can add extra scrape config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+  - job_name: system
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: 'system_logs'
+          host: 'myhostname'
+          __path__: '/var/log/syslog'
+```
+
+In this example we are shipping /var/log/syslog from localhost with label "host" set to "myhostname". You might need to add an extraVolumeMounts and extraVolumes to Promtail to make this work.
+
+###### Extra relabel config
+
+If you want to add any additional relabel_configs to "kubernetes-pods" job, you can add extra relabel config to Promtail. Here is an example:
+
+```yaml
+extraScrapeConfigs:
+   source_labels: [__meta_kubernetes_pod_label_log_me]
+    action: keep
+    regex: true
+```
+
+###### Pipeline stages
+
+If you want to add any additional pipeline stages to "kubernetes-pods" job, you can add extra pipeline stages to Promtail. Here is an example:
+
+```yaml
+extraPipelineStages:
+  - docker: {}
+  - cri: {}
+  - labeldrop:
+      - filename
+  - match:
+      selector: '{app="nginx"}'
+      stages:
+        - json:
+            expressions:
+              log: log
+```
+
+In this example we are adding json parser to all pods with label "app" set to "nginx".
+
+In this example we are keeping only those pods which have label "log_me" set to true.
 
 ### Management
 
@@ -786,10 +843,10 @@ The features that distinguish Prometheus from other metrics and monitoring syste
 | monitoring.prometheus.values.server.ingress.auth.username | string | `"admin"` | Basic auth username (only for `raw` type) |
 | monitoring.prometheus.values.server.ingress.enabled | bool | `true` | Enable Prometheus UI Ingress |
 | monitoring.prometheus.values.server.ingress.name | string | `"prometheus"` | Prometheus ingress name or path (weither it is an ingress wildcard or domain) |
-| monitoring.prometheus.values.server.nodeSelector | object | `{}` | Node labels for controller pod assignment |
+| monitoring.prometheus.values.server.nodeSelector | object | `{}` | Node labels for prometheus pod assignment |
 | monitoring.prometheus.values.server.pvcSize | string | `"30Gi"` | Prometheus PVC size, you will need to define a StorageClass in `default.storageClass` |
 | monitoring.prometheus.values.server.retention | string | `"720h"` | Prometheus data retention |
-| monitoring.prometheus.values.server.tolerations | list | `[]` | Node tolerations for scheduling ingress controller to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
+| monitoring.prometheus.values.server.tolerations | list | `[]` | Node tolerations for scheduling Prometheus to nodes with taints [Kubernetes Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 | monitoring.prometheusMsTeams.chart.name | string | `"prometheus-msteams"` | Chart name |
 | monitoring.prometheusMsTeams.chart.repo | string | `"https://prometheus-msteams.github.io/prometheus-msteams/"` | Helm repository |
 | monitoring.prometheusMsTeams.chart.version | string | `"1.3.0"` | Chart version |
