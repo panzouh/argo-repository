@@ -502,7 +502,7 @@ The Loki project was started at Grafana Labs in 2018, and announced at KubeCon S
 | logging.loki.chart.name | string | `"loki"` | Chart name |
 | logging.loki.chart.repo | string | `"https://grafana.github.io/helm-charts"` | Helm repository |
 | logging.loki.chart.version | string | `"3.8.0"` | Chart version |
-| logging.loki.enabled | bool | `true` | Enable Loki chart |
+| logging.loki.enabled | bool | `false` | Enable Loki chart |
 | logging.loki.values.enableGrafanaDashboard | bool | `true` | Enable a Grafana specific dashboard, you will need to have Grafana enabled |
 | logging.loki.values.ingress.enabled | bool | `true` | Enable Loki UI Ingress |
 | logging.loki.values.ingress.name | string | `"loki"` | Loki ingress name or path (weither it is an ingress wildcard or domain) |
