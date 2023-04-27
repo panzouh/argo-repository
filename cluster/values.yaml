@@ -347,7 +347,7 @@ logging:
       # -- Loki retention
       retention: 740h
       ingress:
-        # -- Enable Kibana UI Ingress
+        # -- Enable Loki UI Ingress
         enabled: true
         # -- Loki ingress name or path (weither it is an ingress wildcard or domain)
         name: loki
