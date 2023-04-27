@@ -32,8 +32,8 @@ Networking
 {{- if $authSecret -}}
 {{- end -}}
 ingress:
-  {{- if and $ingressDefinition.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{- $ingressDefinition.className }}
+  {{- if $ingressDefinition.className }}
+  ingressClassName: {{ $ingressDefinition.className }}
   {{- end }}
   enabled: true
   {{- if $annotations }}
@@ -79,8 +79,8 @@ ingress:
 {{- end -}}
 ingress:
   enabled: true
-  {{- if and $ingressDefinition.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{- $ingressDefinition.className }}
+  {{- if $ingressDefinition.className }}
+  ingressClassName: {{ $ingressDefinition.className }}
   {{- end }}
   {{- if $annotations }}
   annotations:

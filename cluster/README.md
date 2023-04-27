@@ -1024,6 +1024,7 @@ It is loosely based upon the work of kube-lego and has borrowed some wisdom from
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| ingress.ingressDefinition.className | string | `""` | Defines which ingress controller will implement the resource |
 | ingress.ingressDefinition.dns.domain | string | `"domain.tld"` | Cluster DNS entry, it generate this kind of urls : `https://domain.tld/prometheus` |
 | ingress.ingressDefinition.dns.mode | string | `"wildcard"` | DNS declaration of your cluster can be `domain` or `wildcard` |
 | ingress.ingressDefinition.dns.wildcard | string | `"your-cluster.domain.tld"` | Cluster DNS wildcard entry, it generate this kind of urls : `https://prometheus.your-cluster.domain.tld` |
