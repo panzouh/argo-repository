@@ -710,6 +710,8 @@ ingress:
     tolerations: []
     # -- Node labels for controller pod assignment
     nodeSelector: {}
+    # -- Defines which ingress controller will implement the resource
+    className: ""
   traefik:
     # -- Enable Traefik chart, you should know that you can't activate Traefik & Nginx
     enabled: false
