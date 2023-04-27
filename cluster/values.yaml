@@ -329,7 +329,7 @@ olm:
 logging:
   loki:
     # -- Enable Loki chart
-    enabled: true
+    enabled: false
     chart:
       # -- Helm repository
       repo: https://grafana.github.io/helm-charts
@@ -355,7 +355,6 @@ logging:
       tolerations: []
       # -- Node labels for Loki pod assignment
       nodeSelector: {}
-
   promtail:
     # -- Enable Promtail chart
     enabled: false
