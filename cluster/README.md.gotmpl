@@ -93,6 +93,17 @@ Airbyte is an open-source platform for building data integration pipelines. It a
   {{- end }}
 {{- end }}
 
+#### Metabase
+
+Metabase is an open-source business intelligence platform. You can use Metabase to ask questions about your data, or embed Metabase in your app to let your customers explore their data on their own.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "data.metabase" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 ### Integration
 
 By default, the integration stack is not enabled. You can activate either by setting every charts to `<chart-name>.enabled: true` or `default.enabled: true`. It will enable all the default stack including ArgoCD & Namespace configurator operator).
