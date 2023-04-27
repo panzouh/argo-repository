@@ -90,6 +90,13 @@ data:
   metabase:
     # -- Enabe Metabase chart
     enabled: false
+    chart:
+    # -- Helm repository (This own repository)
+    repo: https://github.com/panzouh/argo-repository.git
+    # -- Chart path on repository
+    path: charts/metabase
+    # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
+    targetRevision: metabase
 
 # Integration
 
