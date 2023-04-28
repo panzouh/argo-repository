@@ -17,7 +17,6 @@ spec:
     server: https://kubernetes.default.svc
   project: data
   source:
-    chart: {{ .Values.data.metabase.chart.name }}
     repoURL: {{ .Values.data.metabase.chart.repo }}
     path: {{ .Values.data.metabase.chart.path }}
     targetRevision: {{ .Values.data.metabase.chart.targetRevision }}
