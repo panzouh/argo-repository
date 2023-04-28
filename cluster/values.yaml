@@ -97,6 +97,7 @@ data:
       path: charts/metabase
       # -- Chart target revision, using `HEAD` allow you to use the same version of your cluster spec
       targetRevision: HEAD
+    values: {}
 
 # Integration
 
