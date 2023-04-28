@@ -109,6 +109,7 @@ Metabase is an open-source business intelligence platform. You can use Metabase 
 | data.metabase.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
 | data.metabase.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | data.metabase.enabled | bool | `false` | Enabe Metabase chart |
+| data.metabase.values | object | `{}` |  |
 
 ### Integration
 
