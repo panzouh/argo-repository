@@ -19,7 +19,7 @@ spec:
   source:
     chart: {{ .Values.data.metabase.chart.name }}
     repoURL: {{ .Values.data.metabase.chart.repo }}
-    targetRevision: {{ .Values.data.metabase.chart.version }}
+    targetRevision: {{ .Values.data.metabase.chart.targetRevision }}
     helm:
       version: v3
       values: |-
