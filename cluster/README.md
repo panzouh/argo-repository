@@ -105,11 +105,11 @@ Airbyte is an open-source platform for building data integration pipelines. It a
 Metabase is an open-source business intelligence platform. You can use Metabase to ask questions about your data, or embed Metabase in your app to let your customers explore their data on their own.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| data.metabase.chart | string | `nil` |  |
+| data.metabase.chart.name | string | `"metabase"` | Chart name |
+| data.metabase.chart.path | string | `"charts/metabase"` | Chart path on repository |
+| data.metabase.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
+| data.metabase.chart.targetRevision | string | `"metabase"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 | data.metabase.enabled | bool | `false` | Enabe Metabase chart |
-| data.metabase.path | string | `"charts/metabase"` | Chart path on repository |
-| data.metabase.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
-| data.metabase.targetRevision | string | `"metabase"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
 
 ### Integration
 
