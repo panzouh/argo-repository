@@ -97,8 +97,19 @@ Airbyte is an open-source platform for building data integration pipelines. It a
 |-----|------|---------|-------------|
 | data.airbyte.chart.name | string | `"airbyte"` | Chart name |
 | data.airbyte.chart.repo | string | `"https://airbytehq.github.io/helm-charts/"` | Helm repository |
-| data.airbyte.chart.version | string | `"0.42.0"` | Chart version |
+| data.airbyte.chart.version | string | `"0.45.8"` | Chart version |
 | data.airbyte.enabled | bool | `false` | Enabe Airbyte chart |
+
+#### Metabase
+
+Metabase is an open-source business intelligence platform. You can use Metabase to ask questions about your data, or embed Metabase in your app to let your customers explore their data on their own.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| data.metabase.chart.path | string | `"charts/metabase"` | Chart path on repository |
+| data.metabase.chart.repo | string | `"https://github.com/panzouh/argo-repository.git"` | Helm repository (This own repository) |
+| data.metabase.chart.targetRevision | string | `"HEAD"` | Chart target revision, using `HEAD` allow you to use the same version of your cluster spec |
+| data.metabase.enabled | bool | `false` | Enabe Metabase chart |
+| data.metabase.values | object | `{}` |  |
 
 ### Integration
 

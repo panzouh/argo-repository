@@ -1,5 +1,5 @@
 {{- define "data.enabled" -}}
-{{- or .Values.data.airbyte.enabled -}}
+{{- or .Values.data.airbyte.enabled .Values.data.metabase.enabled -}}
 {{- end -}}
 {{ if eq (include "data.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1
