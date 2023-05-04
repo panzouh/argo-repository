@@ -97,7 +97,7 @@ Airbyte is an open-source platform for building data integration pipelines. It a
 |-----|------|---------|-------------|
 | data.airbyte.chart.name | string | `"airbyte"` | Chart name |
 | data.airbyte.chart.repo | string | `"https://airbytehq.github.io/helm-charts/"` | Helm repository |
-| data.airbyte.chart.version | string | `"0.42.0"` | Chart version |
+| data.airbyte.chart.version | string | `"0.45.8"` | Chart version |
 | data.airbyte.enabled | bool | `false` | Enabe Airbyte chart |
 
 #### Metabase
