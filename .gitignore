@@ -26,3 +26,5 @@ lefthook-local.yml
 # Ignore build directory
 build/**/*
 .bin/
+# Ignore local debug template
+debug-tpl.yml
