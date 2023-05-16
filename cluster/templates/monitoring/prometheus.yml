@@ -83,7 +83,7 @@ spec:
           readinessProbeInitialDelay: 600
           readinessProbePeriodSeconds: 30
           readinessProbeTimeout: 5
-          readinessProbeFailureThreshold: 5
+          readinessProbeFailureThreshold: 60
           readinessProbeSuccessThreshold: 1
           livenessProbeInitialDelay: 30
           livenessProbePeriodSeconds: 15
