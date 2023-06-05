@@ -508,7 +508,9 @@ uxp:
     name: universal-crossplane
     # -- Chart version
     version: 1.10.1-up.1
-  values: {}
+  values:
+    # Add crossplane packages to uxp
+    providers: []
 
 # Monitoring
 

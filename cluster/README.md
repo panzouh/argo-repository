@@ -617,7 +617,18 @@ In this example we are keeping only those pods which have label "log_me" set to 
 | uxp.chart.version | string | `"1.10.1-up.1"` | Chart version |
 | uxp.enabled | bool | `false` | Enable Universal Crossplane chart |
 | uxp.namespace | string | `"upbound-system"` | Destination namespace |
-| uxp.values | object | `{}` |  |
+| uxp.values.providers | list | `[]` |  |
+
+##### Uxp providers
+
+```yaml
+uxp:
+  enabled: true
+  values:
+    providers:
+      - crossplane/provider-kubernetes:main
+      - crossplane/provider-aws:v0.21.2
+```
 
 ### Monitoring
 

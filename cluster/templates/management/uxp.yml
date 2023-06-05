@@ -2,7 +2,7 @@
 {{- .Values.uxp.enabled -}}
 {{- end -}}
 {{ if eq (include "uxp.enabled" .) "true" }}
-
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -23,4 +23,11 @@ spec:
     helm:
       version: v3
       values: |-
+      {{- if .Values.uxp.values.providers }}
+        providers:
+          packages:
+          {{- range .Values.uxp.values.providers }}
+            - {{ . }}
+          {{- end }}
+      {{- end }}
 {{ end }}
