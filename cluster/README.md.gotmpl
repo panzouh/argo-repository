@@ -535,6 +535,17 @@ In this example we are keeping only those pods which have label "log_me" set to 
   {{- end }}
 {{- end }}
 
+##### Uxp providers
+
+```yaml
+uxp:
+  enabled: true
+  values:
+    providers:
+      - crossplane/provider-kubernetes:main
+      - crossplane/provider-aws:v0.21.2
+```
+
 ### Monitoring
 
 #### Define Monitoring global variables
