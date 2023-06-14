@@ -23,10 +23,10 @@ spec:
     helm:
       version: v3
       values: |-
-      {{- if .Values.uxp.values.providers }}
-        providers:
+      {{- if .Values.uxp.values.packages }}
+        provider:
           packages:
-          {{- range .Values.uxp.values.providers }}
+          {{- range .Values.uxp.values.packages }}
             - {{ . }}
           {{- end }}
       {{- end }}

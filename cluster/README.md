@@ -614,10 +614,10 @@ In this example we are keeping only those pods which have label "log_me" set to 
 |-----|------|---------|-------------|
 | uxp.chart.name | string | `"universal-crossplane"` | Chart name |
 | uxp.chart.repo | string | `"https://charts.upbound.io/stable"` | Helm repository |
-| uxp.chart.version | string | `"1.10.1-up.1"` | Chart version |
+| uxp.chart.version | string | `"1.12.2-up.1"` | Chart version |
 | uxp.enabled | bool | `false` | Enable Universal Crossplane chart |
 | uxp.namespace | string | `"upbound-system"` | Destination namespace |
-| uxp.values.providers | list | `[]` |  |
+| uxp.values.packages | list | `[]` |  |
 
 ##### Uxp providers
 
@@ -625,7 +625,7 @@ In this example we are keeping only those pods which have label "log_me" set to 
 uxp:
   enabled: true
   values:
-    providers:
+    packages:
       - crossplane/provider-kubernetes:main
       - crossplane/provider-aws:v0.21.2
 ```
