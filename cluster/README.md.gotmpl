@@ -515,27 +515,17 @@ In this example we are keeping only those pods which have label "log_me" set to 
 
 ### Management
 
-#### Rancher
+#### Crossplane
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
-  {{- if (hasPrefix "rancher" .Key) }} 
+  {{- if (hasPrefix "crossplane" .Key) }} 
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
 
-#### Uxp
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-{{- range .Values }}
-  {{- if (hasPrefix "uxp" .Key) }} 
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
-
-##### Uxp providers
+##### Crossplane providers
 
 ```yaml
 uxp:
@@ -545,6 +535,16 @@ uxp:
       - crossplane/provider-kubernetes:main
       - crossplane/provider-aws:v0.21.2
 ```
+
+#### Rancher
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if (hasPrefix "rancher" .Key) }} 
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
 
 ### Monitoring
 

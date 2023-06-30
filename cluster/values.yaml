@@ -496,18 +496,18 @@ rancher:
       # -- Rancher ingress name or path (weither it is an ingress wildcard or domain)
       name: rancher
 
-uxp:
+crossplane:
   # -- Enable Universal Crossplane chart
   enabled: false
   # -- Destination namespace
   namespace: upbound-system
   chart:
     # -- Helm repository
-    repo: https://charts.upbound.io/stable
+    repo: https://charts.crossplane.io/stable
     # -- Chart name
-    name: universal-crossplane
+    name: crossplane
     # -- Chart version
-    version: 1.12.2-up.1
+    version: 1.12.2
   values:
     # Add crossplane packages to uxp
     packages: []

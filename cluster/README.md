@@ -593,6 +593,28 @@ In this example we are keeping only those pods which have label "log_me" set to 
 
 ### Management
 
+#### Crossplane
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| crossplane.chart.name | string | `"crossplane"` | Chart name |
+| crossplane.chart.repo | string | `"https://charts.crossplane.io/stable"` | Helm repository |
+| crossplane.chart.version | string | `"1.12.2"` | Chart version |
+| crossplane.enabled | bool | `false` | Enable Universal Crossplane chart |
+| crossplane.namespace | string | `"upbound-system"` | Destination namespace |
+| crossplane.values.packages | list | `[]` |  |
+
+##### Crossplane providers
+
+```yaml
+uxp:
+  enabled: true
+  values:
+    packages:
+      - crossplane/provider-kubernetes:main
+      - crossplane/provider-aws:v0.21.2
+```
+
 #### Rancher
 
 | Key | Type | Default | Description |
@@ -607,28 +629,6 @@ In this example we are keeping only those pods which have label "log_me" set to 
 | rancher.values.ingress.enabled | bool | `false` | Enable Rancher ingress UI |
 | rancher.values.ingress.name | string | `"rancher"` | Rancher ingress name or path (weither it is an ingress wildcard or domain) |
 | rancher.values.replicas | int | `1` | Rancher replicas |
-
-#### Uxp
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| uxp.chart.name | string | `"universal-crossplane"` | Chart name |
-| uxp.chart.repo | string | `"https://charts.upbound.io/stable"` | Helm repository |
-| uxp.chart.version | string | `"1.12.2-up.1"` | Chart version |
-| uxp.enabled | bool | `false` | Enable Universal Crossplane chart |
-| uxp.namespace | string | `"upbound-system"` | Destination namespace |
-| uxp.values.packages | list | `[]` |  |
-
-##### Uxp providers
-
-```yaml
-uxp:
-  enabled: true
-  values:
-    packages:
-      - crossplane/provider-kubernetes:main
-      - crossplane/provider-aws:v0.21.2
-```
 
 ### Monitoring
 
