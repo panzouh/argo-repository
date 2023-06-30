@@ -607,7 +607,7 @@ In this example we are keeping only those pods which have label "log_me" set to 
 ##### Crossplane providers
 
 ```yaml
-uxp:
+crossplane:
   enabled: true
   values:
     packages:
