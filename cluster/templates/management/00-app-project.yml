@@ -1,5 +1,5 @@
 {{- define "management.enabled" -}}
-{{- or .Values.rancher.enabled .Values.uxp.enabled -}}
+{{- or .Values.rancher.enabled .Values.crossplane.enabled -}}
 {{- end -}}
 {{ if eq (include "management.enabled" .) "true" }}
 apiVersion: argoproj.io/v1alpha1

@@ -1,32 +1,32 @@
-{{- define "uxp.enabled" -}}
-{{- .Values.uxp.enabled -}}
+{{- define "crossplane.enabled" -}}
+{{- .Values.crossplane.enabled -}}
 {{- end -}}
-{{ if eq (include "uxp.enabled" .) "true" }}
+{{ if eq (include "crossplane.enabled" .) "true" }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: uxp
+  name: crossplane
   namespace: {{ .Values.argocd.namespace }}
   finalizers:
   {{- include "argocd.applications.finalizers" . | nindent 4 }}
 spec:
   {{- template "cluster.syncPolicy.default" . }}
   destination:
-    namespace: {{ .Values.uxp.namespace }}
+    namespace: {{ .Values.crossplane.namespace }}
     server: https://kubernetes.default.svc
   project: management
   source:
-    chart: {{ .Values.uxp.chart.name }}
-    repoURL: {{ .Values.uxp.chart.repo }}
-    targetRevision: {{ .Values.uxp.chart.version }}
+    chart: {{ .Values.crossplane.chart.name }}
+    repoURL: {{ .Values.crossplane.chart.repo }}
+    targetRevision: {{ .Values.crossplane.chart.version }}
     helm:
       version: v3
       values: |-
-      {{- if .Values.uxp.values.packages }}
+      {{- if .Values.crossplane.values.packages }}
         provider:
           packages:
-          {{- range .Values.uxp.values.packages }}
+          {{- range .Values.crossplane.values.packages }}
             - {{ . }}
           {{- end }}
       {{- end }}
